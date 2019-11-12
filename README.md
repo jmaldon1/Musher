@@ -31,7 +31,7 @@ python song_test.py
 ### Linux
 1. Run 
 ```
-bash build_win.sh poc/c++_extensions
+bash build_linux.sh poc/c++_extensions
 ```
 to generate and build the Unix Makefile based projects.
 

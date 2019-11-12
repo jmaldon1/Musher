@@ -6,3 +6,43 @@ Mush songs together to create new songs.
 2. Combine like pieces of songs together thru their metadata
 
 3. Put songs back together. 
+
+
+## Build the Proof of Concept Model
+### Windows
+1. Run 
+```
+build_win.bat poc\c++_extensions
+```
+to generate and build the Visual Studio 2019 (vc16/ toolset 142) projects.
+
+2. Within the directory "poc\c++_extensions\song\wrapper", run
+```
+python setup.py build_ext --inplace
+```
+
+3. Run the python test program
+```
+python song_test.py
+```
+
+### Linux
+1. Run 
+```
+bash build_win.sh poc/c++_extensions
+```
+to generate and build the Unix Makefile based projects.
+
+2. Within the directory "poc/c++_extensions/song/wrapper", run
+```
+python3 setup.py build_ext --inplace
+```
+
+3. Run the python test program
+```
+python3 song_test.py
+```
+
+## Next Steps
+1. Get the python packages to compile using precompiled static and/or shared libraries instead of recompiling the c++ source code
+2. Create and access the python package from other paths (i.e. generate and use it without the "--inplace" argument)

@@ -1,6 +1,8 @@
 # Musher
 Mush songs together to create new songs.
 
+## Steps
+
 1. Get all metadata out of various song files.
 
 2. Combine like pieces of songs together thru their metadata
@@ -46,3 +48,9 @@ python3 song_test.py
 ## Next Steps
 1. Get the python packages to compile using precompiled static and/or shared libraries instead of recompiling the c++ source code
 2. Create and access the python package from other paths (i.e. generate and use it without the "--inplace" argument)
+3. Put songs back together.
+
+## Useful links
+Python audio libraries:
+
+* https://github.com/vinta/awesome-python#audio

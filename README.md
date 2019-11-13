@@ -67,7 +67,7 @@ brew install cmake
 
 **Linux**
 ```shell
-apt install cmake
+sudo apt install cmake
 ```
 
 #### Build

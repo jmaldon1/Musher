@@ -9,7 +9,7 @@ int main()
     std::cout << "This is the c++ wrapper to test the Musher library"               << std::endl;
     std::cout << "================================================================" << std::endl;
 
-    PrintFunctionalMessage("This is a message for a functional program");
+    CPrintFunctionalMessage("This is a message for a functional program");
 
     return 0;
 }

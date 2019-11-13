@@ -161,7 +161,7 @@ PyObject* PrintFunctionalMessage(PyObject* self, PyObject* args)
                     &message);
 
     /* Call function */
-    PrintFunctionalMessage(message);
+    CPrintFunctionalMessage(message);
 
     /* Return nothing */
     return Py_BuildValue("");

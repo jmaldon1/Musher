@@ -126,6 +126,7 @@ class CleanBuildCommand(distutils.cmd.Command):
         # remove shared libraries
         so_libs = glob.glob(os.path.join(ROOT_DIR, "*.so"))
         dlls_libs = glob.glob(os.path.join(ROOT_DIR, "*.dll"))
+        dylibs_libs = glob.glob(os.path.join(ROOT_DIR, "*.dylib"))
 
         for so in so_libs:
             try:
@@ -136,6 +137,12 @@ class CleanBuildCommand(distutils.cmd.Command):
         for dll in dlls_libs:
             try:
                 os.remove(dll)
+            except OSError:
+                pass
+
+        for dylib in dylibs_libs:
+            try:
+                os.remove(dylib)
             except OSError:
                 pass
         print(u'\u2713', "cleaning done")

@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.5)
 
-project(musher)
+project(Musher)
 
 find_package(PythonLibs REQUIRED)
 
@@ -20,6 +20,6 @@ set(TEST_SOURCES
     ${SOURCE_DIR}/functional_test.cpp
     ${SOURCE_DIR}/musher_test.cpp)
 
-add_library(musher_library SHARED ${SOURCES})
-target_link_libraries(musher_library ${PYTHON_LIBRARIES})
+add_library(Musher MODULE ${SOURCES})
+target_link_libraries(Musher ${PYTHON_LIBRARIES})
 add_definitions(-DMUSHER_EXPORT)

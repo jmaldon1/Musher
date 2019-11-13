@@ -14,5 +14,6 @@ def main():
 
     PrintFunctionalMessage("This is a functional message")
 
+
 if __name__ == "__main__":
     main()

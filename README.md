@@ -2,9 +2,11 @@
 
 - [Musher](#musher)
     - [Steps](#steps)
-    - [Build NEW Model](#build-new-model)
+    - [Installation](#installation)
         - [Required General Dependencies](#required-general-dependencies)
-        - [Build & Install](#build--install)
+        - [Build & install python module](#build--install-python-module)
+            - [Install normally](#install-normally)
+            - [Install in development mode](#install-in-development-mode)
     - [Tests](#tests)
         - [How to run tests](#how-to-run-tests)
     - [Next Steps](#next-steps)
@@ -32,7 +34,7 @@ Mush songs together to create new songs.
 3. Put songs back together. 
 
 
-## Build NEW Model
+## Installation
 
 ### Required General Dependencies
 
@@ -53,12 +55,27 @@ BRIAN ADD THIS
 ```
 
 
-### Build & Install
+### Build & install python module
 
-1. Run 
-    ```
-    python3 setup.py install
-    ```
+#### Install normally
+
+```shell
+pip install .
+
+# OR
+
+python3 setup.py install
+```
+
+#### Install in development mode
+
+```shell
+pip install -e .
+
+# OR
+
+python3 setup.py develop
+```
 
 ## Tests
 

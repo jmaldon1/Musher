@@ -1,9 +1,21 @@
-import os, sys
+import os
+import sys
+import platform
 
 try:
     from distutils.core import setup, Extension
 except:
     raise RuntimeError("\n\nPython distutils not found\n")
+
+
+# Various platform-dependent extras
+extra_compile_args = []
+extra_link_args = []
+
+# #349: something with OS X Mojave causes libstd not to be found
+if platform.system() == 'Darwin':
+    extra_compile_args += ['-std=c++11', '-mmacosx-version-min=10.9']
+    extra_link_args += ['-stdlib=libc++', '-mmacosx-version-min=10.9']
 
 file_path = os.path.abspath(os.path.dirname(__file__))
 song_project_path = os.path.abspath(os.path.join(file_path, ".."))
@@ -18,7 +30,9 @@ cSong = Extension("cSong",
                     "song_wrapper.cpp",
                     os.path.join(src_path, "song.cpp"),
                     os.path.join(src_path, "functional_test.cpp")],
-                include_dirs = [include_path])
+                include_dirs = [include_path],
+                extra_compile_args=extra_compile_args,
+                extra_link_args=extra_link_args)
 
 # Compile from shared library
 # Does not currently work

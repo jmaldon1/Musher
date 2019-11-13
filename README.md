@@ -2,15 +2,20 @@
 
 - [Musher](#musher)
     - [Steps](#steps)
-    - [Build the Proof of Concept Model](#build-the-proof-of-concept-model)
-        - [Windows](#windows)
-            - [Required General Dependencies](#required-general-dependencies)
-            - [Build](#build)
-        - [Linux & MacOS](#linux--macos)
-            - [Required General Dependencies](#required-general-dependencies-1)
-            - [Build](#build-1)
+    - [Build NEW Model](#build-new-model)
+        - [Required General Dependencies](#required-general-dependencies)
+        - [Build & Install](#build--install)
+    - [Tests](#tests)
+        - [How to run tests](#how-to-run-tests)
     - [Next Steps](#next-steps)
     - [Useful links](#useful-links)
+    - [~~Build the Proof of Concept Model~~ \(OLD INSTRUCTIONS\)](#%7E%7Ebuild-the-proof-of-concept-model%7E%7E-old-instructions)
+        - [Windows](#windows)
+            - [Required General Dependencies](#required-general-dependencies-1)
+            - [Build](#build)
+        - [Linux & MacOS](#linux--macos)
+            - [Required General Dependencies](#required-general-dependencies-2)
+            - [Build](#build-1)
 
 <!-- /MarkdownTOC -->
 
@@ -27,7 +32,60 @@ Mush songs together to create new songs.
 3. Put songs back together. 
 
 
-## Build the Proof of Concept Model
+## Build NEW Model
+
+### Required General Dependencies
+
+**MacOS**
+```shell
+brew install cmake
+```
+
+**Linux**
+```shell
+sudo apt install cmake
+```
+
+**Windows**
+
+```shell
+BRIAN ADD THIS
+```
+
+
+### Build & Install
+
+1. Run 
+    ```
+    python3 setup.py install
+    ```
+
+## Tests
+
+### How to run tests
+
+```shell
+pytest ./tests
+```
+
+## Next Steps
+
+1. Get the python packages to compile using precompiled static and/or shared libraries instead of recompiling the c++ source code
+
+2. Create and access the python package from other paths (i.e. generate and use it without the "--inplace" argument)
+
+3. Put songs back together.
+
+## Useful links
+
+Python audio libraries:
+
+* https://github.com/vinta/awesome-python#audio
+
+
+
+
+## ~~Build the Proof of Concept Model~~ (OLD INSTRUCTIONS)
 
 ### Windows
 
@@ -90,17 +148,3 @@ sudo apt install cmake
     ```shell
     python3 song_test.py
     ```
-
-## Next Steps
-
-1. Get the python packages to compile using precompiled static and/or shared libraries instead of recompiling the c++ source code
-
-2. Create and access the python package from other paths (i.e. generate and use it without the "--inplace" argument)
-
-3. Put songs back together.
-
-## Useful links
-
-Python audio libraries:
-
-* https://github.com/vinta/awesome-python#audio

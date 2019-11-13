@@ -5,11 +5,23 @@ import subprocess
 import shutil
 import glob
 import distutils.cmd
+import codecs
 
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+readme_note = """\
+.. note::
+
+   For the latest source, discussion, etc, please visit the
+   `GitHub repository <https://github.com/jmaldon1/Musher>`_\n\n
+
+"""
+
+with codecs.open('README.md', encoding='utf-8') as fobj:
+    long_description = fobj.read()
 
 # # Various platform-dependent extras
 # extra_compile_args = []
@@ -47,7 +59,7 @@ class CMakeExtension(Extension):
 class CMakeBuild(build_ext):
     def run(self):
         try:
-            out = subprocess.check_output(["cmake", "--version"])
+            subprocess.check_output(["cmake", "--version"])
         except OSError:
             raise RuntimeError(
                 "CMake must be installed to build the following extensions: " +
@@ -151,14 +163,17 @@ class CleanBuildCommand(distutils.cmd.Command):
 setup(
     name='Musher',
     version='0.1',
-    author='Brian Silver, Joshua Maldonado',
-    author_email='',
     description='A hybrid Python/C++ test project',
-    long_description='',
+    packages=find_packages(),
     # add extension module
-    ext_modules=[CMakeExtension("Musher", ROOT_DIR)],
+    ext_modules=[CMakeExtension("Musher")],
     # add custom build_ext command
     cmdclass={"build_ext": CMakeBuild,
               "clean": CleanBuildCommand},
     zip_safe=False,
+    long_description=long_description,
+    author='Brian Silver, Joshua Maldonado',
+    author_email='joshjm9915@gmail.com',
+    url='https://github.com/jmaldon1/Musher',
+    license='MIT',
 )

@@ -25,4 +25,5 @@ add_library(Musher MODULE ${SOURCES})
 target_link_libraries(Musher ${PYTHON_LIBRARIES})
 add_definitions(-DMUSHER_EXPORT)
 
+# Remove prefix from generated .so file
 SET_TARGET_PROPERTIES(Musher PROPERTIES PREFIX "")

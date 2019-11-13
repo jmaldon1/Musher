@@ -170,7 +170,7 @@ PyObject* PrintFunctionalMessage(PyObject* self, PyObject* args)
 
 
 /* define the functions provided by the module */
-PyMethodDef cSongFunctions[] =
+PyMethodDef cFuncs[] =
 {
     #if 0
     /* c++/Python constructor */
@@ -236,18 +236,18 @@ PyMethodDef cSongFunctions[] =
 
 
 /* define the module */
-struct PyModuleDef cSongModule =
+struct PyModuleDef cModule =
 {
     PyModuleDef_HEAD_INIT,
     "Musher",
     NULL,
     -1,
-    cSongFunctions
+    cFuncs
 };
 
 
 /* Initialize the Python module */
-PyMODINIT_FUNC PyInit_cSong(void)
+PyMODINIT_FUNC PyInit_Musher(void)
 {
-    return PyModule_Create(&cSongModule);
+    return PyModule_Create(&cModule);
 }

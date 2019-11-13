@@ -5,6 +5,7 @@ project(Musher)
 find_package(PythonLibs REQUIRED)
 
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
+# set(CMAKE_MODULE_LIBRARY_PREFIX "")
 set(CMAKE_STATIC_LIBRARY_PREFIX "")
 
 set(SOURCE_DIR "src")
@@ -23,3 +24,5 @@ set(TEST_SOURCES
 add_library(Musher MODULE ${SOURCES})
 target_link_libraries(Musher ${PYTHON_LIBRARIES})
 add_definitions(-DMUSHER_EXPORT)
+
+SET_TARGET_PROPERTIES(Musher PROPERTIES PREFIX "")

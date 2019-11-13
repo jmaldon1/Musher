@@ -156,7 +156,7 @@ setup(
     description='A hybrid Python/C++ test project',
     long_description='',
     # add extension module
-    ext_modules=[CMakeExtension('musher_library', ROOT_DIR)],
+    ext_modules=[CMakeExtension("Musher", ROOT_DIR)],
     # add custom build_ext command
     cmdclass={"build_ext": CMakeBuild,
               "clean": CleanBuildCommand},

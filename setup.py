@@ -6,7 +6,7 @@ import shutil
 import glob
 import distutils.cmd
 
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -104,32 +104,41 @@ class CleanBuildCommand(distutils.cmd.Command):
 
         try:
             shutil.rmtree(build_path)
-        except Exception:
+        except OSError:
+            pass
+
+        # remove dist folder
+        dist_path = os.path.join(ROOT_DIR, "dist")
+
+        try:
+            shutil.rmtree(dist_path)
+        except OSError:
             pass
 
         # remove egg info folder
-        egg_info_path = os.path.join(ROOT_DIR, "Musher.egg_info")
+        egg_info_path = os.path.join(ROOT_DIR, "Musher.egg-info")
 
         try:
             shutil.rmtree(egg_info_path)
-        except Exception:
+        except OSError:
             pass
 
         # remove shared libraries
         so_libs = glob.glob(os.path.join(ROOT_DIR, "*.so"))
         dlls_libs = glob.glob(os.path.join(ROOT_DIR, "*.dll"))
 
-        try:
-            for so in so_libs:
+        for so in so_libs:
+            try:
                 os.remove(so)
-        except Exception:
-            pass
+            except OSError:
+                pass
 
-        try:
-            for dll in dlls_libs:
+        for dll in dlls_libs:
+            try:
                 os.remove(dll)
-        except Exception:
-            pass
+            except OSError:
+                pass
+        print(u'\u2713', "cleaning done")
 
 
 setup(

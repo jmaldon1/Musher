@@ -9,6 +9,7 @@ import codecs
 
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
+from setuptools.command.test import test as TestCommand
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -22,6 +23,10 @@ readme_note = """\
 
 with codecs.open('README.md', encoding='utf-8') as fobj:
     long_description = fobj.read()
+
+tests_require = [
+    'pytest',
+]
 
 # # Various platform-dependent extras
 # extra_compile_args = []
@@ -48,6 +53,25 @@ with codecs.open('README.md', encoding='utf-8') as fobj:
 #                 include_dirs = [include_path],
 #                 extra_compile_args=extra_compile_args,
 #                 extra_link_args=extra_link_args)
+
+
+class PyTest(TestCommand):
+    user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+        self.pytest_args = []
+
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+
+    def run_tests(self):
+        # import here, cause outside the eggs aren't loaded
+        import pytest
+        errno = pytest.main(self.pytest_args)
+        sys.exit(errno)
 
 
 class CMakeExtension(Extension):
@@ -169,11 +193,14 @@ setup(
     ext_modules=[CMakeExtension("Musher")],
     # add custom build_ext command
     cmdclass={"build_ext": CMakeBuild,
-              "clean": CleanBuildCommand},
+              "clean": CleanBuildCommand,
+              "test": PyTest
+              },
     zip_safe=False,
     long_description=long_description,
     author='Brian Silver, Joshua Maldonado',
     author_email='joshjm9915@gmail.com',
     url='https://github.com/jmaldon1/Musher',
     license='MIT',
+    tests_require=tests_require,
 )

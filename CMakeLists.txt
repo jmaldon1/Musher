@@ -8,9 +8,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/tools")
 # Include buildTools cmake
 include(buildTools)
 
-# Set variable for source directory
-set(SOURCE_DIR "src")
-# Set variable for include directory
+# Set variable for source and include directory
+set(SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/src" CACHE INTERNAL "")
 set(MUSHER_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include" CACHE INTERNAL "")
 
 # Set variable for all source files within the source directory

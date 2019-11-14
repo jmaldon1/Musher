@@ -92,14 +92,13 @@ python3 setup.py test
 
 ## Accomplishments
 
-1. Get the python packages to compile using precompiled static and/or shared libraries instead of recompiling the c++ source code on linux and mac
+1. Get the python packages to compile using precompiled static and/or shared libraries instead of recompiling the c++ source code on linux and mac.
 
+2. Added support for mac and linux having multiple python versions, this used to cause a seg fault. Along with adding support for windows, which used to not work at all.
 
 ## Next Steps
 
-1. Get package to compile and install on windows
-
-2. Start the actual project (This will be broken down later)
+1. Start the actual project (This will be broken down later)
 
 ## Useful links
 

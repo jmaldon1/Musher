@@ -49,10 +49,7 @@ sudo apt install cmake
 ```
 
 **Windows**
-
-```shell
-BRIAN ADD THIS
-```
+Download from https://cmake.org/download/
 
 
 ### Build & install python module

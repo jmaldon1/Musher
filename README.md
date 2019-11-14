@@ -8,7 +8,9 @@
             - [Install normally](#install-normally)
             - [Install in development mode](#install-in-development-mode)
     - [Tests](#tests)
+        - [Required modules](#required-modules)
         - [How to run tests](#how-to-run-tests)
+    - [Accomplishments](#accomplishments)
     - [Next Steps](#next-steps)
     - [Useful links](#useful-links)
     - [~~Build the Proof of Concept Model~~ \(OLD INSTRUCTIONS\)](#%7E%7Ebuild-the-proof-of-concept-model%7E%7E-old-instructions)
@@ -49,6 +51,7 @@ sudo apt install cmake
 ```
 
 **Windows**
+
 Download from https://cmake.org/download/
 
 
@@ -58,9 +61,7 @@ Download from https://cmake.org/download/
 
 ```shell
 pip install .
-
 # OR
-
 python3 setup.py install
 ```
 
@@ -68,27 +69,37 @@ python3 setup.py install
 
 ```shell
 pip install -e .
-
 # OR
-
 python3 setup.py develop
 ```
 
 ## Tests
 
+### Required modules
+
+```shell
+pip install pytest
+```
+
 ### How to run tests
 
 ```shell
 pytest ./tests
+# OR
+python3 setup.py test
 ```
+
+
+## Accomplishments
+
+1. Get the python packages to compile using precompiled static and/or shared libraries instead of recompiling the c++ source code on linux and mac
+
 
 ## Next Steps
 
-1. Get the python packages to compile using precompiled static and/or shared libraries instead of recompiling the c++ source code
+1. Get package to compile and install on windows
 
-2. Create and access the python package from other paths (i.e. generate and use it without the "--inplace" argument)
-
-3. Put songs back together.
+2. Start the actual project (This will be broken down later)
 
 ## Useful links
 

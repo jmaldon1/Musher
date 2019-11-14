@@ -6,6 +6,7 @@ import shutil
 import glob
 import distutils.cmd
 import codecs
+from functools import reduce
 
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
@@ -135,52 +136,26 @@ class CleanBuildCommand(distutils.cmd.Command):
         pass
 
     def run(self):
-        # remove build folder
-        build_path = os.path.join(ROOT_DIR, "build")
+        cleanup_dir_list = [
+            os.path.join(ROOT_DIR, "build"),
+            os.path.join(ROOT_DIR, "dist"),
+            os.path.join(ROOT_DIR, "Musher.egg-info"),
+            os.path.join(ROOT_DIR, ".eggs"),
+            os.path.join(ROOT_DIR, ".pytest_cache"),
+            *glob.glob(os.path.join(ROOT_DIR, "*.so")),  # Spread any lists
+            *glob.glob(os.path.join(ROOT_DIR, "*.dll")),  # Spread any lists
+            *glob.glob(os.path.join(ROOT_DIR, "*.dylib")),  # Spread any lists
+        ]
 
-        try:
-            shutil.rmtree(build_path)
-        except OSError:
-            pass
-
-        # remove dist folder
-        dist_path = os.path.join(ROOT_DIR, "dist")
-
-        try:
-            shutil.rmtree(dist_path)
-        except OSError:
-            pass
-
-        # remove egg info folder
-        egg_info_path = os.path.join(ROOT_DIR, "Musher.egg-info")
-
-        try:
-            shutil.rmtree(egg_info_path)
-        except OSError:
-            pass
-
-        # remove shared libraries
-        so_libs = glob.glob(os.path.join(ROOT_DIR, "*.so"))
-        dlls_libs = glob.glob(os.path.join(ROOT_DIR, "*.dll"))
-        dylibs_libs = glob.glob(os.path.join(ROOT_DIR, "*.dylib"))
-
-        for so in so_libs:
-            try:
-                os.remove(so)
+        for item in cleanup_dir_list:
+            try:  # If item is a dir then remove it
+                shutil.rmtree(item)
             except OSError:
-                pass
+                try:  # If item is a file then remove it
+                    os.remove(item)
+                except OSError:
+                    pass
 
-        for dll in dlls_libs:
-            try:
-                os.remove(dll)
-            except OSError:
-                pass
-
-        for dylib in dylibs_libs:
-            try:
-                os.remove(dylib)
-            except OSError:
-                pass
         print(u'\u2713', "cleaning done")
 
 

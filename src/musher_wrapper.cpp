@@ -170,7 +170,7 @@ PyObject* PrintFunctionalMessage(PyObject* self, PyObject* args)
 
 
 /* define the functions provided by the module */
-PyMethodDef cFuncs[] =
+static PyMethodDef cFuncs[] =
 {
     #if 0
     /* c++/Python constructor */
@@ -226,7 +226,8 @@ PyMethodDef cFuncs[] =
     /* Wrapper for PrintFunctionalMessage */
     {
         "PrintFunctionalMessage",
-        PrintFunctionalMessage, METH_VARARGS,
+        PrintFunctionalMessage,
+        METH_VARARGS,
         "Print a message from a function"
     },
 
@@ -236,7 +237,7 @@ PyMethodDef cFuncs[] =
 
 
 /* define the module */
-struct PyModuleDef cModule =
+static struct PyModuleDef cModule =
 {
     PyModuleDef_HEAD_INIT,
     "Musher",

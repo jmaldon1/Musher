@@ -1,0 +1,5 @@
+include README.md
+include CMakeLists.txt
+include tools/*
+include src/*
+include include/*

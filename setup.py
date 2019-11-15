@@ -23,10 +23,6 @@ readme_note = """\
 with codecs.open('README.md', encoding='utf-8') as fobj:
     long_description = readme_note + fobj.read()
 
-tests_require = [
-    'pytest',
-]
-
 
 class PyTest(TestCommand):
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
@@ -111,13 +107,14 @@ class CleanBuildCommand(distutils.cmd.Command):
         cleanup_dir_list = [
             os.path.join(ROOT_DIR, "build"),
             os.path.join(ROOT_DIR, "dist"),
-            os.path.join(ROOT_DIR, "Musher.egg-info"),
+            os.path.join(ROOT_DIR, "musher.egg-info"),
             os.path.join(ROOT_DIR, ".eggs"),
             os.path.join(ROOT_DIR, ".pytest_cache"),
+            os.path.join(ROOT_DIR, ".tox"),
             *glob.glob(os.path.join(ROOT_DIR, "*.so")),  # Spread any lists
             *glob.glob(os.path.join(ROOT_DIR, "*.dll")),  # Spread any lists
             *glob.glob(os.path.join(ROOT_DIR, "*.dylib")),  # Spread any lists
-            *glob.glob(os.path.join(ROOT_DIR, "*.pyd")) # clean up windows outputs 
+            *glob.glob(os.path.join(ROOT_DIR, "*.pyd"))  # clean up windows outputs
         ]
 
         for item in cleanup_dir_list:
@@ -135,12 +132,12 @@ class CleanBuildCommand(distutils.cmd.Command):
 
 
 setup(
-    name='Musher',
+    name='musher',
     version='0.1',
     description='A hybrid Python/C++ test project',
     packages=find_packages(),
     # add extension module
-    ext_modules=[CMakeExtension("Musher")],
+    ext_modules=[CMakeExtension("musher")],
     # add custom build_ext command
     cmdclass={"build_ext": CMakeBuild,
               "clean": CleanBuildCommand,
@@ -152,5 +149,5 @@ setup(
     author_email='joshjm9915@gmail.com',
     url='https://github.com/jmaldon1/Musher',
     license='MIT',
-    tests_require=tests_require,
+    tests_require=['pytest'],
 )

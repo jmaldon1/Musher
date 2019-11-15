@@ -1,5 +1,5 @@
-import Musher
+import musher
 
 
 def test_print_functional_message():
-    Musher.PrintFunctionalMessage("hi")
+    musher.PrintFunctionalMessage("hi")

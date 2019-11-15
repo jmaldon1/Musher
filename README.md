@@ -71,15 +71,13 @@ python3 setup.py develop
 ### Required modules
 
 ```shell
-pip install pytest
+pip install tox
 ```
 
 ### How to run tests
 
 ```shell
-pytest ./tests
-# OR
-python3 setup.py test
+tox
 ```
 
 

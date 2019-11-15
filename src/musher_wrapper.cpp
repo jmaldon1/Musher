@@ -42,7 +42,7 @@ static PyMethodDef cFuncs[] =
 static struct PyModuleDef cModule =
 {
     PyModuleDef_HEAD_INIT,
-    "Musher",
+    "musher",
     NULL,
     -1,
     cFuncs
@@ -50,7 +50,7 @@ static struct PyModuleDef cModule =
 
 
 /* Initialize the Python module */
-PyMODINIT_FUNC PyInit_Musher(void)
+PyMODINIT_FUNC PyInit_musher(void)
 {
     return PyModule_Create(&cModule);
 }

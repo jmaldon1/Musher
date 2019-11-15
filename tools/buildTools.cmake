@@ -23,7 +23,7 @@ if(NOT MUSHER_CPP_STANDARD AND NOT CMAKE_CXX_STANDARD)
       if (HAS_CPP11_FLAG)
         set(MUSHER_CPP_STANDARD -std=c++11)
       else()
-        message(FATAL_ERROR "Unsupported compiler -- pybind11 requires C++11 support!")
+        message(FATAL_ERROR "Unsupported compiler -- musher requires C++11 support!")
       endif()
     endif()
   elseif(MSVC)
@@ -39,7 +39,7 @@ endif()
 # linkerflags are lists of flags to use.  The result variable is a unique variable name for each set
 # of flags: the compilation result will be cached base on the result variable.  If the flags work,
 # sets them in cxxflags_out/linkerflags_out internal cache variables (in addition to ${result}).
-function(_pybind11_return_if_cxx_and_linker_flags_work result cxxflags linkerflags cxxflags_out linkerflags_out)
+function(_musher_return_if_cxx_and_linker_flags_work result cxxflags linkerflags cxxflags_out linkerflags_out)
   set(CMAKE_REQUIRED_LIBRARIES ${linkerflags})
   check_cxx_compiler_flag("${cxxflags}" ${result})
   if (${result})
@@ -50,7 +50,7 @@ endfunction()
 
 
 # Internal: find the appropriate link time optimization flags for this compiler
-function(_pybind11_add_lto_flags target_name prefer_thin_lto)
+function(_musher_add_lto_flags target_name prefer_thin_lto)
   if (NOT DEFINED MUSHER_LTO_CXX_FLAGS)
     set(MUSHER_LTO_CXX_FLAGS "" CACHE INTERNAL "")
     set(MUSHER_LTO_LINKER_FLAGS "" CACHE INTERNAL "")
@@ -66,25 +66,25 @@ function(_pybind11_add_lto_flags target_name prefer_thin_lto)
       endif()
 
       if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND prefer_thin_lto)
-        _pybind11_return_if_cxx_and_linker_flags_work(HAS_FLTO_THIN
+        _musher_return_if_cxx_and_linker_flags_work(HAS_FLTO_THIN
           "-flto=thin${cxx_append}" "-flto=thin${linker_append}"
           MUSHER_LTO_CXX_FLAGS MUSHER_LTO_LINKER_FLAGS)
       endif()
 
       if (NOT HAS_FLTO_THIN)
-        _pybind11_return_if_cxx_and_linker_flags_work(HAS_FLTO
+        _musher_return_if_cxx_and_linker_flags_work(HAS_FLTO
           "-flto${cxx_append}" "-flto${linker_append}"
           MUSHER_LTO_CXX_FLAGS MUSHER_LTO_LINKER_FLAGS)
       endif()
     elseif (CMAKE_CXX_COMPILER_ID MATCHES "Intel")
       # Intel equivalent to LTO is called IPO
-      _pybind11_return_if_cxx_and_linker_flags_work(HAS_INTEL_IPO
+      _musher_return_if_cxx_and_linker_flags_work(HAS_INTEL_IPO
       "-ipo" "-ipo" MUSHER_LTO_CXX_FLAGS MUSHER_LTO_LINKER_FLAGS)
     elseif(MSVC)
       # cmake only interprets libraries as linker flags when they start with a - (otherwise it
       # converts /LTCG to \LTCG as if it was a Windows path).  Luckily MSVC supports passing flags
       # with - instead of /, even if it is a bit non-standard:
-      _pybind11_return_if_cxx_and_linker_flags_work(HAS_MSVC_GL_LTCG
+      _musher_return_if_cxx_and_linker_flags_work(HAS_MSVC_GL_LTCG
         "/GL" "-LTCG" MUSHER_LTO_CXX_FLAGS MUSHER_LTO_LINKER_FLAGS)
     endif()
 
@@ -105,7 +105,7 @@ function(_pybind11_add_lto_flags target_name prefer_thin_lto)
 endfunction()
 
 # Build a Python extension module:
-# pybind11_add_module(<name> [MODULE | SHARED] [EXCLUDE_FROM_ALL]
+# musher_add_module(<name> [MODULE | SHARED] [EXCLUDE_FROM_ALL]
 #                     [NO_EXTRAS] [SYSTEM] [THIN_LTO] source1 [source2 ...])
 #
 function(musher_add_module target_name)
@@ -148,7 +148,7 @@ function(musher_add_module target_name)
 
   # -fvisibility=hidden is required to allow multiple modules compiled against
   # different pybind versions to work properly, and for some features (e.g.
-  # py::module_local).  We force it on everything inside the `pybind11`
+  # py::module_local).  We force it on everything inside the `musher`
   # namespace; also turning it on for a pybind module compilation here avoids
   # potential warnings or issues from having mixed hidden/non-hidden types.
   # set_target_properties(${target_name} PROPERTIES CXX_VISIBILITY_PRESET "hidden")
@@ -182,16 +182,16 @@ function(musher_add_module target_name)
 
   # Make sure C++11/14 are enabled
   if(CMAKE_VERSION VERSION_LESS 3.3)
-    target_compile_options(${target_name} PUBLIC ${PYBIND11_CPP_STANDARD})
+    target_compile_options(${target_name} PUBLIC ${MUSHER_CPP_STANDARD})
   else()
-    target_compile_options(${target_name} PUBLIC $<$<COMPILE_LANGUAGE:CXX>:${PYBIND11_CPP_STANDARD}>)
+    target_compile_options(${target_name} PUBLIC $<$<COMPILE_LANGUAGE:CXX>:${MUSHER_CPP_STANDARD}>)
   endif()
 
   if(ARG_NO_EXTRAS)
     return()
   endif()
 
-  _pybind11_add_lto_flags(${target_name} ${ARG_THIN_LTO})
+  _musher_add_lto_flags(${target_name} ${ARG_THIN_LTO})
 
   if (NOT MSVC AND NOT ${CMAKE_BUILD_TYPE} MATCHES Debug|RelWithDebInfo)
     # Strip unnecessary sections of the binary on Linux/Mac OS

@@ -6,8 +6,6 @@ import shutil
 import glob
 import distutils.cmd
 import codecs
-from functools import reduce
-
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 from setuptools.command.test import test as TestCommand
@@ -23,37 +21,11 @@ readme_note = """\
 """
 
 with codecs.open('README.md', encoding='utf-8') as fobj:
-    long_description = fobj.read()
+    long_description = readme_note + fobj.read()
 
 tests_require = [
     'pytest',
 ]
-
-# # Various platform-dependent extras
-# extra_compile_args = []
-# extra_link_args = []
-
-# # #349: something with OS X Mojave causes libstd not to be found
-# if platform.system() == 'Darwin':
-#     extra_compile_args += ['-std=c++11', '-mmacosx-version-min=10.9']
-#     extra_link_args += ['-stdlib=libc++', '-mmacosx-version-min=10.9']
-
-# file_path = os.path.abspath(os.path.dirname(__file__))
-# song_project_path = os.path.abspath(os.path.join(file_path, ".."))
-# include_path = os.path.join(song_project_path, "include")
-# src_path = os.path.join(song_project_path, "src")
-
-# # Definition of the extension modules
-# # Compile from sources
-# cSong = Extension("cSong",
-#                 sources = [
-#                     # os.path.join(src_path, "song_wrapper.cpp"),
-#                     "song_wrapper.cpp",
-#                     os.path.join(src_path, "song.cpp"),
-#                     os.path.join(src_path, "functional_test.cpp")],
-#                 include_dirs = [include_path],
-#                 extra_compile_args=extra_compile_args,
-#                 extra_link_args=extra_link_args)
 
 
 class PyTest(TestCommand):

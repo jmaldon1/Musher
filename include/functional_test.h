@@ -5,6 +5,8 @@
 
 #include "musher_core.h"
 
-void MUSHER_API CPrintFunctionalMessage(const std::string& message);
-
+extern "C"
+{
+    void MUSHER_API CPrintFunctionalMessage(const char* message);
+}
 #endif

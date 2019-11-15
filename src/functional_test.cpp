@@ -3,7 +3,7 @@
 
 #include "functional_test.h"
 
-void CPrintFunctionalMessage(const std::string& message)
+void CPrintFunctionalMessage(const char* message)
 {
     std::cout << message << std::endl;
 }

@@ -13,13 +13,6 @@
     - [Accomplishments](#accomplishments)
     - [Next Steps](#next-steps)
     - [Useful links](#useful-links)
-    - [~~Build the Proof of Concept Model~~ \(OLD INSTRUCTIONS\)](#%7E%7Ebuild-the-proof-of-concept-model%7E%7E-old-instructions)
-        - [Windows](#windows)
-            - [Required General Dependencies](#required-general-dependencies-1)
-            - [Build](#build)
-        - [Linux & MacOS](#linux--macos)
-            - [Required General Dependencies](#required-general-dependencies-2)
-            - [Build](#build-1)
 
 <!-- /MarkdownTOC -->
 

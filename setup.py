@@ -151,9 +151,11 @@ class CleanBuildCommand(distutils.cmd.Command):
         for item in cleanup_dir_list:
             try:  # If item is a dir then remove it
                 shutil.rmtree(item)
+                print(f"cleaned {item}")
             except OSError:
                 try:  # If item is a file then remove it
                     os.remove(item)
+                    print(f"cleaned {item}")
                 except OSError:
                     pass
 

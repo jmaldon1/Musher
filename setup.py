@@ -6,6 +6,7 @@ import shutil
 import glob
 import distutils.cmd
 import codecs
+import sys
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 from setuptools.command.test import test as TestCommand
@@ -47,6 +48,9 @@ class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=""):
         Extension.__init__(self, name, sources=[])
         self.sourcedir = os.path.abspath(sourcedir)
+        self.test = False
+        if sys.argv[1] == 'test':
+            self.test = True
 
 
 class CMakeBuild(build_ext):

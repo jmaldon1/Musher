@@ -18,10 +18,10 @@ set_target_properties(gmock PROPERTIES FOLDER extern)
 set_target_properties(gmock_main PROPERTIES FOLDER extern)
 
 macro(package_add_test TESTNAME)
-    add_executable(${TESTNAME} ${ARGN})
+    add_executable(${TESTNAME} ${ARGN}) 
     target_link_libraries(${TESTNAME} gtest gmock gtest_main)
     add_test(NAME ${TESTNAME} COMMAND ${TESTNAME})
     set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
 endmacro()
 
-package_add_test(test_musher_cpp test_musher_cpp.cpp)
+package_add_test(test_musher_cpp test_musher_cpp.cpp ${PROJECT_SOURCE_DIR}/include/functional_test.h ${PROJECT_SOURCE_DIR}/include/musher_core.h)

@@ -1,5 +1,9 @@
 cmake_minimum_required (VERSION 2.8.12)
 
+if (POLICY CMP0048)
+  cmake_policy(SET CMP0048 NEW)
+endif (POLICY CMP0048)
+
 project(musher LANGUAGES CXX)
 
 # Options. Turn on with 'cmake -Dmyvarname=ON'.
@@ -31,6 +35,9 @@ set(TEST_SOURCES
 
 set(CMAKE_CXX_STANDARD 17)
 
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
+    add_subdirectory(tests)
+endif()
 # call build function within buildTools
 musher_add_module(musher MODULE ${SOURCES})
 
@@ -38,41 +45,10 @@ musher_add_module(musher MODULE ${SOURCES})
 # ################################
 # # Testing
 # ################################
-# if (PACKAGE_TESTS)
-#   # if (APPLE)
-#   #   add_definitions(-DGTEST_USE_OWN_TR1_TUPLE)
-#   #   add_definitions(-D__GLIBCXX__)
-#   # endif (APPLE)
+# target_include_directories(musher PUBLIC ${MUSHER_INCLUDE_DIR})
 
-#   enable_testing()
-
-#   # This adds another subdirectory, which has 'project(gtest)'.
-#   add_subdirectory(lib/googletest)
-
-#   # Include the gtest library. gtest_SOURCE_DIR is available due to
-#   # 'project(gtest)' above.
-#   include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-
-#   # ##############
-#   # # Unit Tests
-#   # ##############
-#   # add_executable(runUnitTests test_project1.cpp)
-
-#   # # Standard linking to gtest stuff.
-#   # target_link_libraries(runUnitTests gtest gtest_main)
-
-#   # # Extra linking for the project.
-#   # target_link_libraries(runUnitTests project1_lib)
-
-#   # # This is so you can do 'make test' to see all your tests run, instead of
-#   # # manually running the executable runUnitTests to see those specific tests.
-#   # add_test(NAME that-test-I-made COMMAND runUnitTests)
-
-#   # # You can also omit NAME and COMMAND. The second argument could be some other
-#   # # test executable.
-#   # add_test(that-other-test-I-made runUnitTests)
-# endif()
-
+# add_library(A STATIC SOURCES)
+# target_include_directories(A PUBLIC MUSHER_INCLUDE_DIR)
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
     add_subdirectory(tests)
 endif()

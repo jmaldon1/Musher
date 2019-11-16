@@ -24,4 +24,8 @@ macro(package_add_test TESTNAME)
     set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
 endmacro()
 
-package_add_test(test_musher_cpp test_musher_cpp.cpp ${PROJECT_SOURCE_DIR}/include/functional_test.h ${PROJECT_SOURCE_DIR}/include/musher_core.h)
+package_add_test(test_musher_cpp
+    ${PROJECT_SOURCE_DIR}/src/functional_test.cpp
+    test_musher_cpp.cpp
+    ${PROJECT_SOURCE_DIR}/include/functional_test.h
+    ${PROJECT_SOURCE_DIR}/include/musher_core.h)

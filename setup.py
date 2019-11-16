@@ -118,7 +118,8 @@ class CleanBuildCommand(distutils.cmd.Command):
             *glob.glob(os.path.join(ROOT_DIR, "*.so")),  # Spread any lists
             *glob.glob(os.path.join(ROOT_DIR, "*.dll")),  # Spread any lists
             *glob.glob(os.path.join(ROOT_DIR, "*.dylib")),  # Spread any lists
-            *glob.glob(os.path.join(ROOT_DIR, "*.pyd"))  # clean up windows outputs
+            *glob.glob(os.path.join(ROOT_DIR, "*.pyd")),  # clean up windows outputs
+            *glob.glob(os.path.join(ROOT_DIR, "*.exe")),
         ]
 
         for item in cleanup_dir_list:

@@ -224,7 +224,7 @@ endfunction()
 
 
 # Build a library
-# musher_add_module(<name> [MODULE | SHARED] [EXCLUDE_FROM_ALL]
+# musher_add_library(<name> [MODULE | SHARED] [EXCLUDE_FROM_ALL]
 #                     [NO_EXTRAS] [SYSTEM] [THIN_LTO] source1 [source2 ...])
 #
 function(musher_add_library target_name)

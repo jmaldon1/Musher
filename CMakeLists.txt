@@ -54,8 +54,12 @@ musher_add_library(${MUSHER_LIB} SHARED ${MUSHER_LIBRARY_SOURCES})
 #     set_target_properties(${MUSHER_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR})
 #     # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)
 # endif ( MSVC )
-set_target_properties(${MUSHER_LIB} PROPERTIES
-                      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}$<0:>)
+# set_target_properties(${MUSHER_LIB} PROPERTIES
+#                       LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}$<0:>)
+# add_custom_command(TARGET MUSHER_LIB POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E copy_directory
+#         "${PROJECT_SOURCE_DIR}/build/$<CONFIGURATION>"
+#         $<PROJECT_SOURCE_DIR:MUSHER_LIB>)
 
 # windows dll export
 add_definitions(-DMUSHER_EXPORT)
@@ -66,10 +70,10 @@ add_definitions(-DMUSHER_EXPORT)
 musher_add_module(musher MODULE ${MUSHER_SOURCES})
 
 # copy MUSHER_LIB output to Project root
-if (WIN32 OR CYGWIN)
-    file(GLOB MUSHER_DLLS ${CMAKE_BINARY_DIR}\\*.dll)
-    file(COPY ${MUSHER_DLLS} DESTINATION ${PROJECT_SOURCE_DIR})
-endif()
+# if (WIN32 OR CYGWIN)
+    # file(GLOB MUSHER_DLLS ${CMAKE_BINARY_DIR}\\*.dll)
+    # file(COPY ${MUSHER_DLLS} DESTINATION ${PROJECT_SOURCE_DIR})
+# endif()
 
 target_link_libraries(musher PRIVATE ${MUSHER_LIB})
 
@@ -80,6 +84,15 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
     add_subdirectory(tests)
 endif()
 
+# set(CONFIGURATION "Release")
+# # if (MSVC)
+# 	add_custom_command(TARGET test_musher_cpp POST_BUILD
+# 	    COMMAND ${CMAKE_COMMAND} -E copy_directory
+# 	        "${PROJECT_SOURCE_DIR}/$<CONFIGURATION>"
+# 	        # $<PROJECT_SOURCE_DIR:test_musher_cpp>
+# 	        ${PROJECT_SOURCE_DIR}
+# 	        )
+# endif()
 # # https://cliutils.gitlab.io/modern-cmake/chapters/testing.html
 # # Override for anyone wanting to enable testing on their package and this package.
 # if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MYPROJECT_BUILD_TESTING) AND BUILD_TESTING)

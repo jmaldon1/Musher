@@ -1,9 +1,13 @@
+# Prevent overriding the parent project's compiler/linker
+# dll Settings on Windows
+if (WIN32 OR CYGWIN)
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+endif()
+
+# set(INSTALL_GTEST off)
+
 add_subdirectory("${PROJECT_SOURCE_DIR}/extern/googletest" "extern/googletest")
 
-# include_directories(
-# 	${MUSHER_INCLUDE_DIR}  # from project CMakeLists.txt
-#   )
-# include_directories(${MUSHER_INCLUDE_DIR})
 # keeps your CACHE cleaner
 mark_as_advanced(
     BUILD_GMOCK BUILD_GTEST BUILD_SHARED_LIBS

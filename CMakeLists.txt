@@ -39,10 +39,6 @@ musher_add_module(musher MODULE ${SOURCES})
 # ################################
 # # Testing
 # ################################
-# target_include_directories(musher PUBLIC ${MUSHER_INCLUDE_DIR})
-
-# add_library(A STATIC SOURCES)
-# target_include_directories(A PUBLIC MUSHER_INCLUDE_DIR)
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
     add_subdirectory(tests)
 endif()

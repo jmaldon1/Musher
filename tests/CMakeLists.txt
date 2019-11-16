@@ -41,7 +41,7 @@ endmacro()
 
 package_add_test(test_musher_cpp ${MUSHER_CPP_TEST_SOURCES})
 
-# if (MSVC)
+if (MSVC)
     # POSSIBLE FIX FOR MSVC
 	# set(CONFIGURATION "Release")
 	add_custom_command(TARGET test_musher_cpp POST_BUILD
@@ -51,4 +51,4 @@ package_add_test(test_musher_cpp ${MUSHER_CPP_TEST_SOURCES})
 	        ${PROJECT_SOURCE_DIR}
 	)
 	message( ${CMAKE_BINARY_DIR} )
-# endif()
+endif()

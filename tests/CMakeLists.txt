@@ -6,6 +6,10 @@ endif()
 
 # set(INSTALL_GTEST off)
 
+# define test source files
+set(MUSHER_CPP_TEST_SOURCES
+    test_musher_cpp.cpp)
+
 add_subdirectory("${PROJECT_SOURCE_DIR}/extern/googletest" "extern/googletest")
 
 # keeps your CACHE cleaner
@@ -23,13 +27,9 @@ set_target_properties(gmock_main PROPERTIES FOLDER extern)
 
 macro(package_add_test TESTNAME)
     add_executable(${TESTNAME} ${ARGN}) 
-    target_link_libraries(${TESTNAME} gtest gmock gtest_main)
+    target_link_libraries(${TESTNAME} gtest gmock gtest_main ${MUSHER_LIB})
     add_test(NAME ${TESTNAME} COMMAND ${TESTNAME})
-    set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
+    set_target_properties(${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}$<0:>)
 endmacro()
 
-package_add_test(test_musher_cpp
-    ${PROJECT_SOURCE_DIR}/src/functional_test.cpp
-    test_musher_cpp.cpp
-    ${PROJECT_SOURCE_DIR}/include/functional_test.h
-    ${PROJECT_SOURCE_DIR}/include/musher_core.h)
+package_add_test(test_musher_cpp ${MUSHER_CPP_TEST_SOURCES})

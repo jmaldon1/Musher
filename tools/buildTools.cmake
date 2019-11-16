@@ -221,3 +221,80 @@ function(musher_add_module target_name)
     endif()
   endif()
 endfunction()
+
+
+# Build a library
+# musher_add_module(<name> [MODULE | SHARED] [EXCLUDE_FROM_ALL]
+#                     [NO_EXTRAS] [SYSTEM] [THIN_LTO] source1 [source2 ...])
+#
+function(musher_add_library target_name)
+  set(options MODULE SHARED EXCLUDE_FROM_ALL NO_EXTRAS SYSTEM THIN_LTO)
+  cmake_parse_arguments(ARG "${options}" "" "" ${ARGN})
+
+  if(ARG_MODULE AND ARG_SHARED)
+    message(FATAL_ERROR "Can't be both MODULE and SHARED")
+  elseif(ARG_SHARED)
+    set(lib_type SHARED)
+  else()
+    set(lib_type MODULE)
+  endif()
+
+  if(ARG_EXCLUDE_FROM_ALL)
+    set(exclude_from_all EXCLUDE_FROM_ALL)
+  endif()
+
+  add_library(${target_name} ${lib_type} ${exclude_from_all} ${ARG_UNPARSED_ARGUMENTS})
+
+  if(ARG_SYSTEM)
+    set(inc_isystem SYSTEM)
+  endif()
+
+  target_include_directories(${target_name} ${inc_isystem}
+    PRIVATE ${MUSHER_INCLUDE_DIR}  # from project CMakeLists.txt
+  )
+
+  # The prefix and extension are provided by FindPythonLibsNew.cmake
+  set_target_properties(${target_name} PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}")
+  # set_target_properties(${target_name} PROPERTIES SUFFIX "${PYTHON_MODULE_EXTENSION}")
+
+  # Make sure C++11/14 are enabled
+  if(CMAKE_VERSION VERSION_LESS 3.3)
+    target_compile_options(${target_name} PUBLIC ${MUSHER_CPP_STANDARD})
+  else()
+    target_compile_options(${target_name} PUBLIC $<$<COMPILE_LANGUAGE:CXX>:${MUSHER_CPP_STANDARD}>)
+  endif()
+
+  if(ARG_NO_EXTRAS)
+    return()
+  endif()
+
+  _musher_add_lto_flags(${target_name} ${ARG_THIN_LTO})
+
+  if (NOT MSVC AND NOT ${CMAKE_BUILD_TYPE} MATCHES Debug|RelWithDebInfo)
+    # Strip unnecessary sections of the binary on Linux/Mac OS
+    if(CMAKE_STRIP)
+      if(APPLE)
+        add_custom_command(TARGET ${target_name} POST_BUILD
+                           COMMAND ${CMAKE_STRIP} -x $<TARGET_FILE:${target_name}>)
+      else()
+        add_custom_command(TARGET ${target_name} POST_BUILD
+                           COMMAND ${CMAKE_STRIP} $<TARGET_FILE:${target_name}>)
+      endif()
+    endif()
+  endif()
+
+  if(MSVC)
+    # /MP enables multithreaded builds (relevant when there are many files), /bigobj is
+    # needed for bigger binding projects due to the limit to 64k addressable sections
+    target_compile_options(${target_name} PRIVATE /bigobj)
+    if(CMAKE_VERSION VERSION_LESS 3.11)
+      target_compile_options(${target_name} PRIVATE $<$<NOT:$<CONFIG:Debug>>:/MP>)
+    else()
+      # Only set these options for C++ files.  This is important so that, for
+      # instance, projects that include other types of source files like CUDA
+      # .cu files don't get these options propagated to nvcc since that would
+      # cause the build to fail.
+      target_compile_options(${target_name} PRIVATE $<$<NOT:$<CONFIG:Debug>>:$<$<COMPILE_LANGUAGE:CXX>:/MP>>)
+    endif()
+  endif()
+endfunction()

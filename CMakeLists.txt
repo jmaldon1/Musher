@@ -24,17 +24,54 @@ endif()
 set(SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/src" CACHE INTERNAL "")
 set(MUSHER_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include" CACHE INTERNAL "")
 
+# allows added submodules to find c++ header files
 include_directories(${MUSHER_INCLUDE_DIR})
 
 # Set variable for all source files within the source directory
-set(SOURCES
-    ${SOURCE_DIR}/functional_test.cpp
+# set(SOURCES
+#     ${SOURCE_DIR}/functional_test.cpp
+#     ${SOURCE_DIR}/musher_wrapper.cpp)
+
+set(MUSHER_LIBRARY_SOURCES
+    ${SOURCE_DIR}/functional_test.cpp)
+
+set(MUSHER_SOURCES
     ${SOURCE_DIR}/musher_wrapper.cpp)
 
 set(CMAKE_CXX_STANDARD 17)
+set(MUSHER_LIB musher_library)
 
+
+
+# ################################
+# # Building
+# ################################
+musher_add_library(${MUSHER_LIB} SHARED ${MUSHER_LIBRARY_SOURCES})
+# set_target_properties(${MUSHER_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE {PROJECT_SOURCE_DIR})
+# if ( MSVC )
+#     set_target_properties(${MUSHER_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
+#     set_target_properties(${MUSHER_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PROJECT_SOURCE_DIR})
+#     set_target_properties(${MUSHER_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR})
+#     # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)
+# endif ( MSVC )
+set_target_properties(${MUSHER_LIB} PROPERTIES
+                      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}$<0:>)
+
+# windows dll export
+add_definitions(-DMUSHER_EXPORT)
+
+
+# Python library
 # call build function within buildTools
-musher_add_module(musher MODULE ${SOURCES})
+musher_add_module(musher MODULE ${MUSHER_SOURCES})
+
+# copy MUSHER_LIB output to Project root
+if (WIN32 OR CYGWIN)
+    file(GLOB MUSHER_DLLS ${CMAKE_BINARY_DIR}\\*.dll)
+    file(COPY ${MUSHER_DLLS} DESTINATION ${PROJECT_SOURCE_DIR})
+endif()
+
+target_link_libraries(musher PRIVATE ${MUSHER_LIB})
 
 # ################################
 # # Testing

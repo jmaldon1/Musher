@@ -115,11 +115,14 @@ class CleanBuildCommand(distutils.cmd.Command):
             os.path.join(ROOT_DIR, ".eggs"),
             os.path.join(ROOT_DIR, ".pytest_cache"),
             os.path.join(ROOT_DIR, ".tox"),
-            *glob.glob(os.path.join(ROOT_DIR, "*.so")),  # Spread any lists
-            *glob.glob(os.path.join(ROOT_DIR, "*.dll")),  # Spread any lists
-            *glob.glob(os.path.join(ROOT_DIR, "*.dylib")),  # Spread any lists
+            *glob.glob(os.path.join(ROOT_DIR, "*.so")),  # clean up linux outputs
+            *glob.glob(os.path.join(ROOT_DIR, "*.dylib")),
             *glob.glob(os.path.join(ROOT_DIR, "*.pyd")),  # clean up windows outputs
+            *glob.glob(os.path.join(ROOT_DIR, "*.dll")),
             *glob.glob(os.path.join(ROOT_DIR, "*.exe")),
+            *glob.glob(os.path.join(ROOT_DIR, "*.exp")),
+            *glob.glob(os.path.join(ROOT_DIR, "*.lib")),
+
         ]
 
         for item in cleanup_dir_list:

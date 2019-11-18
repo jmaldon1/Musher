@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.11)
+cmake_minimum_required (VERSION 2.8.12)
 
 # Prevent overriding the parent project's compiler/linker
 # dll Settings on Windows
@@ -10,28 +10,31 @@ endif()
 set(MUSHER_CPP_TEST_SOURCES
     test_musher_cpp.cpp)
 
-# add_subdirectory("${PROJECT_SOURCE_DIR}/extern/googletest" "extern/googletest")
-include(FetchContent)
+if(${CMAKE_VERSION} VERSION_LESS 3.11)
+    add_subdirectory("${PROJECT_SOURCE_DIR}/extern/googletest" "extern/googletest")
+else()
+    include(FetchContent)
 
-FetchContent_Declare(
-  googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG        release-1.10.0
-)
+    FetchContent_Declare(
+      googletest
+      GIT_REPOSITORY https://github.com/google/googletest.git
+      GIT_TAG        release-1.10.0
+    )
 
-# macro providing same functionality as FetchContent_MakeAvailable (cmake 3.14+)
-# To support cmake version 3.11+
-if(${CMAKE_VERSION} VERSION_LESS 3.14)
-    macro(FetchContent_MakeAvailable NAME)
-        FetchContent_GetProperties(${NAME})
-        if(NOT ${NAME}_POPULATED)
-            FetchContent_Populate(${NAME})
-            add_subdirectory(${${NAME}_SOURCE_DIR} ${${NAME}_BINARY_DIR})
-        endif()
-    endmacro()
+    # macro providing same functionality as FetchContent_MakeAvailable (cmake 3.14+)
+    # To support cmake version 3.11+
+    if(${CMAKE_VERSION} VERSION_LESS 3.14)
+        macro(FetchContent_MakeAvailable NAME)
+            FetchContent_GetProperties(${NAME})
+            if(NOT ${NAME}_POPULATED)
+                FetchContent_Populate(${NAME})
+                add_subdirectory(${${NAME}_SOURCE_DIR} ${${NAME}_BINARY_DIR})
+            endif()
+        endmacro()
+    endif()
+
+    FetchContent_MakeAvailable(googletest)
 endif()
-
-FetchContent_MakeAvailable(googletest)
 
 # keeps your CACHE cleaner
 mark_as_advanced(

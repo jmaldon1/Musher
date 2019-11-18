@@ -32,25 +32,6 @@ cpp_tests_list = [
 ]
 
 
-class PyTest(TestCommand):
-    user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
-
-    def initialize_options(self):
-        TestCommand.initialize_options(self)
-        self.pytest_args = []
-
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        # import here, cause outside the eggs aren't loaded
-        import pytest
-        errno = pytest.main(self.pytest_args)
-        sys.exit(errno)
-
-
 class BuildCppTests(distutils.cmd.Command):
     description = 'Build c++ tests for musher library'
     user_options = [
@@ -221,7 +202,6 @@ setup(
     # add custom build_ext command
     cmdclass={"build_ext": CMakeBuild,
               "clean": CleanBuildCommand,
-              "test": PyTest,
               "build_cpp_tests": BuildCppTests,
               },
     zip_safe=False,
@@ -230,5 +210,4 @@ setup(
     author_email='joshjm9915@gmail.com',
     url='https://github.com/jmaldon1/Musher',
     license='MIT',
-    tests_require=['pytest'],
 )

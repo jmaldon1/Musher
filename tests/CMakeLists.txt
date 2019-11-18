@@ -1,16 +1,37 @@
+cmake_minimum_required (VERSION 3.11)
+
 # Prevent overriding the parent project's compiler/linker
 # dll Settings on Windows
 if (WIN32 OR CYGWIN)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 endif()
 
-# set(INSTALL_GTEST off)
-
 # define test source files
 set(MUSHER_CPP_TEST_SOURCES
     test_musher_cpp.cpp)
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/extern/googletest" "extern/googletest")
+# add_subdirectory("${PROJECT_SOURCE_DIR}/extern/googletest" "extern/googletest")
+include(FetchContent)
+
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG        release-1.10.0
+)
+
+# macro providing same functionality as FetchContent_MakeAvailable (cmake 3.14+)
+# To support cmake version 3.11+
+if(${CMAKE_VERSION} VERSION_LESS 3.14)
+    macro(FetchContent_MakeAvailable NAME)
+        FetchContent_GetProperties(${NAME})
+        if(NOT ${NAME}_POPULATED)
+            FetchContent_Populate(${NAME})
+            add_subdirectory(${${NAME}_SOURCE_DIR} ${${NAME}_BINARY_DIR})
+        endif()
+    endmacro()
+endif()
+
+FetchContent_MakeAvailable(googletest)
 
 # keeps your CACHE cleaner
 mark_as_advanced(
@@ -29,11 +50,9 @@ macro(package_add_test TESTNAME)
     add_executable(${TESTNAME} ${ARGN}) 
     target_link_libraries(${TESTNAME} gtest gmock gtest_main ${MUSHER_LIB})
     add_test(NAME ${TESTNAME} COMMAND ${TESTNAME})
+    set_target_properties(${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
     if (MSVC)
-        set_target_properties(${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
         set_target_properties(${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${CONFIGURATION} ${PROJECT_SOURCE_DIR})
-    else()
-        set_target_properties(${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
     endif()
     # set_target_properties(${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
     # if (WIN32 OR CYGWIN OR MSVC)

@@ -10,9 +10,6 @@ project(musher LANGUAGES CXX)
 # Build code without python module, useful for building only tests
 option(BUILD_PYTHON_MODULE "Build all tests." ON)
 
-# Options. Turn on with 'cmake -Dmyvarname=ON'.
-# option(PACKAGE_TESTS "Build the tests" ON) # Makes boolean 'test' available.
-
 # Add /tools to cmake path
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/tools")
 
@@ -45,13 +42,13 @@ set(MUSHER_WRAPPER
 
 set(MUSHER_LIB musher_library)
 
-# set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-# SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-
 # ################################
 # # Building
 # ################################
-musher_add_library(${MUSHER_LIB} SHARED ${MUSHER_LIBRARY_SOURCES})
+# musher_library needs to be STATIC (link during build time) for it to link with other libraries correctly
+# If not set to STATIC, python will have a runtime linking error when pip installing then importing musher
+# Atleast for MacOSX
+musher_add_library(${MUSHER_LIB} STATIC ${MUSHER_LIBRARY_SOURCES})
 # set_target_properties(${MUSHER_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE {PROJECT_SOURCE_DIR})
 # if ( MSVC )
 #     set_target_properties(${MUSHER_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
@@ -75,33 +72,9 @@ if(BUILD_PYTHON_MODULE)
 	# Call build function within buildTools
 	musher_add_module(musher MODULE ${MUSHER_WRAPPER})
 
-# 	find_library (
-#     ${MUSHER_LIB}
-#     NAMES musher_library # what to look for
-#     HINTS "${CMAKE_BINARY_DIR}" # where to look
-#     NO_DEFAULT_PATH # do not search system default paths
-# )
-# 	# check if we found the library
-# 	message(STATUS "MUSHER_LIB: [${MUSHER_LIB}]")
-
-# 	if (NOT ${MUSHER_LIB})
-# 	    message(SEND_ERROR "Did not find lib musher_library")
-# 	endif()
-
 	# Link library to python module
 	target_link_libraries(musher PRIVATE ${MUSHER_LIB})
 
-	# INSTALL( TARGETS musher
- #   		# RUNTIME DESTINATION ${INSTALL_DIR} 
- #   		LIBRARY DESTINATION ${INSTALL_DIR} 
- #    )
-	 # install(TARGETS musher
-  #       # EXPORT MyLibTargets
-  #       LIBRARY DESTINATION lib
-  #       ARCHIVE DESTINATION lib
-  #       RUNTIME DESTINATION bin
-  #       # INCLUDES DESTINATION include
-  #       )
 endif()
 
 # ################################
@@ -111,15 +84,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
     add_subdirectory(tests)
 endif()
 
-# set(CONFIGURATION "Release")
-# # if (MSVC)
-# 	add_custom_command(TARGET test_musher_cpp POST_BUILD
-# 	    COMMAND ${CMAKE_COMMAND} -E copy_directory
-# 	        "${PROJECT_SOURCE_DIR}/$<CONFIGURATION>"
-# 	        # $<PROJECT_SOURCE_DIR:test_musher_cpp>
-# 	        ${PROJECT_SOURCE_DIR}
-# 	        )
-# endif()
 # # https://cliutils.gitlab.io/modern-cmake/chapters/testing.html
 # # Override for anyone wanting to enable testing on their package and this package.
 # if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MYPROJECT_BUILD_TESTING) AND BUILD_TESTING)

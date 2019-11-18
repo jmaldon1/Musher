@@ -9,7 +9,8 @@
             - [Install in development mode](#install-in-development-mode)
     - [Tests](#tests)
         - [Required modules](#required-modules)
-        - [How to run tests](#how-to-run-tests)
+        - [How to run Python tests](#how-to-run-python-tests)
+        - [How to run C++ tests](#how-to-run-c-tests)
     - [Accomplishments](#accomplishments)
     - [Next Steps](#next-steps)
     - [Useful links](#useful-links)
@@ -34,12 +35,12 @@ Mush songs together to create new songs.
 ### Required General Dependencies
 
 **MacOS**
-```shell
+```sh
 brew install cmake
 ```
 
 **Linux**
-```shell
+```sh
 sudo apt install cmake
 ```
 
@@ -52,7 +53,7 @@ Download from https://cmake.org/download/
 
 #### Install normally
 
-```shell
+```sh
 pip install .
 # OR
 python3 setup.py install
@@ -60,7 +61,7 @@ python3 setup.py install
 
 #### Install in development mode
 
-```shell
+```sh
 pip install -e .
 # OR
 python3 setup.py develop
@@ -70,14 +71,62 @@ python3 setup.py develop
 
 ### Required modules
 
-```shell
-pip install tox
+```sh
+pip install tox pytest
 ```
 
-### How to run tests
+### How to run Python tests
 
-```shell
-tox
+This will run tests against a pip installed copy of the source code (best to do before deploying code)
+
+```sh
+# Running this command does not require pytest to be installed
+tox 
+```
+
+This will run tests directly (best to do while modifying the code base)
+
+```sh
+pytest ./tests
+```
+
+Watch test file changes and rerun pytest on save (Requires [entr](https://bitbucket.org/eradman/entr/src/default/))
+
+[Entr installation instructions](https://bitbucket.org/eradman/entr/src/default/)
+
+```sh
+find ./tests \( -iname \*.py -o -iname \*.conf \) | entr pytest
+```
+
+### How to run C++ tests
+
+This will create an executable of the c++ tests and save it to the root directory
+
+```sh
+# This will simply build the tests
+python setup.py build_cpp_tests
+
+# This will run the tests
+./test_musher_cpp
+
+# This will build & run the tests (--run-tests or --r)
+python setup.py build_cpp_tests --r
+```
+
+The alternative Cmake way:
+
+```sh
+mkdir build
+cd build
+cmake .. -DBUILD_PYTHON_MODULE=OFF
+cmake --build .
+
+# Run Tests
+../test_musher_cpp
+# OR
+ctest
+# OR
+make test
 ```
 
 
@@ -87,9 +136,15 @@ tox
 
 2. Added support for mac and linux having multiple python versions, this used to cause a seg fault. Along with adding support for windows, which used to not work at all.
 
+3. Seperate the C++ tests from the python module so that we can ship the python code without the c++ tests
+
+4. Solved a linking issue with MacOSX where musher_library (shared library .dylib) would not link with the python module (shared library .so). We changed musher_library to STATIC instead of SHARED and the linking issue went away.
+
 ## Next Steps
 
-1. Start the actual project (This will be broken down later)
+1. Make sure everything works with windows and linux before moving on.
+
+2. Start the actual project (This will be broken down later)
 
 ## Useful links
 

@@ -6,7 +6,6 @@ import shutil
 import glob
 import distutils.cmd
 import codecs
-import sys
 import re
 
 from setuptools import setup, Extension, find_packages
@@ -26,6 +25,11 @@ readme_note = """\
 
 with codecs.open('README.md', encoding='utf-8') as fobj:
     long_description = readme_note + fobj.read()
+
+# List of all C++ test names
+cpp_tests_list = [
+    'test_musher_cpp'
+]
 
 
 class PyTest(TestCommand):
@@ -49,10 +53,14 @@ class PyTest(TestCommand):
 
 class BuildCppTests(distutils.cmd.Command):
     description = 'Build c++ tests for musher library'
-    user_options = [('debug=', None, 'set to True to set config to debug')]
+    user_options = [
+        ('debug', None, 'sets config to Debug, config set to Release by default'),
+        ('run-tests', 'r', 'set to run tests after building')
+    ]
 
     def initialize_options(self):
         self.debug = False
+        self.run_tests = False
 
     def finalize_options(self):
         pass
@@ -92,6 +100,12 @@ class BuildCppTests(distutils.cmd.Command):
                               cwd=build_dir)
         print()  # Add an empty line for cleaner output
 
+        if self.run_tests:
+            print("running tests...")
+            for test in cpp_tests_list:
+                test_path = f"./{test}"
+                subprocess.check_call([test_path], cwd=ROOT_DIR)
+
 
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=""):
@@ -125,7 +139,6 @@ class CMakeBuild(build_ext):
 
         # Do not build c++ tests when packaging code.
         cmake_args += ['-DBUILD_TESTING=OFF']
-        # cmake_args += ['-DCMAKE_INSTALL_RPATH_USE_LINK_PATH="ON"']
 
         cfg = 'Debug' if self.debug else 'Release'
         build_args = ['--config', cfg]
@@ -209,7 +222,7 @@ setup(
     cmdclass={"build_ext": CMakeBuild,
               "clean": CleanBuildCommand,
               "test": PyTest,
-              # "build_cpp_tests": BuildCppTests,
+              "build_cpp_tests": BuildCppTests,
               },
     zip_safe=False,
     long_description=long_description,

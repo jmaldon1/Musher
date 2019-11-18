@@ -7,9 +7,12 @@ import glob
 import distutils.cmd
 import codecs
 import sys
+import re
+
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 from setuptools.command.test import test as TestCommand
+from distutils.version import LooseVersion
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -44,23 +47,71 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 
+class BuildCppTests(distutils.cmd.Command):
+    description = 'Build c++ tests for musher library'
+    user_options = [('debug=', None, 'set to True to set config to debug')]
+
+    def initialize_options(self):
+        self.debug = False
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        # extdir = os.path.abspath(
+        #     os.path.dirname(self.get_ext_fullpath(ext.name)))
+        cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + ROOT_DIR]
+
+        # Do not compile python module when building c++ code.
+        cmake_args += ['-DBUILD_PYTHON_MODULE=OFF']
+
+        cfg = 'Debug' if self.debug else 'Release'
+        build_args = ['--config', cfg]
+
+        if platform.system() == "Windows":
+            cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(
+                cfg.upper(),
+                ROOT_DIR)]
+            if sys.maxsize > 2**32:
+                cmake_args += ['-A', 'x64']
+            build_args += ['--', '/m']
+        else:
+            cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
+            build_args += ['--', '-j2']
+
+        env = os.environ.copy()
+        env['CXXFLAGS'] = '{} -DVERSION_INFO=\\"{}\\"'.format(
+            env.get('CXXFLAGS', ''),
+            self.distribution.get_version())
+        build_dir = 'build/'
+        if not os.path.exists(build_dir):
+            os.makedirs(build_dir)
+        subprocess.check_call(['cmake', ROOT_DIR] + cmake_args,
+                              cwd=build_dir, env=env)
+        subprocess.check_call(['cmake', '--build', '.'] + build_args,
+                              cwd=build_dir)
+        print()  # Add an empty line for cleaner output
+
+
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=""):
         Extension.__init__(self, name, sources=[])
         self.sourcedir = os.path.abspath(sourcedir)
-        self.test = False
-        if sys.argv[1] == 'test':
-            self.test = True
 
 
 class CMakeBuild(build_ext):
     def run(self):
         try:
-            subprocess.check_output(["cmake", "--version"])
+            out = subprocess.check_output(["cmake", "--version"])
         except OSError:
             raise RuntimeError(
                 "CMake must be installed to build the following extensions: " +
                 ", ".join(e.name for e in self.extensions))
+
+        if platform.system() == "Windows":
+            cmake_version = LooseVersion(re.search(r'version\s*([\d.]+)', out.decode()).group(1))
+            if cmake_version < '3.1.0':
+                raise RuntimeError("CMake >= 3.1.0 is required on Windows")
 
         for ext in self.extensions:
             self.build_extension(ext)
@@ -68,13 +119,19 @@ class CMakeBuild(build_ext):
     def build_extension(self, ext):
         extdir = os.path.abspath(
             os.path.dirname(self.get_ext_fullpath(ext.name)))
+        # Output library to root directory
         cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
                       '-DPYTHON_EXECUTABLE=' + sys.executable]
+
+        # Do not build c++ tests when packaging code.
+        cmake_args += ['-DBUILD_TESTING=OFF']
+        # cmake_args += ['-DCMAKE_INSTALL_RPATH_USE_LINK_PATH="ON"']
 
         cfg = 'Debug' if self.debug else 'Release'
         build_args = ['--config', cfg]
 
         if platform.system() == "Windows":
+            # Output windows library to root directory
             cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(
                 cfg.upper(),
                 extdir)]
@@ -108,7 +165,7 @@ class CleanBuildCommand(distutils.cmd.Command):
         pass
 
     def run(self):
-        cleanup_dir_list = [
+        cleanup_files_list = [
             os.path.join(ROOT_DIR, "build"),
             os.path.join(ROOT_DIR, "dist"),
             os.path.join(ROOT_DIR, "musher.egg-info"),
@@ -117,6 +174,7 @@ class CleanBuildCommand(distutils.cmd.Command):
             os.path.join(ROOT_DIR, ".tox"),
             *glob.glob(os.path.join(ROOT_DIR, "*.so")),  # clean up linux outputs
             *glob.glob(os.path.join(ROOT_DIR, "*.dylib")),
+            *glob.glob(os.path.join(ROOT_DIR, "test_*")),  # executables dont have extensions on mac
             *glob.glob(os.path.join(ROOT_DIR, "*.pyd")),  # clean up windows outputs
             *glob.glob(os.path.join(ROOT_DIR, "*.dll")),
             *glob.glob(os.path.join(ROOT_DIR, "*.exe")),
@@ -125,7 +183,7 @@ class CleanBuildCommand(distutils.cmd.Command):
 
         ]
 
-        for item in cleanup_dir_list:
+        for item in cleanup_files_list:
             try:  # If item is a dir then remove it
                 shutil.rmtree(item)
                 print(f"cleaned {item}")
@@ -144,12 +202,14 @@ setup(
     version='0.1',
     description='A hybrid Python/C++ test project',
     packages=find_packages(),
+    # packages=['musher'],
     # add extension module
     ext_modules=[CMakeExtension("musher")],
     # add custom build_ext command
     cmdclass={"build_ext": CMakeBuild,
               "clean": CleanBuildCommand,
-              "test": PyTest
+              "test": PyTest,
+              # "build_cpp_tests": BuildCppTests,
               },
     zip_safe=False,
     long_description=long_description,

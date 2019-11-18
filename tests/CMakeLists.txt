@@ -29,7 +29,13 @@ macro(package_add_test TESTNAME)
     add_executable(${TESTNAME} ${ARGN}) 
     target_link_libraries(${TESTNAME} gtest gmock gtest_main ${MUSHER_LIB})
     add_test(NAME ${TESTNAME} COMMAND ${TESTNAME})
-    set_target_properties(${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+    if (MSVC)
+        set_target_properties(${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
+        set_target_properties(${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${CONFIGURATION} ${PROJECT_SOURCE_DIR})
+    else()
+        set_target_properties(${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
+    endif()
+    # set_target_properties(${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
     # if (WIN32 OR CYGWIN OR MSVC)
     # add_custom_command(TARGET ${TESTNAME} POST_BUILD
     # COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -41,14 +47,14 @@ endmacro()
 
 package_add_test(test_musher_cpp ${MUSHER_CPP_TEST_SOURCES})
 
-if (MSVC)
-    # POSSIBLE FIX FOR MSVC
-	# set(CONFIGURATION "Release")
-	add_custom_command(TARGET test_musher_cpp POST_BUILD
-	    COMMAND ${CMAKE_COMMAND} -E copy_directory
-	        "${CMAKE_BINARY_DIR}/$<CONFIGURATION>"
-	        # $<PROJECT_SOURCE_DIR:test_musher_cpp>
-	        ${PROJECT_SOURCE_DIR}
-	)
-	message( ${CMAKE_BINARY_DIR} )
-endif()
+# if (MSVC)
+#     # POSSIBLE FIX FOR MSVC
+# 	# set(CONFIGURATION "Release")
+# 	add_custom_command(TARGET test_musher_cpp POST_BUILD
+# 	    COMMAND ${CMAKE_COMMAND} -E copy_directory
+# 	        "${CMAKE_BINARY_DIR}/$<CONFIGURATION>"
+# 	        # $<PROJECT_SOURCE_DIR:test_musher_cpp>
+# 	        ${PROJECT_SOURCE_DIR}
+# 	)
+# 	# message( ${CMAKE_BINARY_DIR} )
+# endif()

@@ -6,6 +6,10 @@ endif (POLICY CMP0048)
 
 project(musher LANGUAGES CXX)
 
+# Turn off with 'cmake -DBUILD_PYTHON_MODULE=OFF'
+# Build code without python module, useful for building only tests
+option(BUILD_PYTHON_MODULE "Build all tests." ON)
+
 # Options. Turn on with 'cmake -Dmyvarname=ON'.
 # option(PACKAGE_TESTS "Build the tests" ON) # Makes boolean 'test' available.
 
@@ -31,17 +35,18 @@ include_directories(${MUSHER_INCLUDE_DIR})
 # set(SOURCES
 #     ${SOURCE_DIR}/functional_test.cpp
 #     ${SOURCE_DIR}/musher_wrapper.cpp)
+set(CMAKE_CXX_STANDARD 17)
 
 set(MUSHER_LIBRARY_SOURCES
     ${SOURCE_DIR}/functional_test.cpp)
 
-set(MUSHER_SOURCES
+set(MUSHER_WRAPPER
     ${SOURCE_DIR}/musher_wrapper.cpp)
 
-set(CMAKE_CXX_STANDARD 17)
 set(MUSHER_LIB musher_library)
 
-
+# set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+# SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
 # ################################
 # # Building
@@ -65,17 +70,39 @@ musher_add_library(${MUSHER_LIB} SHARED ${MUSHER_LIBRARY_SOURCES})
 add_definitions(-DMUSHER_EXPORT)
 
 
-# Python library
-# call build function within buildTools
-musher_add_module(musher MODULE ${MUSHER_SOURCES})
+if(BUILD_PYTHON_MODULE)
+	# Python module
+	# Call build function within buildTools
+	musher_add_module(musher MODULE ${MUSHER_WRAPPER})
 
-# copy MUSHER_LIB output to Project root
-# if (WIN32 OR CYGWIN)
-    # file(GLOB MUSHER_DLLS ${CMAKE_BINARY_DIR}\\*.dll)
-    # file(COPY ${MUSHER_DLLS} DESTINATION ${PROJECT_SOURCE_DIR})
-# endif()
+# 	find_library (
+#     ${MUSHER_LIB}
+#     NAMES musher_library # what to look for
+#     HINTS "${CMAKE_BINARY_DIR}" # where to look
+#     NO_DEFAULT_PATH # do not search system default paths
+# )
+# 	# check if we found the library
+# 	message(STATUS "MUSHER_LIB: [${MUSHER_LIB}]")
 
-target_link_libraries(musher PRIVATE ${MUSHER_LIB})
+# 	if (NOT ${MUSHER_LIB})
+# 	    message(SEND_ERROR "Did not find lib musher_library")
+# 	endif()
+
+	# Link library to python module
+	target_link_libraries(musher PRIVATE ${MUSHER_LIB})
+
+	# INSTALL( TARGETS musher
+ #   		# RUNTIME DESTINATION ${INSTALL_DIR} 
+ #   		LIBRARY DESTINATION ${INSTALL_DIR} 
+ #    )
+	 # install(TARGETS musher
+  #       # EXPORT MyLibTargets
+  #       LIBRARY DESTINATION lib
+  #       ARCHIVE DESTINATION lib
+  #       RUNTIME DESTINATION bin
+  #       # INCLUDES DESTINATION include
+  #       )
+endif()
 
 # ################################
 # # Testing

@@ -11,6 +11,7 @@
         - [Required modules](#required-modules)
         - [How to run Python tests](#how-to-run-python-tests)
         - [How to run C++ tests](#how-to-run-c-tests)
+    - [Cleanup](#cleanup)
     - [Accomplishments](#accomplishments)
     - [Next Steps](#next-steps)
     - [Useful links](#useful-links)
@@ -129,6 +130,19 @@ ctest
 make test
 ```
 
+_NOTE: If your CMake version is less than 3.11 than you must clone the googletest submodules in order for tests to work._
+
+```sh
+git submodule update --init --recursive
+```
+
+## Cleanup
+
+This will remove all the files created from building and testing this package
+
+```sh
+python setup.py clean
+```
 
 ## Accomplishments
 

@@ -172,6 +172,8 @@ class CleanBuildCommand(distutils.cmd.Command):
             os.path.join(ROOT_DIR, ".eggs"),
             os.path.join(ROOT_DIR, ".pytest_cache"),
             os.path.join(ROOT_DIR, ".tox"),
+            os.path.join(ROOT_DIR, "Release"),
+            os.path.join(ROOT_DIR, "Debug"),
             *glob.glob(os.path.join(ROOT_DIR, "*.so")),  # clean up linux outputs
             *glob.glob(os.path.join(ROOT_DIR, "*.dylib")),
             *glob.glob(os.path.join(ROOT_DIR, "test_*")),  # executables dont have extensions on mac

@@ -48,7 +48,14 @@ set(MUSHER_LIB musher_library)
 # musher_library needs to be STATIC (link during build time) for it to link with other libraries correctly
 # If not set to STATIC, python will have a runtime linking error when pip installing then importing musher
 # Atleast for MacOSX
-musher_add_library(${MUSHER_LIB} STATIC ${MUSHER_LIBRARY_SOURCES})
+if (APPLE OR WIN32)
+	set (LIB_TYPE STATIC)
+else()
+	set (LIB_TYPE SHARED)
+endif()
+
+musher_add_library(${MUSHER_LIB} ${LIB_TYPE} ${MUSHER_LIBRARY_SOURCES})
+
 # set_target_properties(${MUSHER_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE {PROJECT_SOURCE_DIR})
 # if ( MSVC )
 #     set_target_properties(${MUSHER_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})

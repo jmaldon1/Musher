@@ -83,9 +83,15 @@ class BuildCppTests(distutils.cmd.Command):
 
         if self.run_tests:
             print("running tests...")
-            for test in cpp_tests_list:
-                test_path = f"./{test}"
-                subprocess.check_call([test_path], cwd=ROOT_DIR)
+            if platform.system() == "Windows":
+                for test in cpp_tests_list:
+                    test_path = os.path.abspath(os.path.join(cfg, f"{test}.exe"))
+                    print("-"*40,test_path)
+                    subprocess.check_call([test_path], cwd=ROOT_DIR)               
+            else:
+                for test in cpp_tests_list:
+                    test_path = f"./{test}"
+                    subprocess.check_call([test_path], cwd=ROOT_DIR)
 
 
 class CMakeExtension(Extension):

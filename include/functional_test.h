@@ -8,5 +8,7 @@
 extern "C"
 {
     void MUSHER_API CPrintFunctionalMessage(const char* message);
+    bool MUSHER_API LoadAudioFile(const char* filePath);
+    char* MUSHER_API getFileAbsPath(const char* filePath);
 }
 #endif

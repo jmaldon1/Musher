@@ -6,6 +6,12 @@ endif (POLICY CMP0048)
 
 project(musher LANGUAGES CXX)
 
+if(APPLE)
+	# This requires your mac to be updated to Catalina 
+	# or else there will be a compilation error trying to find C++ libs
+	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15)
+endif()
+
 # Turn off with 'cmake -DBUILD_PYTHON_MODULE=OFF'
 # Build code without python module, useful for building only tests
 option(BUILD_PYTHON_MODULE "Build all tests." ON)

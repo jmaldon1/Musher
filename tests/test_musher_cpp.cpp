@@ -11,3 +11,11 @@ TEST(PrintFunctionalMessage, PrintsMessage) {
 
 	EXPECT_EQ(0, 0);
 }
+
+TEST(LoadAudioFile, LoadsAudioFile) {
+	// LoadAudioFile("/Users/JJMALD1/Desktop/Musher/tests/audio_files/WAV_1MG.wav");
+
+	getFileAbsPath("/Users/JJMALD1/Desktop/Musher/tests/audio_files/WAV_1MG.wav");
+
+	EXPECT_EQ(0, 0);
+}

@@ -11,6 +11,7 @@ set(MUSHER_CPP_TEST_SOURCES
     test_musher_cpp.cpp)
 
 if(${CMAKE_VERSION} VERSION_LESS 3.11)
+    # This requires that you pull all git submodules for this project
     add_subdirectory("${PROJECT_SOURCE_DIR}/extern/googletest" "extern/googletest")
 else()
     include(FetchContent)

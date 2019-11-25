@@ -10,7 +10,6 @@ import re
 
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
-from setuptools.command.test import test as TestCommand
 from distutils.version import LooseVersion
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -83,15 +82,12 @@ class BuildCppTests(distutils.cmd.Command):
 
         if self.run_tests:
             print("running tests...")
-            if platform.system() == "Windows":
-                for test in cpp_tests_list:
+            for test in cpp_tests_list:
+                if platform.system() == "Windows":
                     test_path = os.path.abspath(os.path.join(cfg, f"{test}.exe"))
-                    print("-"*40,test_path)
-                    subprocess.check_call([test_path], cwd=ROOT_DIR)               
-            else:
-                for test in cpp_tests_list:
+                else:
                     test_path = f"./{test}"
-                    subprocess.check_call([test_path], cwd=ROOT_DIR)
+                subprocess.check_call([test_path], cwd=ROOT_DIR)
 
 
 class CMakeExtension(Extension):
@@ -165,7 +161,8 @@ class CleanBuildCommand(distutils.cmd.Command):
         pass
 
     def run(self):
-        cleanup_files_list = [
+        cleanup_list = [
+            # Folders
             os.path.join(ROOT_DIR, "build"),
             os.path.join(ROOT_DIR, "dist"),
             os.path.join(ROOT_DIR, "musher.egg-info"),
@@ -174,6 +171,7 @@ class CleanBuildCommand(distutils.cmd.Command):
             os.path.join(ROOT_DIR, ".tox"),
             os.path.join(ROOT_DIR, "Release"),
             os.path.join(ROOT_DIR, "Debug"),
+            # Files
             *glob.glob(os.path.join(ROOT_DIR, "*.so")),  # clean up linux outputs
             *glob.glob(os.path.join(ROOT_DIR, "*.dylib")),
             *glob.glob(os.path.join(ROOT_DIR, "test_*")),  # executables dont have extensions on mac
@@ -182,10 +180,9 @@ class CleanBuildCommand(distutils.cmd.Command):
             *glob.glob(os.path.join(ROOT_DIR, "*.exe")),
             *glob.glob(os.path.join(ROOT_DIR, "*.exp")),
             *glob.glob(os.path.join(ROOT_DIR, "*.lib")),
-
         ]
 
-        for item in cleanup_files_list:
+        for item in cleanup_list:
             try:  # If item is a dir then remove it
                 shutil.rmtree(item)
                 print(f"cleaned {item}")

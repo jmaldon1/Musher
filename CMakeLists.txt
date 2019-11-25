@@ -6,12 +6,6 @@ endif (POLICY CMP0048)
 
 project(musher LANGUAGES CXX)
 
-if(APPLE)
-	# This requires your mac to be updated to Catalina 
-	# or else there will be a compilation error trying to find C++ libs
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15)
-endif()
-
 # Turn off with 'cmake -DBUILD_PYTHON_MODULE=OFF'
 # Build code without python module, useful for building only tests
 option(BUILD_PYTHON_MODULE "Build all tests." ON)
@@ -34,10 +28,12 @@ set(MUSHER_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include" CACHE INTERNAL "")
 # allows added submodules to find c++ header files
 include_directories(${MUSHER_INCLUDE_DIR})
 
-# Set variable for all source files within the source directory
-# set(SOURCES
-#     ${SOURCE_DIR}/functional_test.cpp
-#     ${SOURCE_DIR}/musher_wrapper.cpp)
+if(APPLE)
+	# This requires your mac to be updated to Catalina 
+	# or else there will be a compilation error trying to find C++ libs
+	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 
 set(MUSHER_LIBRARY_SOURCES
@@ -53,28 +49,14 @@ set(MUSHER_LIB musher_library)
 # ################################
 # musher_library needs to be STATIC (link during build time) for it to link with other libraries correctly
 # If not set to STATIC, python will have a runtime linking error when pip installing then importing musher
-# Atleast for MacOSX
+# Atleast for MacOSX and Windows
 if (APPLE OR WIN32)
-	set (LIB_TYPE STATIC)
+	set(LIB_TYPE STATIC)
 else()
-	set (LIB_TYPE SHARED)
+	set(LIB_TYPE SHARED)
 endif()
 
 musher_add_library(${MUSHER_LIB} ${LIB_TYPE} ${MUSHER_LIBRARY_SOURCES})
-
-# set_target_properties(${MUSHER_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE {PROJECT_SOURCE_DIR})
-# if ( MSVC )
-#     set_target_properties(${MUSHER_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
-#     set_target_properties(${MUSHER_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PROJECT_SOURCE_DIR})
-#     set_target_properties(${MUSHER_LIB} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR})
-#     # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)
-# endif ( MSVC )
-# set_target_properties(${MUSHER_LIB} PROPERTIES
-#                       LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}$<0:>)
-# add_custom_command(TARGET MUSHER_LIB POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E copy_directory
-#         "${PROJECT_SOURCE_DIR}/build/$<CONFIGURATION>"
-#         $<PROJECT_SOURCE_DIR:MUSHER_LIB>)
 
 # windows dll export
 add_definitions(-DMUSHER_EXPORT)

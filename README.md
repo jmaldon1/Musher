@@ -158,7 +158,7 @@ python setup.py clean
 
 1. Make sure everything works with windows and linux before moving on.
 
-2. Start the actual project (This will be broken down later)
+2. Figure out how to pass python function to C++ function
 
 ## Useful links
 

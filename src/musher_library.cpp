@@ -3,13 +3,11 @@
 #include <iterator>
 #include <fstream>
 #include <filesystem>
-// #include <experimental\filesystem>
 #include <vector>
 #include <stdexcept>
 
 #include "musher_library.h"
 
-// namespace fs = std::experimental::filesystem::v1;
 
 void CPrintFunctionalMessage(const char* message)
 {
@@ -17,7 +15,7 @@ void CPrintFunctionalMessage(const char* message)
 }
 
 
-std::vector<uint8_t> CLoadAudioFile(const char* filePath, bool (*decodeFunc)(const char*))
+std::vector<uint8_t> CLoadAudioFile(const char* filePath)
 {
 	std::error_code e;
 	std::filesystem::path audioFileAbsPath = std::filesystem::canonical(filePath, e);
@@ -35,13 +33,7 @@ std::vector<uint8_t> CLoadAudioFile(const char* filePath, bool (*decodeFunc)(con
     std::istream_iterator<uint8_t> begin (audioFile), end;
 
     std::vector<uint8_t> fileData (begin, end);
-
-    if(decodeFunc) {
-    	/* TODO run decode function and return decoded file info */
-    	return fileData; /* this is just here to prevent warnings, remove later */
-    }else{
-    	return fileData;
-    }
+	return fileData;
 }
 
 

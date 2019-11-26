@@ -6,8 +6,8 @@ def test_print_functional_message():
 
 
 def test_decode():
-    musher.PyDecodeWav("hello")
+    musher.DecodeWav("hello")
 
 
 def test_decode_with_func_call():
-    musher.PyAcceptDecode("hello", musher.PyDecodeWav)
+    musher.AcceptDecode("hello", musher.DecodeWav)

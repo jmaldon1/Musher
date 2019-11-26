@@ -10,6 +10,8 @@ project(musher LANGUAGES CXX)
 # Build code without python module, useful for building only tests
 option(BUILD_PYTHON_MODULE "Build all tests." ON)
 
+# set(CMAKE_VERBOSE_MAKEFILE ON)
+
 # Add /tools to cmake path
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/tools")
 
@@ -34,10 +36,15 @@ if(APPLE)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15)
 endif()
 
+# use g++-8 for gnu 
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+	set(CMAKE_CXX_COMPILER "/usr/bin/g++-8")
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 
 set(MUSHER_LIBRARY_SOURCES
-    ${SOURCE_DIR}/functional_test.cpp)
+    ${SOURCE_DIR}/musher_library.cpp)
 
 set(MUSHER_WRAPPER
     ${SOURCE_DIR}/musher_wrapper.cpp)
@@ -57,6 +64,11 @@ else()
 endif()
 
 musher_add_library(${MUSHER_LIB} ${LIB_TYPE} ${MUSHER_LIBRARY_SOURCES})
+
+# fix GNU filesystem c++17 linking error
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+	target_link_libraries(${MUSHER_LIB} PRIVATE stdc++fs)
+endif()
 
 # windows dll export
 add_definitions(-DMUSHER_EXPORT)

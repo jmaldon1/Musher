@@ -3,13 +3,15 @@
 #include <string>
 #include <unordered_map> 
 
-#include "functional_test.h"
+#include "musher_library.h"
+
 
 /* Unordered map of python decode functions mapped to their C++ function equivalent */
 typedef bool (*DecodeFunction)(const char*); // function pointer type
 std::unordered_map<std::string, DecodeFunction> uMapDecodeFuncs({
-    {"PyDecodeWav", &DecodeWav}
-}); 
+    {"DecodeWav", &CDecodeWav}
+});
+
 
 PyObject* PrintFunctionalMessage(PyObject* self, PyObject* args)
 {
@@ -28,7 +30,7 @@ PyObject* PrintFunctionalMessage(PyObject* self, PyObject* args)
 }
 
 
-PyObject* PyDecodeWav(PyObject* self, PyObject* args)
+PyObject* DecodeWav(PyObject* self, PyObject* args)
 {
     /* Arguments passed in from Python */
     const char* message;
@@ -38,14 +40,14 @@ PyObject* PyDecodeWav(PyObject* self, PyObject* args)
                     &message);
 
     /* Call function */
-    DecodeWav(message);
+    CDecodeWav(message);
 
     /* Return nothing */
     return Py_BuildValue("");
 }
 
 
-PyObject* PyAcceptDecode(PyObject* self, PyObject* args)
+PyObject* AcceptDecode(PyObject* self, PyObject* args)
 {
     /* Arguments passed in from Python */
     const char* message;
@@ -79,7 +81,7 @@ PyObject* PyAcceptDecode(PyObject* self, PyObject* args)
     else {
         /* Get decode function from umap */
         bool (*decodeFunc)(const char*) = got->second;
-        AcceptDecode("Hello from Decode wav", decodeFunc);
+        CAcceptDecode("Hello from Decode wav", decodeFunc);
     }
     /* Call function */
     // PyObject* cbArgs = PyTuple_New(1);
@@ -102,14 +104,14 @@ static PyMethodDef cFuncs[] =
         "Print a message from a function"
     },
     {
-        "PyDecodeWav",
-        PyDecodeWav,
+        "DecodeWav",
+        DecodeWav,
         METH_VARARGS,
         "Decode Wav file"
     },
     {
-        "PyAcceptDecode",
-        PyAcceptDecode,
+        "AcceptDecode",
+        AcceptDecode,
         METH_VARARGS,
         "Accept function"
     },

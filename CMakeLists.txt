@@ -37,9 +37,9 @@ if(APPLE)
 endif()
 
 # use g++-8 for gnu 
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-	set(CMAKE_CXX_COMPILER "/usr/bin/g++-8")
-endif()
+# if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+# 	set(CMAKE_CXX_COMPILER "/usr/bin/g++-8")
+# endif()
 
 set(CMAKE_CXX_STANDARD 17)
 

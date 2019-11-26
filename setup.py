@@ -11,6 +11,7 @@ import re
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 from distutils.version import LooseVersion
+from distutils import sysconfig
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -46,6 +47,10 @@ class BuildCppTests(distutils.cmd.Command):
         pass
 
     def run(self):
+        if sysconfig.get_config_var('CXX') == "g++":  # Check if using g++ to compile
+            # Check if user has g++ 8, if they do, use it to compile
+            if os.path.exists("/usr/bin/g++-8"):
+                os.environ["CXX"] = "/usr/bin/g++-8"
         # extdir = os.path.abspath(
         #     os.path.dirname(self.get_ext_fullpath(ext.name)))
         cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + ROOT_DIR]
@@ -114,6 +119,11 @@ class CMakeBuild(build_ext):
             self.build_extension(ext)
 
     def build_extension(self, ext):
+        if sysconfig.get_config_var('CXX') == "g++":  # Check if using g++ to compile
+            # Check if user has g++ 8, if they do, use it to compile
+            if os.path.exists("/usr/bin/g++-8"):
+                os.environ["CXX"] = "g++-8"
+
         extdir = os.path.abspath(
             os.path.dirname(self.get_ext_fullpath(ext.name)))
         # Output library to root directory

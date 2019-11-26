@@ -32,7 +32,7 @@ TEST(AudioFileDecoding, AudioFileNotFoundTest) {
     EXPECT_THROW({
         try
         {
-            LoadAudioFile("/unknown/abs/file/path.wav");
+            CLoadAudioFile("/unknown/abs/file/path.wav");
         }
         catch( const std::runtime_error& e )
         {
@@ -45,7 +45,7 @@ TEST(AudioFileDecoding, AudioFileNotFoundTest) {
 TEST(AudioFileDecoding, LoadsAudioFileTest) {
 	// LoadAudioFile("/Users/JJMALD1/Desktop/Musher/tests/audio_files/WAV_1MG.wav");
 
-	LoadAudioFile("./tests/audio_files/WAV_1MG.wav");
+	CLoadAudioFile("./tests/audio_files/WAV_1MG.wav");
 	// getFileAbsPath("./test/audio_files/WAV_1MG.wav");
 
 	// DecodeWav("Hello");

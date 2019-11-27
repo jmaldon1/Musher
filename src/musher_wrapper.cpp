@@ -8,6 +8,7 @@
 
 #include "musher_library.h"
 #include "utils.h"
+#include "python_utils.h"
 
 
 /* Unordered map of python decode functions mapped to their C++ function equivalent */
@@ -66,9 +67,17 @@ PyObject* LoadAudioFile(PyObject* self, PyObject* args)
     try{
         fileData = CLoadAudioFile(filePath);
 
-        std::vector<int> fileDataInt;
-        auto convert_to_int = [](uint8_t num) { return static_cast<int>(num);};
-        std::transform(fileData.begin(), fileData.end(), std::back_inserter(fileDataInt), convert_to_int);
+        /* convert uint8_t vector to int vector */
+        // std::vector<int> fileDataInt;
+        // std::transform(fileData.begin(), fileData.end(), std::back_inserter(fileDataInt), unint8_t_to_int);
+
+        // for (std::vector<int>::const_iterator i = fileDataInt.begin(); i != fileDataInt.end(); ++i)
+        //     std::cout << *i << ' ';
+
+        // PyObject* pyIntList = vector_to_list_int(fileDataInt);
+        PyObject* pyIntList = vector_to_list_uint8_t(fileData);
+        return pyIntList;
+
     }
     catch( const std::runtime_error& e )
     {
@@ -129,7 +138,7 @@ PyObject* LoadAudioFile(PyObject* self, PyObject* args)
     // PyObject *rv = PyObject_CallObject(decodeFunc, cbArgs);
 
     /* Return nothing */
-    return Py_BuildValue("");
+    // return Py_BuildValue("");
 }
 
 

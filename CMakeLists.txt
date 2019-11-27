@@ -40,17 +40,28 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/src" CACHE INTERNAL "")
 set(MUSHER_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include" CACHE INTERNAL "")
 
-# allows added submodules to find c++ header files
-include_directories(${MUSHER_INCLUDE_DIR})
+SET(MUSHER_LIBRARY_INLUDES
+	"${MUSHER_INCLUDE_DIR}/musher_core.h"
+	"${MUSHER_INCLUDE_DIR}/musher_library.h"
+	"${MUSHER_INCLUDE_DIR}/utils.h"
+	)
 
 set(MUSHER_LIBRARY_SOURCES
-    ${SOURCE_DIR}/musher_library.cpp
-    ${SOURCE_DIR}/utils.cpp)
+    "${SOURCE_DIR}/musher_library.cpp"
+    "${SOURCE_DIR}/utils.cpp"
+    )
 
-set(MUSHER_WRAPPER
-    ${SOURCE_DIR}/musher_wrapper.cpp)
+set(MUSHER_WRAPPER_INCLUDES
+	"${MUSHER_INCLUDE_DIR}/python_utils.h"
+	)
 
-set(MUSHER_LIB musher_library)
+set(MUSHER_WRAPPER_SOURCES
+    "${SOURCE_DIR}/musher_wrapper.cpp"
+    "${SOURCE_DIR}/python_utils.cpp"
+    )
+
+
+set(MUSHER_LIB "musher_library")
 
 # ################################
 # # Building
@@ -64,7 +75,8 @@ else()
 	set(LIB_TYPE SHARED)
 endif()
 
-musher_add_library(${MUSHER_LIB} ${LIB_TYPE} ${MUSHER_LIBRARY_SOURCES})
+musher_add_library(${MUSHER_LIB} ${LIB_TYPE} ${MUSHER_LIBRARY_SOURCES} ${MUSHER_LIBRARY_INLUDES})
+target_include_directories(${MUSHER_LIB} PRIVATE ${MUSHER_INCLUDE_DIR})
 
 # fix GNU filesystem c++17 linking error
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
@@ -78,7 +90,9 @@ add_definitions(-DMUSHER_EXPORT)
 if(BUILD_PYTHON_MODULE)
 	# Python module
 	# Call build function within buildTools
-	musher_add_module(musher MODULE ${MUSHER_WRAPPER})
+	musher_add_module(musher MODULE ${MUSHER_WRAPPER_SOURCES} ${MUSHER_LIBRARY_INLUDES} ${MUSHER_WRAPPER_INCLUDES})
+	# Allow module to find includes
+	target_include_directories(musher PRIVATE ${MUSHER_INCLUDE_DIR})
 
 	# Link library to python module
 	target_link_libraries(musher PRIVATE ${MUSHER_LIB})

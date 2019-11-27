@@ -27,8 +27,9 @@ std::string uint8_vector_to_hex_string(const std::vector<uint8_t>& v) {
 
 std::string get_str_between_two_squotes(const std::string &s)
 {
-    std::size_t pos = s.find("'") + 1;
-	std::size_t endpos = s.rfind("'");
+    std::string squote = "'";
+    std::size_t pos = s.find(squote) + 1;
+	std::size_t endpos = s.rfind(squote);
 	std::size_t len = endpos - pos;
 
     return s.substr (pos, len);;

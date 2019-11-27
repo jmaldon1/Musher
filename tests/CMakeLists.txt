@@ -6,15 +6,22 @@ if (WIN32 OR CYGWIN)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 endif()
 
-# define test source files
-set(MUSHER_CPP_TEST_SOURCES
-    test_musher_cpp.cpp
-    )
-
+set(MUSHER_TEST_SOURCE_DIR "${PROJECT_SOURCE_DIR}/tests" CACHE INTERNAL "")
 set(MUSHER_TEST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/tests/test_include" CACHE INTERNAL "")
 
+# define test source files
+set(MUSHER_CPP_TEST_SOURCES
+    "${MUSHER_TEST_SOURCE_DIR}/test_musher_cpp.cpp"
+    )
+
+# # define test header files
+set(MUSHER_CPP_TEST_INCLUDES
+    "${MUSHER_LIBRARY_INLUDES}"
+    "${MUSHER_TEST_INCLUDE_DIR}/test_load_audio_file.h"
+    )
+
 # allows added submodules to find c++ header files
-include_directories(${MUSHER_TEST_INCLUDE_DIR})
+# include_directories(${MUSHER_TEST_INCLUDE_DIR})
 
 if(${CMAKE_VERSION} VERSION_LESS 3.11)
     # This requires that you pull all git submodules for this project
@@ -74,7 +81,8 @@ macro(package_add_test TESTNAME)
     # set_target_properties(${TESTNAME} PROPERTIES FOLDER "tests/Release")
 endmacro()
 
-package_add_test(test_musher_cpp ${MUSHER_CPP_TEST_SOURCES})
+package_add_test(test_musher_cpp ${MUSHER_CPP_TEST_SOURCES} ${MUSHER_CPP_TEST_INCLUDES})
+target_include_directories(test_musher_cpp PRIVATE ${MUSHER_INCLUDE_DIR} ${MUSHER_TEST_INCLUDE_DIR})
 
 # if (MSVC)
 #     # POSSIBLE FIX FOR MSVC

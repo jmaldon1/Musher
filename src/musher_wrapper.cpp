@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 #include "musher_library.h"
+#include "utils.h"
 
 
 /* Unordered map of python decode functions mapped to their C++ function equivalent */
@@ -57,18 +58,30 @@ PyObject* LoadAudioFile(PyObject* self, PyObject* args)
     /* Process arguments from Python */
     PyArg_ParseTuple(args, "s", &filePath);
 
-    std::string filePathStr(filePath);
-
-    std::vector<uint8_t> fileData;
+    /* 
+    Must catch all c++ exceptions to prevent seg faults in python
+    */
     try{
+        std::vector<uint8_t> fileData;
         fileData = CLoadAudioFile(filePath);
-    }catch( const std::runtime_error& e )
-    {   
-        PyErr_SetString(SpamError, "System command failed");
+    }
+    catch( const std::runtime_error& e )
+    {
+        const std::string unknownFilePath = get_str_between_two_squotes(e.what());
+        const char* unknownFilePathChar = unknownFilePath.c_str();
+        /* Raise a filenotfounderror in python */
+        PyErr_SetFromErrnoWithFilename(PyExc_FileNotFoundError, unknownFilePathChar);
         return NULL;
-        /* This tests if the error message is equal */
-        // EXPECT_STREQ( "No file found at /unknown/abs/file/path.wav" , e.what() );
-        // throw;
+    }
+    catch( const std::exception& e )
+    { /* Catch all standard exceptions */
+        PyErr_SetString(PyExc_Exception, e.what());
+        return NULL;
+    }
+    catch ( ... ) 
+    { /* Catch all other exceptions */
+        PyErr_SetString(PyExc_Exception, "Unknown error occured.");
+        return NULL;
     }
     // fileData = CLoadAudioFile(filePath);
 
@@ -124,7 +137,7 @@ static PyMethodDef cFuncs[] =
         "Print a message from a function"
     },
     {
-        "LoadAudioFile",
+        "load_audio_file",
         LoadAudioFile,
         METH_VARARGS,
         "Load audio file from path"

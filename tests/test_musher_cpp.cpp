@@ -40,7 +40,7 @@ TEST(AudioFileDecoding, AudioFileNotFoundTest) {
         catch( const std::runtime_error& e )
         {   
             /* This tests if the error message is equal */
-            EXPECT_STREQ( "No file found at /unknown/abs/file/path.wav" , e.what() );
+            EXPECT_STREQ( "No file found at '/unknown/abs/file/path.wav'" , e.what() );
             throw;
         }
     }, std::runtime_error );

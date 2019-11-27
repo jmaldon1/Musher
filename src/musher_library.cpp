@@ -23,7 +23,9 @@ std::vector<uint8_t> CLoadAudioFile(const std::string filePath)
 		// ERROR
 		std::filesystem::path absolutePath = std::filesystem::absolute(filePath);
 		std::string eMessage = "No file found at ";
+		eMessage += "'";
 		eMessage += absolutePath.string();
+		eMessage += "'";
 		throw std::runtime_error(eMessage);
 	}
 	std::ifstream audioFile (audioFileAbsPath, std::ios::binary);

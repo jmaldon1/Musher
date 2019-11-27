@@ -8,7 +8,7 @@
 
 
 void MUSHER_API CPrintFunctionalMessage(const char* message);
-std::vector<uint8_t> MUSHER_API CLoadAudioFile(const char* filePath);
+std::vector<uint8_t> MUSHER_API CLoadAudioFile(const std::string filePath);
 bool MUSHER_API CDecodeWav(const char* message);
 bool MUSHER_API CAcceptDecode(const char* message, bool (*decodef)(const char*));
 

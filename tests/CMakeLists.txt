@@ -8,7 +8,13 @@ endif()
 
 # define test source files
 set(MUSHER_CPP_TEST_SOURCES
-    test_musher_cpp.cpp)
+    test_musher_cpp.cpp
+    )
+
+set(MUSHER_TEST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/tests/test_include" CACHE INTERNAL "")
+
+# allows added submodules to find c++ header files
+include_directories(${MUSHER_TEST_INCLUDE_DIR})
 
 if(${CMAKE_VERSION} VERSION_LESS 3.11)
     # This requires that you pull all git submodules for this project

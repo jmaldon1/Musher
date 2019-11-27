@@ -23,13 +23,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CTest)
 endif()
 
-# Set variable for source and include directory
-set(SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/src" CACHE INTERNAL "")
-set(MUSHER_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include" CACHE INTERNAL "")
-
-# allows added submodules to find c++ header files
-include_directories(${MUSHER_INCLUDE_DIR})
-
 if(APPLE)
 	# This requires your mac to be updated to Catalina 
 	# or else there will be a compilation error trying to find C++ libs
@@ -43,8 +36,16 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
+# Set variable for source and include directory
+set(SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/src" CACHE INTERNAL "")
+set(MUSHER_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include" CACHE INTERNAL "")
+
+# allows added submodules to find c++ header files
+include_directories(${MUSHER_INCLUDE_DIR})
+
 set(MUSHER_LIBRARY_SOURCES
-    ${SOURCE_DIR}/musher_library.cpp)
+    ${SOURCE_DIR}/musher_library.cpp
+    ${SOURCE_DIR}/utils.cpp)
 
 set(MUSHER_WRAPPER
     ${SOURCE_DIR}/musher_wrapper.cpp)

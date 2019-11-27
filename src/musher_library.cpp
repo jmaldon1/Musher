@@ -7,6 +7,7 @@
 #include <stdexcept>
 
 #include "musher_library.h"
+#include "utils.h"
 
 
 void CPrintFunctionalMessage(const char* message)
@@ -14,8 +15,7 @@ void CPrintFunctionalMessage(const char* message)
     std::cout << message << std::endl;
 }
 
-
-std::vector<uint8_t> CLoadAudioFile(const char* filePath)
+std::vector<uint8_t> CLoadAudioFile(const std::string filePath)
 {
 	std::error_code e;
 	std::filesystem::path audioFileAbsPath = std::filesystem::canonical(filePath, e);

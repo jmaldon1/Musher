@@ -87,11 +87,14 @@ class BuildCppTests(distutils.cmd.Command):
 
         if self.run_tests:
             print("running tests...")
+            test_bin_dir = os.path.abspath("./test_bin")
             for test in cpp_tests_list:
                 if platform.system() == "Windows":
-                    test_path = os.path.abspath(os.path.join(cfg, f"{test}.exe"))
+                    test_file_path = os.path.join(cfg, f"{test}.exe")
+                    test_path = os.path.abspath(os.path.join(test_bin_dir, test_file_path))
                 else:
-                    test_path = f"./{test}"
+                    test_file_path = test
+                    test_path = os.path.abspath(os.path.join(test_bin_dir, test_file_path))
                 subprocess.check_call([test_path], cwd=ROOT_DIR)
 
 
@@ -181,6 +184,7 @@ class CleanBuildCommand(distutils.cmd.Command):
             os.path.join(ROOT_DIR, ".tox"),
             os.path.join(ROOT_DIR, "Release"),
             os.path.join(ROOT_DIR, "Debug"),
+            os.path.join(ROOT_DIR, "test_bin"),
             # Files
             *glob.glob(os.path.join(ROOT_DIR, "*.so")),  # clean up linux outputs
             *glob.glob(os.path.join(ROOT_DIR, "*.dylib")),

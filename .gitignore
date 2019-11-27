@@ -1,4 +1,4 @@
-test_musher_cpp*
+test_bin
 *.dylib
 
 # VSCODE

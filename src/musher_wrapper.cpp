@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map> 
 #include <stdexcept>
+#include <algorithm>
 
 #include "musher_library.h"
 #include "utils.h"
@@ -61,9 +62,13 @@ PyObject* LoadAudioFile(PyObject* self, PyObject* args)
     /* 
     Must convert all c++ exceptions to python exceptions to prevent seg faults
     */
+    std::vector<uint8_t> fileData;
     try{
-        std::vector<uint8_t> fileData;
         fileData = CLoadAudioFile(filePath);
+
+        std::vector<int> fileDataInt;
+        auto convert_to_int = [](uint8_t num) { return static_cast<int>(num);};
+        std::transform(fileData.begin(), fileData.end(), std::back_inserter(fileDataInt), convert_to_int);
     }
     catch( const std::runtime_error& e )
     {
@@ -83,6 +88,8 @@ PyObject* LoadAudioFile(PyObject* self, PyObject* args)
         PyErr_SetString(PyExc_Exception, "Unknown error occured.");
         return NULL;
     }
+
+
     // fileData = CLoadAudioFile(filePath);
 
     // PyObject* decodeFunc;

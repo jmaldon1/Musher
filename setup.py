@@ -188,7 +188,6 @@ class CleanBuildCommand(distutils.cmd.Command):
             # Files
             *glob.glob(os.path.join(ROOT_DIR, "*.so")),  # clean up linux outputs
             *glob.glob(os.path.join(ROOT_DIR, "*.dylib")),
-            *glob.glob(os.path.join(ROOT_DIR, "test_*")),  # executables dont have extensions on mac
             *glob.glob(os.path.join(ROOT_DIR, "*.pyd")),  # clean up windows outputs
             *glob.glob(os.path.join(ROOT_DIR, "*.dll")),
             *glob.glob(os.path.join(ROOT_DIR, "*.exe")),
@@ -213,7 +212,7 @@ class CleanBuildCommand(distutils.cmd.Command):
 setup(
     name='musher',
     version='0.1',
-    description='A hybrid Python/C++ test project',
+    description='Mush songs together',
     packages=find_packages(),
     # packages=['musher'],
     # add extension module

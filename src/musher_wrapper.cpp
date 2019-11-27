@@ -59,7 +59,7 @@ PyObject* LoadAudioFile(PyObject* self, PyObject* args)
     PyArg_ParseTuple(args, "s", &filePath);
 
     /* 
-    Must catch all c++ exceptions to prevent seg faults in python
+    Must convert all c++ exceptions to python exceptions to prevent seg faults
     */
     try{
         std::vector<uint8_t> fileData;

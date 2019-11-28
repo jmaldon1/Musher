@@ -63,7 +63,8 @@ TEST(AudioFileDecoding, DecodeWav) {
     std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
     fileData = CLoadAudioFile(filePath);
 
-    // std::unordered_map<std::string, std::variant<int, uint32_t, double, bool>> um = {{"hello", 1}};
-    std::unordered_map<std::string, int> um = {{"hello", 1}};
+    std::unordered_map<std::string, std::variant<int, uint32_t, double, bool>> um;
+    // std::vector<std::string> um;
+    // std::vector<uint8_t> fileData;
     CDecodeWav(um.begin(), fileData);
 }

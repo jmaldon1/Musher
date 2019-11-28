@@ -28,7 +28,8 @@ with codecs.open('README.md', encoding='utf-8') as fobj:
 
 # List of all C++ test names
 cpp_tests_list = [
-    'test_musher_cpp'
+    'test_musher_library',
+    'test_musher_utils',
 ]
 
 
@@ -95,6 +96,9 @@ class BuildCppTests(distutils.cmd.Command):
                 else:
                     test_file_path = test
                     test_path = os.path.abspath(os.path.join(test_bin_dir, test_file_path))
+                print("=" * 35)
+                print(f"Running Test '{test}'")
+                print("=" * 35)
                 subprocess.check_call([test_path], cwd=ROOT_DIR)
 
 

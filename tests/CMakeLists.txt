@@ -10,9 +10,10 @@ set(MUSHER_TEST_SOURCE_DIR "${PROJECT_SOURCE_DIR}/tests" CACHE INTERNAL "")
 set(MUSHER_TEST_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/tests/test_include" CACHE INTERNAL "")
 
 # define test source files
-set(MUSHER_CPP_TEST_SOURCES
-    "${MUSHER_TEST_SOURCE_DIR}/test_musher_cpp.cpp"
-    )
+# set(MUSHER_CPP_TEST_SOURCES
+#     "${MUSHER_TEST_SOURCE_DIR}/test_musher_library.cpp"
+#     "${MUSHER_TEST_SOURCE_DIR}/test_musher_utils.cpp"
+#     )
 
 # # define test header files
 set(MUSHER_CPP_TEST_INCLUDES
@@ -66,6 +67,7 @@ set_target_properties(gmock_main PROPERTIES FOLDER extern)
 macro(package_add_test TESTNAME)
     add_executable(${TESTNAME} ${ARGN}) 
     target_link_libraries(${TESTNAME} gtest gmock gtest_main ${MUSHER_LIB})
+    target_include_directories(${TESTNAME} PRIVATE ${MUSHER_INCLUDE_DIR} ${MUSHER_TEST_INCLUDE_DIR})
     add_test(NAME ${TESTNAME} COMMAND ${TESTNAME})
     set_target_properties(${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/test_bin)
     if (MSVC)
@@ -81,8 +83,8 @@ macro(package_add_test TESTNAME)
     # set_target_properties(${TESTNAME} PROPERTIES FOLDER "tests/Release")
 endmacro()
 
-package_add_test(test_musher_cpp ${MUSHER_CPP_TEST_SOURCES} ${MUSHER_CPP_TEST_INCLUDES})
-target_include_directories(test_musher_cpp PRIVATE ${MUSHER_INCLUDE_DIR} ${MUSHER_TEST_INCLUDE_DIR})
+package_add_test(test_musher_library "${MUSHER_TEST_SOURCE_DIR}/test_musher_library.cpp" "${MUSHER_CPP_TEST_INCLUDES}")
+package_add_test(test_musher_utils "${MUSHER_TEST_SOURCE_DIR}/test_musher_utils.cpp" "${MUSHER_CPP_TEST_INCLUDES}")
 
 # if (MSVC)
 #     # POSSIBLE FIX FOR MSVC

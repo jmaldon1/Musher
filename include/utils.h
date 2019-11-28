@@ -8,5 +8,6 @@
 std::string uint8_vector_to_hex_string(const std::vector<uint8_t>& v);
 std::string get_str_between_two_squotes(const std::string &s);
 auto unint8_t_to_int = [](uint8_t num) { return static_cast<int>(num); };
+auto int_to_unint8_t = [](int num) { return static_cast<uint8_t>(num); };
 
 #endif /* __UTILS_H__ */

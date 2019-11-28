@@ -2,6 +2,8 @@
 #include <string>
 #include <stdexcept>
 #include <filesystem>
+#include <variant>
+#include <unordered_map>
 #include "gtest/gtest.h"
 
 #include "musher_library.h"
@@ -54,4 +56,14 @@ TEST(AudioFileDecoding, LoadsAudioFileTest) {
 
     std::string fileDataHex = uint8_vector_to_hex_string(fileData);
     EXPECT_EQ( FileDataHexCantinaBand3sec, fileDataHex );
+}
+
+TEST(AudioFileDecoding, DecodeWav) {
+    std::vector<uint8_t> fileData;
+    std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
+    fileData = CLoadAudioFile(filePath);
+
+    // std::unordered_map<std::string, std::variant<int, uint32_t, double, bool>> um = {{"hello", 1}};
+    std::unordered_map<std::string, int> um = {{"hello", 1}};
+    CDecodeWav(um.begin(), fileData);
 }

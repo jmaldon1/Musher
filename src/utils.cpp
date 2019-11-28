@@ -28,9 +28,13 @@ std::string uint8_vector_to_hex_string(const std::vector<uint8_t>& v) {
 std::string get_str_between_two_squotes(const std::string &s)
 {
     std::string squote = "'";
+    // Find 1st quote starting from beginning of string
     std::size_t pos = s.find(squote) + 1;
+    // Find 2nd quote starting from end of string
 	std::size_t endpos = s.rfind(squote);
+    // Find length of string between single quotes
 	std::size_t len = endpos - pos;
 
-    return s.substr (pos, len);;
+    // Return the substring between single quotes
+    return s.substr(pos, len);
 }

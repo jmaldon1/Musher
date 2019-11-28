@@ -1,4 +1,5 @@
 import musher
+import os
 
 
 def test_print_functional_message():
@@ -6,7 +7,8 @@ def test_print_functional_message():
 
 
 def test_load_audio_file():
-    t = musher.load_audio_file("./tests/audio_files/WAV_1MG.wav")
+    abs_audio_file_path = os.path.abspath("./tests/audio_files/WAV_1MG.wav")
+    file_data = musher.load_audio_file(abs_audio_file_path)
     # print(t)
     # musher.DecodeWav("hello")
 

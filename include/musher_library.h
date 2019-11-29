@@ -18,7 +18,7 @@ bool MUSHER_API CAcceptDecode(const char* message, bool (*decodef)(const char*))
 // void MUSHER_API CDecodeAudio(UnorderedMapIterator first, const std::string& filePath=std::string(), const std::vector<uint8_t>& fileData=std::vector<uint8_t>());
 
 template MUSHER_API <class UnorderedMap, class AudioBufferType>
-void MUSHER_API CDecodeWav(UnorderedMap wavDecodedData, const std::vector<uint8_t>& fileData, std::vector< std::vector<AudioBufferType> > samples)
+void MUSHER_API CDecodeWav(UnorderedMap& wavDecodedData, const std::vector<uint8_t>& fileData, std::vector< std::vector<AudioBufferType> > samples)
 {
 	// -----------------------------------------------------------
     // HEADER CHUNK
@@ -58,11 +58,9 @@ void MUSHER_API CDecodeWav(UnorderedMap wavDecodedData, const std::vector<uint8_
     int16_t audioFormat = twoBytesToInt (fileData, f + 8);
     int16_t numChannels = twoBytesToInt (fileData, f + 10);
     uint32_t sampleRate = (uint32_t) fourBytesToInt (fileData, f + 12);
-    wavDecodedData["sample_rate"] = sampleRate;
     int32_t numBytesPerSecond = fourBytesToInt (fileData, f + 16);
     int16_t numBytesPerBlock = twoBytesToInt (fileData, f + 20);
     int bitDepth = (int) twoBytesToInt (fileData, f + 22);
-    wavDecodedData["bit_depth"] = bitDepth;
 
     int numBytesPerSample = bitDepth / 8;
     
@@ -141,6 +139,20 @@ void MUSHER_API CDecodeWav(UnorderedMap wavDecodedData, const std::vector<uint8_
         }
     }
 
+    int numChannelsInt = static_cast<int>(numChannels);
+    bool mono = numChannels == 1;
+    bool stereo = numChannels == 2;
+    int numSamplesPerChannel = 0;
+    if (samples.size() > 0)
+        numSamplesPerChannel = static_cast<int>(samples[0].size());
+    double lengthInSeconds = static_cast<double>(numSamplesPerChannel) / static_cast<double>(sampleRate);
+    wavDecodedData["sample_rate"] = sampleRate;
+    wavDecodedData["bit_depth"] = bitDepth;
+    wavDecodedData["channels"] = numChannelsInt;
+    wavDecodedData["mono"] = mono;
+    wavDecodedData["stereo"] = stereo;
+    wavDecodedData["samples_per_channel"] = numSamplesPerChannel;
+    wavDecodedData["length_in_seconds"] = lengthInSeconds;
 }
 
 

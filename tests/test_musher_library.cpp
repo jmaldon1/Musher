@@ -73,13 +73,13 @@ TEST(AudioFileDecoding, LoadsAudioFileTest) {
 // } Vistor;
 
 
-template <class ...Fs>
-struct overload : Fs... {
-  overload(Fs const&... fs) : Fs{fs}...
-  {}
+// template <class ...Fs>
+// struct overload : Fs... {
+//   overload(Fs const&... fs) : Fs{fs}...
+//   {}
 
-  using Fs::operator()...;
-};
+//   using Fs::operator()...;
+// };
 
 TEST(AudioFileDecoding, DecodeWav) {
     std::vector<uint8_t> fileData;
@@ -89,6 +89,41 @@ TEST(AudioFileDecoding, DecodeWav) {
     std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
     std::vector< std::vector<double> > audioBuffer;
     CDecodeWav(wavDecodedData, fileData, audioBuffer);
+
+    uint32_t sampleRate;
+    if (std::holds_alternative<uint32_t>(wavDecodedData["sample_rate"]))
+        sampleRate = (uint32_t)std::visit([](uint32_t arg) {return arg;}, wavDecodedData["sample_rate"]);
+    std::cout << sampleRate << std::endl;
+
+    int bitDepth;
+    if (std::holds_alternative<int>(wavDecodedData["bit_depth"]))
+        bitDepth = (int)std::visit([](int arg) {return arg;}, wavDecodedData["bit_depth"]);
+    std::cout << bitDepth << std::endl;
+
+    int channels;
+    if (std::holds_alternative<int>(wavDecodedData["channels"]))
+        channels = (int)std::visit([](int arg) {return arg;}, wavDecodedData["channels"]);
+    std::cout << channels << std::endl;
+
+    bool mono;
+    if (std::holds_alternative<bool>(wavDecodedData["mono"]))
+        mono = (bool)std::visit([](bool arg) {return arg;}, wavDecodedData["mono"]);
+    std::cout << mono << std::endl;
+
+    bool stereo;
+    if (std::holds_alternative<bool>(wavDecodedData["stereo"]))
+        stereo = (bool)std::visit([](bool arg) {return arg;}, wavDecodedData["stereo"]);
+    std::cout << stereo << std::endl;
+
+    double lengthInSeconds;
+    if (std::holds_alternative<double>(wavDecodedData["length_in_seconds"]))
+        lengthInSeconds = (double)std::visit([](double arg) {return arg;}, wavDecodedData["length_in_seconds"]);
+    std::cout << lengthInSeconds << std::endl;
+
+    int numSamplesPerChannel;
+    if (std::holds_alternative<int>(wavDecodedData["samples_per_channel"]))
+        numSamplesPerChannel = (int)std::visit([](int arg) {return arg;}, wavDecodedData["samples_per_channel"]);
+    std::cout << numSamplesPerChannel << std::endl;
 
     // struct {
     //     void operator()(int a) { std::cout << "int!\n" << a; }
@@ -122,12 +157,4 @@ TEST(AudioFileDecoding, DecodeWav) {
     //     else if (std::holds_alternative<std::string>(arg))
     //         auto v_str = std::get<std::string>(arg);
     //     }, wavDecodedData["sample_rate"]);
-
-    int sampleRate;
-    if (std::holds_alternative<int>(wavDecodedData["sample_rate"]))
-        sampleRate = (int)std::visit([](int arg) {return arg;}, wavDecodedData["sample_rate"]);
-        // std::cout << "the variant holds an int!\n";
-    std::cout << sampleRate << std::endl;
-
-    // std::visit(visitor, wavDecodedData["sample_rate"]);
 }

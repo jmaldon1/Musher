@@ -17,3 +17,6 @@ def test_load_audio_file():
 
 # def test_decode_with_func_call():
     # musher.AcceptDecode("hello", musher.DecodeWav)
+
+def test_decode_wav():
+    musher.decode_wav("hello")

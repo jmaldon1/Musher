@@ -48,31 +48,6 @@ TEST(AudioFileDecoding, LoadsAudioFileTest) {
 }
 
 
-// struct
-// {
-//     auto operator()(int a)
-//     {
-//         return a;
-//         //Called if variant holds an int
-//     }
-//     auto operator()(uint16_t a)
-//     {
-//         return a;
-//         //Called if variant holds a float
-//     }
-//     auto operator()(double a)
-//     {
-//         return a;
-//         //Called if variant holds a char
-//     }
-//     auto operator()(bool a)
-//     {
-//         return a;
-//         //Called if variant holds a char
-//     }
-// } Vistor;
-
-
 // template <class ...Fs>
 // struct overload : Fs... {
 //   overload(Fs const&... fs) : Fs{fs}...
@@ -115,12 +90,12 @@ TEST(AudioFileDecoding, DecodeWav) {
     EXPECT_EQ( expectedChannels, actualChannels );
 
     bool expectedMono = true;
-    bool acutalMono;
+    bool actualMono;
     if (std::holds_alternative<bool>(wavDecodedData["mono"]))
-        acutalMono = (bool)std::visit([](bool arg) {return arg;}, wavDecodedData["mono"]);
-    // std::cout << acutalMono << std::endl;
+        actualMono = (bool)std::visit([](bool arg) {return arg;}, wavDecodedData["mono"]);
+    // std::cout << actualMono << std::endl;
 
-    EXPECT_EQ( expectedMono, acutalMono );
+    EXPECT_EQ( expectedMono, actualMono );
 
     bool expectedStereo = false;
     bool actualStereo;

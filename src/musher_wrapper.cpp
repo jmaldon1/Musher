@@ -35,21 +35,35 @@ PyObject* PrintFunctionalMessage(PyObject* self, PyObject* args)
 }
 
 
-// PyObject* DecodeWav(PyObject* self, PyObject* args)
-// {
-//     /* Arguments passed in from Python */
-//     const char* message;
+PyObject* DecodeWav(PyObject* self, PyObject* args)
+{
+    /* Arguments passed in from Python */
+    const char* message;
 
-//     /* Process arguments from Python */
-//     PyArg_ParseTuple(args, "s",
-//                     &message);
+    /* Process arguments from Python */
+    PyArg_ParseTuple(args, "s",
+                    &message);
 
-//     /* Call function */
-//     CDecodeWav(message);
+    std::vector<uint8_t> fileData;
+    const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
+    fileData = CLoadAudioFile(filePath);
 
-//     /* Return nothing */
-//     return Py_BuildValue("");
-// }
+    std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
+    std::vector< std::vector<double> > audioBuffer;
+    CDecodeWav(wavDecodedData, fileData, audioBuffer);
+
+    for (const auto & [ key, value ] : wavDecodedData) {
+        std::cout << key << std::endl;
+        PyObject* k = Py_BuildValue("s", const_cast<char *>(key.c_str()));
+        PyObject* v = variantToPyobject(value);
+    }
+
+    /* Call function */
+    // CDecodeWav(message);
+
+    /* Return nothing */
+    return Py_BuildValue("");
+}
 
 
 PyObject* LoadAudioFile(PyObject* self, PyObject* args)
@@ -158,12 +172,12 @@ static PyMethodDef cFuncs[] =
         METH_VARARGS,
         "Load audio file from path"
     },
-    // {
-    //     "DecodeWav",
-    //     DecodeWav,
-    //     METH_VARARGS,
-    //     "Decode Wav file"
-    // },
+    {
+        "decode_wav",
+        DecodeWav,
+        METH_VARARGS,
+        "Decode Wav file"
+    },
     /* last one must be empty */
     {NULL, NULL, 0, NULL}
 };

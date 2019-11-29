@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <variant>
 
 
 std::string uint8_vector_to_hex_string(const std::vector<uint8_t>& v);

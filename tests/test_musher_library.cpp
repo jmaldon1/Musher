@@ -20,18 +20,6 @@ TEST(PrintFunctionalMessage, PrintsMessage) {
 	EXPECT_EQ(0, 0);
 }
 
-// TEST(Decode, DecodeTest) {
-// 	// LoadAudioFile("/Users/JJMALD1/Desktop/Musher/tests/audio_files/WAV_1MG.wav");
-
-// 	// LoadAudioFile("./test/audio_files/WAV_1MG.wav");
-// 	// getFileAbsPath("./test/audio_files/WAV_1MG.wav");
-
-// 	// DecodeWav("Hello");
-
-// 	AcceptDecode("Hello", DecodeWav);
-
-// 	EXPECT_EQ(0, 0);
-// }
 
 TEST(AudioFileDecoding, AudioFileNotFoundTest) {
 	/* This tests that the expected exception is thrown */
@@ -49,6 +37,7 @@ TEST(AudioFileDecoding, AudioFileNotFoundTest) {
     }, std::runtime_error );
 }
 
+
 TEST(AudioFileDecoding, LoadsAudioFileTest) {
     std::vector<uint8_t> fileData;
     std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
@@ -58,13 +47,87 @@ TEST(AudioFileDecoding, LoadsAudioFileTest) {
     EXPECT_EQ( FileDataHexCantinaBand3sec, fileDataHex );
 }
 
+
+// struct
+// {
+//     auto operator()(int a)
+//     {
+//         return a;
+//         //Called if variant holds an int
+//     }
+//     auto operator()(uint16_t a)
+//     {
+//         return a;
+//         //Called if variant holds a float
+//     }
+//     auto operator()(double a)
+//     {
+//         return a;
+//         //Called if variant holds a char
+//     }
+//     auto operator()(bool a)
+//     {
+//         return a;
+//         //Called if variant holds a char
+//     }
+// } Vistor;
+
+
+template <class ...Fs>
+struct overload : Fs... {
+  overload(Fs const&... fs) : Fs{fs}...
+  {}
+
+  using Fs::operator()...;
+};
+
 TEST(AudioFileDecoding, DecodeWav) {
     std::vector<uint8_t> fileData;
-    std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
+    const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
     fileData = CLoadAudioFile(filePath);
 
-    std::unordered_map<std::string, std::variant<int, uint32_t, double, bool>> um;
-    // std::vector<std::string> um;
-    // std::vector<uint8_t> fileData;
-    CDecodeWav(um.begin(), fileData);
+    std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
+    std::vector< std::vector<double> > audioBuffer;
+    CDecodeWav(wavDecodedData, fileData, audioBuffer);
+
+    // struct {
+    //     void operator()(int a) { std::cout << "int!\n" << a; }
+    //     void operator()(double) { std::cout << "double!\n"; }
+    //     void operator()(uint32_t) { std::cout << "uint32!\n"; }
+    //     void operator()(bool) { std::cout << "bool!\n"; }
+    //   } visitor;
+
+
+    // int k2 = (int)std::visit([](int arg) {return arg;}, wavDecodedData["sample_rate"]);
+    // int k3 = (int)k2;
+    // auto k2 = std::visit(
+    //     overload(
+    //       [](const int a){return a;},
+    //       // [](const uint32_t b){return b;}
+    //       // [](const double a){return a;},
+    //       // [](const bool a){return a;}
+    //     ),
+    //     wavDecodedData["sample_rate"]
+    // );
+
+    // std::visit([](auto arg) {
+    //     if (std::holds_alternative<int>(arg))
+    //         auto v_int = std::get<int>(arg);
+    //     else if (std::holds_alternative<char>(arg))
+    //         auto v_chart = std::get<char>(arg);
+    //     else if (std::holds_alternative<double>(arg))
+    //         auto v_double = std::get<double>(arg);
+    //     else if (std::holds_alternative<bool>(arg))
+    //         auto v_bool = std::get<bool>(arg);
+    //     else if (std::holds_alternative<std::string>(arg))
+    //         auto v_str = std::get<std::string>(arg);
+    //     }, wavDecodedData["sample_rate"]);
+
+    int sampleRate;
+    if (std::holds_alternative<int>(wavDecodedData["sample_rate"]))
+        sampleRate = (int)std::visit([](int arg) {return arg;}, wavDecodedData["sample_rate"]);
+        // std::cout << "the variant holds an int!\n";
+    std::cout << sampleRate << std::endl;
+
+    // std::visit(visitor, wavDecodedData["sample_rate"]);
 }

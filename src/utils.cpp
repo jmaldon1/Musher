@@ -3,7 +3,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <type_traits>
 
+#include "utils.h"
 
 /**
  * @brief Convert uint8_t vector to hex string
@@ -24,7 +26,13 @@ std::string uint8_vector_to_hex_string(const std::vector<uint8_t>& v) {
     return ss.str();
 }
 
-
+/**
+ * @brief Get string between two single quotes
+ * @details Get string between two single quotes
+ * 
+ * @param s String that contains 2 single quotes
+ * @return string between single quotes
+ */
 std::string get_str_between_two_squotes(const std::string &s)
 {
     std::string squote = "'";
@@ -37,4 +45,41 @@ std::string get_str_between_two_squotes(const std::string &s)
 
     // Return the substring between single quotes
     return s.substr(pos, len);
+}
+
+
+int16_t twoBytesToInt(const std::vector<uint8_t>& source, const int startIndex)
+{
+    int16_t result;
+    
+    if (!is_big_endian())
+        result = (source[startIndex + 1] << 8) | source[startIndex];
+    else
+        result = (source[startIndex] << 8) | source[startIndex + 1];
+    
+    return result;
+}
+
+
+int32_t fourBytesToInt(const std::vector<uint8_t>& source, const int startIndex)
+{
+    int32_t result;
+    
+    if (!is_big_endian())
+        result = (source[startIndex + 3] << 24) | (source[startIndex + 2] << 16) | (source[startIndex + 1] << 8) | source[startIndex];
+    else
+        result = (source[startIndex] << 24) | (source[startIndex + 1] << 16) | (source[startIndex + 2] << 8) | source[startIndex + 3];
+    
+    return result;
+}
+
+
+bool is_big_endian(void)
+{
+    union {
+        uint32_t i;
+        char c[4];
+    } bint = {0x01020304};
+
+    return bint.c[0] == 1; 
 }

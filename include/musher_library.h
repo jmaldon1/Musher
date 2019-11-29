@@ -7,6 +7,7 @@
 #include <variant>
 
 #include "musher_core.h"
+#include "utils.h"
 
 
 void MUSHER_API CPrintFunctionalMessage(const char* message);
@@ -16,8 +17,8 @@ bool MUSHER_API CAcceptDecode(const char* message, bool (*decodef)(const char*))
 // template <class UnorderedMapIterator>
 // void MUSHER_API CDecodeAudio(UnorderedMapIterator first, const std::string& filePath=std::string(), const std::vector<uint8_t>& fileData=std::vector<uint8_t>());
 
-template MUSHER_API <class UnorderedMapIterator>
-void MUSHER_API CDecodeWav(UnorderedMapIterator first, const std::vector<uint8_t>& fileData)
+template MUSHER_API <class UnorderedMap, class AudioBufferType>
+void MUSHER_API CDecodeWav(UnorderedMap wavDecodedData, const std::vector<uint8_t>& fileData, std::vector< std::vector<AudioBufferType> > samples)
 {
 	// -----------------------------------------------------------
     // HEADER CHUNK
@@ -57,9 +58,88 @@ void MUSHER_API CDecodeWav(UnorderedMapIterator first, const std::vector<uint8_t
     int16_t audioFormat = twoBytesToInt (fileData, f + 8);
     int16_t numChannels = twoBytesToInt (fileData, f + 10);
     uint32_t sampleRate = (uint32_t) fourBytesToInt (fileData, f + 12);
+    wavDecodedData["sample_rate"] = sampleRate;
     int32_t numBytesPerSecond = fourBytesToInt (fileData, f + 16);
     int16_t numBytesPerBlock = twoBytesToInt (fileData, f + 20);
     int bitDepth = (int) twoBytesToInt (fileData, f + 22);
+    wavDecodedData["bit_depth"] = bitDepth;
+
+    int numBytesPerSample = bitDepth / 8;
+    
+    // check that the audio format is PCM
+    if (audioFormat != 1)
+    {
+        std::string err_message = "This is a compressed .WAV file and this library does not support decoding them at present";
+        throw std::runtime_error(err_message);
+    }
+    
+    // check the number of channels is mono or stereo
+    if (numChannels < 1 ||numChannels > 2)
+    {
+        std::string err_message = "This WAV file seems to be neither mono nor stereo (perhaps multi-track, or corrupted?";
+        throw std::runtime_error(err_message);
+    }
+    
+    // check header data is consistent
+    if ((numBytesPerSecond != (numChannels * sampleRate * bitDepth) / 8) || (numBytesPerBlock != (numChannels * numBytesPerSample)))
+    {
+        std::string err_message = "The header data in this WAV file seems to be inconsistent";
+        throw std::runtime_error(err_message);
+    }
+    
+    // check bit depth is either 8, 16 or 24 bit
+    if (bitDepth != 8 && bitDepth != 16 && bitDepth != 24)
+    {
+        std::string err_message = "This file has a bit depth that is not 8, 16 or 24 bits";
+        throw std::runtime_error(err_message);
+    }
+
+    // -----------------------------------------------------------
+    // DATA CHUNK
+    int d = dataChunkIndex;
+    std::string dataChunkID (fileData.begin() + d, fileData.begin() + d + 4);
+    int32_t dataChunkSize = fourBytesToInt (fileData, d + 4);
+    
+    int numSamples = dataChunkSize / (numChannels * bitDepth / 8);
+    int samplesStartIndex = dataChunkIndex + 8;
+
+    samples.resize (numChannels);
+
+    for (int i = 0; i < numSamples; i++)
+    {
+        for (int channel = 0; channel < numChannels; channel++)
+        {
+            int sampleIndex = samplesStartIndex + (numBytesPerBlock * i) + channel * numBytesPerSample;
+            
+            if (bitDepth == 8)
+            {
+                AudioBufferType sample = singleByteToSample<AudioBufferType>(fileData[sampleIndex]);
+                samples[channel].push_back (sample);
+            }
+            else if (bitDepth == 16)
+            {
+                int16_t sampleAsInt = twoBytesToInt(fileData, sampleIndex);
+                AudioBufferType sample = sixteenBitIntToSample<AudioBufferType>(sampleAsInt);
+                samples[channel].push_back (sample);
+            }
+            else if (bitDepth == 24)
+            {
+                int32_t sampleAsInt = 0;
+                sampleAsInt = (fileData[sampleIndex + 2] << 16) | (fileData[sampleIndex + 1] << 8) | fileData[sampleIndex];
+                
+                if (sampleAsInt & 0x800000) //  if the 24th bit is set, this is a negative number in 24-bit world
+                    sampleAsInt = sampleAsInt | ~0xFFFFFF; // so make sure sign is extended to the 32 bit float
+
+                AudioBufferType sample = (AudioBufferType)sampleAsInt / (AudioBufferType)8388608.;
+                samples[channel].push_back (sample);
+            }
+            else
+            {
+                std::string err_message = "This file has a bit depth that is not 8, 16 or 24 bits";
+        		throw std::runtime_error(err_message);
+            }
+        }
+    }
 
 }
 

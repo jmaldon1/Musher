@@ -146,6 +146,8 @@ void MUSHER_API CDecodeWav(UnorderedMap& wavDecodedData, const std::vector<uint8
     if (samples.size() > 0)
         numSamplesPerChannel = static_cast<int>(samples[0].size());
     double lengthInSeconds = static_cast<double>(numSamplesPerChannel) / static_cast<double>(sampleRate);
+
+    /* Add the decoded info into the unordered map */
     wavDecodedData["sample_rate"] = sampleRate;
     wavDecodedData["bit_depth"] = bitDepth;
     wavDecodedData["channels"] = numChannelsInt;

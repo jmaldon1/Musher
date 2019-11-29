@@ -12,10 +12,10 @@
 
 
 /* Unordered map of python decode functions mapped to their C++ function equivalent */
-typedef bool (*DecodeFunction)(const char*); // function pointer type
-std::unordered_map<std::string, DecodeFunction> uMapDecodeFuncs({
-    {"DecodeWav", &CDecodeWav}
-});
+// typedef bool (*DecodeFunction)(const char*); // function pointer type
+// std::unordered_map<std::string, DecodeFunction> uMapDecodeFuncs({
+//     {"DecodeWav", &CDecodeWav}
+// });
 
 
 PyObject* PrintFunctionalMessage(PyObject* self, PyObject* args)
@@ -35,21 +35,21 @@ PyObject* PrintFunctionalMessage(PyObject* self, PyObject* args)
 }
 
 
-PyObject* DecodeWav(PyObject* self, PyObject* args)
-{
-    /* Arguments passed in from Python */
-    const char* message;
+// PyObject* DecodeWav(PyObject* self, PyObject* args)
+// {
+//     /* Arguments passed in from Python */
+//     const char* message;
 
-    /* Process arguments from Python */
-    PyArg_ParseTuple(args, "s",
-                    &message);
+//     /* Process arguments from Python */
+//     PyArg_ParseTuple(args, "s",
+//                     &message);
 
-    /* Call function */
-    CDecodeWav(message);
+//     /* Call function */
+//     CDecodeWav(message);
 
-    /* Return nothing */
-    return Py_BuildValue("");
-}
+//     /* Return nothing */
+//     return Py_BuildValue("");
+// }
 
 
 PyObject* LoadAudioFile(PyObject* self, PyObject* args)
@@ -158,12 +158,12 @@ static PyMethodDef cFuncs[] =
         METH_VARARGS,
         "Load audio file from path"
     },
-    {
-        "DecodeWav",
-        DecodeWav,
-        METH_VARARGS,
-        "Decode Wav file"
-    },
+    // {
+    //     "DecodeWav",
+    //     DecodeWav,
+    //     METH_VARARGS,
+    //     "Decode Wav file"
+    // },
     /* last one must be empty */
     {NULL, NULL, 0, NULL}
 };

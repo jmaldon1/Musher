@@ -90,40 +90,63 @@ TEST(AudioFileDecoding, DecodeWav) {
     std::vector< std::vector<double> > audioBuffer;
     CDecodeWav(wavDecodedData, fileData, audioBuffer);
 
-    uint32_t sampleRate;
+    uint32_t expectedSampleRate = 22050;
+    uint32_t actualSampleRate;
     if (std::holds_alternative<uint32_t>(wavDecodedData["sample_rate"]))
-        sampleRate = (uint32_t)std::visit([](uint32_t arg) {return arg;}, wavDecodedData["sample_rate"]);
-    std::cout << sampleRate << std::endl;
+        actualSampleRate = (uint32_t)std::visit([](uint32_t arg) {return arg;}, wavDecodedData["sample_rate"]);
+    // std::cout << actualSampleRate << std::endl;
 
-    int bitDepth;
+    EXPECT_EQ( expectedSampleRate, actualSampleRate );
+
+    int expectedBitDepth = 16;
+    int actualBitDepth;
     if (std::holds_alternative<int>(wavDecodedData["bit_depth"]))
-        bitDepth = (int)std::visit([](int arg) {return arg;}, wavDecodedData["bit_depth"]);
-    std::cout << bitDepth << std::endl;
+        actualBitDepth = (int)std::visit([](int arg) {return arg;}, wavDecodedData["bit_depth"]);
+    // std::cout << actualBitDepth << std::endl;
 
-    int channels;
+    EXPECT_EQ( expectedBitDepth, actualBitDepth );
+
+    int expectedChannels = 1;
+    int actualChannels;
     if (std::holds_alternative<int>(wavDecodedData["channels"]))
-        channels = (int)std::visit([](int arg) {return arg;}, wavDecodedData["channels"]);
-    std::cout << channels << std::endl;
+        actualChannels = (int)std::visit([](int arg) {return arg;}, wavDecodedData["channels"]);
+    // std::cout << actualChannels << std::endl;
 
-    bool mono;
+    EXPECT_EQ( expectedChannels, actualChannels );
+
+    bool expectedMono = true;
+    bool acutalMono;
     if (std::holds_alternative<bool>(wavDecodedData["mono"]))
-        mono = (bool)std::visit([](bool arg) {return arg;}, wavDecodedData["mono"]);
-    std::cout << mono << std::endl;
+        acutalMono = (bool)std::visit([](bool arg) {return arg;}, wavDecodedData["mono"]);
+    // std::cout << acutalMono << std::endl;
 
-    bool stereo;
+    EXPECT_EQ( expectedMono, acutalMono );
+
+    bool expectedStereo = false;
+    bool actualStereo;
     if (std::holds_alternative<bool>(wavDecodedData["stereo"]))
-        stereo = (bool)std::visit([](bool arg) {return arg;}, wavDecodedData["stereo"]);
-    std::cout << stereo << std::endl;
+        actualStereo = (bool)std::visit([](bool arg) {return arg;}, wavDecodedData["stereo"]);
+    // std::cout << actualStereo << std::endl;
 
-    double lengthInSeconds;
+    EXPECT_EQ( expectedStereo, actualStereo );
+
+    double expectedLengthInSeconds = 3.0;
+    double actualLengthInSeconds;
     if (std::holds_alternative<double>(wavDecodedData["length_in_seconds"]))
-        lengthInSeconds = (double)std::visit([](double arg) {return arg;}, wavDecodedData["length_in_seconds"]);
-    std::cout << lengthInSeconds << std::endl;
+        actualLengthInSeconds = (double)std::visit([](double arg) {return arg;}, wavDecodedData["length_in_seconds"]);
+    // std::cout << actualLengthInSeconds << std::endl;
 
-    int numSamplesPerChannel;
+    EXPECT_EQ( expectedLengthInSeconds, actualLengthInSeconds );
+
+    int expectedNumSamplesPerChannel = 66150;
+    int actualNumSamplesPerChannel;
     if (std::holds_alternative<int>(wavDecodedData["samples_per_channel"]))
-        numSamplesPerChannel = (int)std::visit([](int arg) {return arg;}, wavDecodedData["samples_per_channel"]);
-    std::cout << numSamplesPerChannel << std::endl;
+        actualNumSamplesPerChannel = (int)std::visit([](int arg) {return arg;}, wavDecodedData["samples_per_channel"]);
+    // std::cout << actualNumSamplesPerChannel << std::endl;
+
+    EXPECT_EQ( expectedNumSamplesPerChannel, actualNumSamplesPerChannel );
+
+
 
     // struct {
     //     void operator()(int a) { std::cout << "int!\n" << a; }
@@ -135,10 +158,11 @@ TEST(AudioFileDecoding, DecodeWav) {
 
     // int k2 = (int)std::visit([](int arg) {return arg;}, wavDecodedData["sample_rate"]);
     // int k3 = (int)k2;
-    // auto k2 = std::visit(
+    // std::variant<int, uint32_t, double, bool> my_var;
+    // std::variant<int, uint32_t, double, bool> k2 = std::visit(
     //     overload(
     //       [](const int a){return a;},
-    //       // [](const uint32_t b){return b;}
+    //       [](const uint32_t b){return b;}
     //       // [](const double a){return a;},
     //       // [](const bool a){return a;}
     //     ),

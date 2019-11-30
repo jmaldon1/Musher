@@ -11,6 +11,9 @@
 #include "python_utils.h"
 
 
+using namespace Musher;
+
+
 /* Unordered map of python decode functions mapped to their C++ function equivalent */
 // typedef bool (*DecodeFunction)(const char*); // function pointer type
 // std::unordered_map<std::string, DecodeFunction> uMapDecodeFuncs({

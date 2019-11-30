@@ -44,25 +44,39 @@ PyObject* DecodeWav(PyObject* self, PyObject* args)
     PyArg_ParseTuple(args, "s",
                     &message);
 
-    std::vector<uint8_t> fileData;
-    const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
-    fileData = CLoadAudioFile(filePath);
+    PyObject *wavDecodedDataDict = PyDict_New();
+    try{
+        std::vector<uint8_t> fileData;
+        const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
+        fileData = CLoadAudioFile(filePath);
 
-    std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
-    std::vector< std::vector<double> > audioBuffer;
-    CDecodeWav(wavDecodedData, fileData, audioBuffer);
+        std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
+        std::vector< std::vector<double> > audioBuffer;
+        CDecodeWav(wavDecodedData, fileData, audioBuffer);
 
-    for (const auto & [ key, value ] : wavDecodedData) {
-        std::cout << key << std::endl;
-        PyObject* k = Py_BuildValue("s", const_cast<char *>(key.c_str()));
-        PyObject* v = variantToPyobject(value);
+        for (const auto & [ key, value ] : wavDecodedData) {
+            // TODO: Possibly fix this to not have to use const_cast
+            PyObject* k = Py_BuildValue("s", const_cast<char *>(key.c_str()));
+            PyObject* v = variantToPyobject(value);
+            PyDict_SetItem(wavDecodedDataDict, k, v);
+        }
+    }
+    catch( const std::exception& e )
+    { /* Catch all standard exceptions */
+        PyErr_SetString(PyExc_Exception, e.what());
+        return NULL;
+    }
+    catch ( ... ) 
+    { /* Catch all other exceptions */
+        PyErr_SetString(PyExc_Exception, "Unknown error occured.");
+        return NULL;
     }
 
     /* Call function */
     // CDecodeWav(message);
 
     /* Return nothing */
-    return Py_BuildValue("");
+    return wavDecodedDataDict;
 }
 
 

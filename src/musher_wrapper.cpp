@@ -39,10 +39,14 @@ PyObject* DecodeWav(PyObject* self, PyObject* args)
 {
     /* Arguments passed in from Python */
     const char* message;
+    PyObject* listObj;
 
     /* Process arguments from Python */
-    PyArg_ParseTuple(args, "s",
-                    &message);
+    if (!PyArg_ParseTuple(args, "sO!",
+                    &message,
+                    &PyList_Type,
+                    &listObj))
+        return NULL;
 
     PyObject *wavDecodedDataDict = PyDict_New();
     try{
@@ -89,7 +93,8 @@ PyObject* LoadAudioFile(PyObject* self, PyObject* args)
     const char* filePath;
 
     /* Process arguments from Python */
-    PyArg_ParseTuple(args, "s", &filePath);
+    if (!PyArg_ParseTuple(args, "s", &filePath))
+        return NULL;
 
     /* 
     Must convert all c++ exceptions to python exceptions to prevent seg faults

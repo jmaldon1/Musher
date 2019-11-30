@@ -133,7 +133,7 @@ void MUSHER_API CDecodeWav(UnorderedMap& wavDecodedData, const std::vector<uint8
             }
             else
             {
-                std::string err_message = "This file has a bit depth that is not 8, 16 or 24 bits";
+                std::string err_message = "This file has a bit depth that is not 8, 16 or 24 bits, not sure how you got past the first error check.";
         		throw std::runtime_error(err_message);
             }
         }

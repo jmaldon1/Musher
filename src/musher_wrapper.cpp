@@ -56,7 +56,10 @@ PyObject* DecodeWav(PyObject* self, PyObject* args)
 
         for (const auto & [ key, value ] : wavDecodedData) {
             // TODO: Possibly fix this to not have to use const_cast
-            PyObject* k = Py_BuildValue("s", const_cast<char *>(key.c_str()));
+            char* key_copy = new char[key.length()]();;
+            strcpy(key_copy, key.c_str());
+            // const_cast<char *>(key.c_str())
+            PyObject* k = Py_BuildValue("s", key_copy);
             PyObject* v = variantToPyobject(value);
             PyDict_SetItem(wavDecodedDataDict, k, v);
         }

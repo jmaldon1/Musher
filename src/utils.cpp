@@ -7,7 +7,7 @@
 
 #include "utils.h"
 
-namespace Musher
+namespace musher
 {
     /**
      * @brief Convert uint8_t vector to hex string

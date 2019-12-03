@@ -30,9 +30,9 @@ if(APPLE)
 endif()
 
 # use g++-8 for gnu 
-# if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-# 	set(CMAKE_CXX_COMPILER "/usr/bin/g++-8")
-# endif()
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+	set(CMAKE_CXX_COMPILER "/usr/bin/g++-8")
+endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -46,22 +46,26 @@ SET(MUSHER_LIBRARY_INLUDES
 	"${MUSHER_INCLUDE_DIR}/utils.h"
 	)
 
-set(MUSHER_LIBRARY_SOURCES
-    "${SOURCE_DIR}/musher_library.cpp"
+# set(MUSHER_LIBRARY_SOURCES
+#     "${SOURCE_DIR}/musher_library.cpp"
+#     "${SOURCE_DIR}/utils.cpp"
+#     )
+
+# set(MUSHER_WRAPPER_INCLUDES
+# 	"${MUSHER_INCLUDE_DIR}/python_utils.h"
+# 	)
+
+# set(MUSHER_WRAPPER_SOURCES
+#     "${SOURCE_DIR}/musher_wrapper.cpp"
+#     "${SOURCE_DIR}/python_utils.cpp"
+# 	)
+	
+set(MUSHER_SOURCES
     "${SOURCE_DIR}/utils.cpp"
-    )
-
-set(MUSHER_WRAPPER_INCLUDES
-	"${MUSHER_INCLUDE_DIR}/python_utils.h"
-	)
-
-set(MUSHER_WRAPPER_SOURCES
+	"${SOURCE_DIR}/python_utils.cpp"
+    "${SOURCE_DIR}/musher_library.cpp"
     "${SOURCE_DIR}/musher_wrapper.cpp"
-    "${SOURCE_DIR}/python_utils.cpp"
-    )
-
-
-set(MUSHER_LIB "musher_library")
+)
 
 # ################################
 # # Building
@@ -69,33 +73,39 @@ set(MUSHER_LIB "musher_library")
 # musher_library needs to be STATIC (link during build time) for it to link with other libraries correctly
 # If not set to STATIC, python will have a runtime linking error when pip installing then importing musher
 # Atleast for MacOSX and Windows
-if (APPLE OR WIN32)
-	set(LIB_TYPE STATIC)
-else()
-	set(LIB_TYPE SHARED)
-endif()
+# if (APPLE OR WIN32)
+# 	set(LIB_TYPE STATIC)
+# else()
+# 	set(LIB_TYPE SHARED)
+# endif()
 
-musher_add_library(${MUSHER_LIB} ${LIB_TYPE} ${MUSHER_LIBRARY_SOURCES} ${MUSHER_LIBRARY_INLUDES})
-target_include_directories(${MUSHER_LIB} PRIVATE ${MUSHER_INCLUDE_DIR})
+# musher_add_library(${MUSHER_LIB} ${LIB_TYPE} ${MUSHER_LIBRARY_SOURCES} ${MUSHER_LIBRARY_INLUDES})
+# target_include_directories(${MUSHER_LIB} PRIVATE ${MUSHER_INCLUDE_DIR})
 
 # fix GNU filesystem c++17 linking error
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-	target_link_libraries(${MUSHER_LIB} PRIVATE stdc++fs)
-endif()
+# if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+	# target_link_libraries(${MUSHER_LIB} PRIVATE stdc++fs)
+# endif()
 
 # windows dll export
-add_definitions(-DMUSHER_EXPORT)
+# add_definitions(-DMUSHER_EXPORT)
 
 
 if(BUILD_PYTHON_MODULE)
 	# Python module
 	# Call build function within buildTools
-	musher_add_module(musher MODULE ${MUSHER_WRAPPER_SOURCES} ${MUSHER_LIBRARY_INLUDES} ${MUSHER_WRAPPER_INCLUDES})
+	# musher_add_module(musher MODULE ${MUSHER_WRAPPER_SOURCES} ${MUSHER_LIBRARY_INLUDES} ${MUSHER_WRAPPER_INCLUDES})
+	musher_add_module(musher MODULE ${MUSHER_SOURCES})
 	# Allow module to find includes
 	target_include_directories(musher PRIVATE ${MUSHER_INCLUDE_DIR})
 
 	# Link library to python module
-	target_link_libraries(musher PRIVATE ${MUSHER_LIB})
+	# target_link_libraries(musher PRIVATE ${MUSHER_LIB})
+
+	# fix GNU filesystem c++17 linking error
+	if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+		target_link_libraries(musher PRIVATE stdc++fs)
+	endif()
 
 endif()
 

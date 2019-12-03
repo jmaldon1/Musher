@@ -4,12 +4,13 @@
 #include <variant>
 #include <unordered_map>
 #include <typeinfo>
+#include <iostream>
 
 std::unordered_map<std::string, std::string> uMapTypeList({
     {typeid(int).name(),         "i"},
     {typeid(uint32_t).name(),    "I"},
-    {typeid(uint16_t).name(),    "I"},
-    {typeid(uint8_t).name(),     "I"},
+    {typeid(uint16_t).name(),    "H"},
+    {typeid(uint8_t).name(),     "B"},
     {typeid(double).name(),      "d"},
     {typeid(float).name(),       "f"},
     {typeid(std::string).name(), "s"},
@@ -71,7 +72,7 @@ PyObject* basicTypeToPyobject(const std::string &var)
 }
 
 template<class T>
-T pyObjectToBasicType(PyObject* &pyObj)
+T pyObjectToBasicType(PyObject* pyObj)
 {
     T basicType;
     /* Get type of template */
@@ -86,11 +87,10 @@ T pyObjectToBasicType(PyObject* &pyObj)
         throw std::runtime_error(err_message);
     }
 
-    char* typeStr = new char[got->second.length()]();
-    strcpy(typeStr, got->second.c_str());
+    std::string typeStr = got->second;
 
-    /* Parse PyObject into corresponding c++ type */
-    if(!PyArg_Parse(pyObj, typeStr, &basicType))
+    // /* Parse PyObject into corresponding c++ type */
+    if(!PyArg_Parse(pyObj, typeStr.c_str(), &basicType))
     {
         PyTypeObject* type = pyObj->ob_type;
         const char* p = type->tp_name;
@@ -127,7 +127,7 @@ PyObject* variantToPyobject(const std::variant<types...> &var)
     PyObject* basicPyType;
     std::visit(
       overload(
-        [&basicPyType](int arg) { basicPyType = basicTypeToPyobject<int>(arg); },
+        [&basicPyType](int arg) { basicPyType = basicTypeToPyobject(arg); },
         [&basicPyType](uint32_t arg) { basicPyType = basicTypeToPyobject(arg); },
         [&basicPyType](uint16_t arg) { basicPyType = basicTypeToPyobject(arg); },
         [&basicPyType](uint8_t arg) { basicPyType = basicTypeToPyobject(arg); },
@@ -144,6 +144,7 @@ PyObject* variantToPyobject(const std::variant<types...> &var)
       ),
       var
     );
+    
     return basicPyType;
 }
 

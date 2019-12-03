@@ -64,10 +64,10 @@ namespace musher
 	// }
 
 
-	bool CAcceptDecode(const char* message, bool (*decodef)(const char*))
-	{
-		// *decodef("hello")
-		std::cout << "Hello from Accept Decode!" << std::endl;
-		return decodef(message);
-	}
+	// bool CAcceptDecode(const char* message, bool (*decodef)(const char*))
+	// {
+	// 	// *decodef("hello")
+	// 	std::cout << "Hello from Accept Decode!" << std::endl;
+	// 	return decodef(message);
+	// }
 }

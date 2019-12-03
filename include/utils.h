@@ -5,7 +5,7 @@
 #include <vector>
 #include <variant>
 
-namespace Musher
+namespace musher
 {
     std::string uint8_vector_to_hex_string(const std::vector<uint8_t>& v);
     std::string get_str_between_two_squotes(const std::string &s);

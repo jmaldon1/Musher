@@ -11,7 +11,7 @@
 #include "python_utils.h"
 
 
-using namespace Musher;
+using namespace musher;
 
 
 /* Unordered map of python decode functions mapped to their C++ function equivalent */
@@ -131,8 +131,8 @@ PyObject* DecodeWav(PyObject* self, PyObject* args)
         return NULL;
 
     PyObject* wavDecodedDataDict = PyDict_New();
-    try{
-
+    try
+    {
         std::vector<uint8_t> fileData;
         fileData = listToVector<uint8_t>(listObj);
 
@@ -140,7 +140,8 @@ PyObject* DecodeWav(PyObject* self, PyObject* args)
         std::vector< std::vector<double> > audioBuffer;
         CDecodeWav(wavDecodedData, fileData, audioBuffer);
 
-        for (const auto & [ key, value ] : wavDecodedData) {
+        for (const auto & [ key, value ] : wavDecodedData)
+        {
             PyObject* k = basicTypeToPyobject(key);
             PyObject* v = variantToPyobject(value);
             PyDict_SetItem(wavDecodedDataDict, k, v);

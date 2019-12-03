@@ -16,7 +16,7 @@ namespace musher
 
     std::vector<uint8_t> MUSHER_API CLoadAudioFile(const std::string& filePath);
 
-    bool MUSHER_API CAcceptDecode(const char* message, bool (*decodef)(const char*));
+    // bool MUSHER_API CAcceptDecode(const char* message, bool (*decodef)(const char*));
 
     template <template <typename ...> class Map, typename K, typename V, typename AudioBufferType>
     void MUSHER_API CDecodeWav(Map<K, V>& wavDecodedData, const std::vector<uint8_t>& fileData, std::vector<std::vector<AudioBufferType>> samples)
@@ -165,12 +165,12 @@ namespace musher
         wavDecodedData["length_in_seconds"] = lengthInSeconds;
     }
 
-    bool CDecodeAudio(const char* message, bool (*decodef)(const char*))
-    {
-        // *decodef("hello")
-        std::cout << "Hello from Accept Decode!" << std::endl;
-        return decodef(message);
-    }
+    // bool CDecodeAudio(const char* message, bool (*decodef)(const char*))
+    // {
+    //     // *decodef("hello")
+    //     std::cout << "Hello from Accept Decode!" << std::endl;
+    //     return decodef(message);
+    // }
 }
 
 #endif /* __MUSHER_LIBRARY_H__ */

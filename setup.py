@@ -48,13 +48,14 @@ class BuildCppTests(distutils.cmd.Command):
         pass
 
     def run(self):
-        if sysconfig.get_config_var('CXX') == "g++":  # Check if using g++ to compile
-            # Check if user has g++ 8, if they do, use it to compile
-            if os.path.exists("/usr/bin/g++-8"):
-                os.environ["CXX"] = "/usr/bin/g++-8"
         # extdir = os.path.abspath(
         #     os.path.dirname(self.get_ext_fullpath(ext.name)))
         cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + ROOT_DIR]
+
+        if sysconfig.get_config_var('CXX') == "g++":  # Check if using g++ to compile
+            # Check if user has g++ 8, if they do, use it to compile
+            if os.path.exists("/usr/bin/g++-8"):
+                cmake_args += ["-DCMAKE_CXX_COMPILER=/usr/bin/g++-8"]
 
         # Do not compile python module when building c++ code.
         cmake_args += ['-DBUILD_PYTHON_MODULE=OFF']
@@ -126,16 +127,16 @@ class CMakeBuild(build_ext):
             self.build_extension(ext)
 
     def build_extension(self, ext):
-        if sysconfig.get_config_var('CXX') == "g++":  # Check if using g++ to compile
-            # Check if user has g++ 8, if they do, use it to compile
-            if os.path.exists("/usr/bin/g++-8"):
-                os.environ["CXX"] = "g++-8"
-
         extdir = os.path.abspath(
             os.path.dirname(self.get_ext_fullpath(ext.name)))
         # Output library to root directory
         cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
                       '-DPYTHON_EXECUTABLE=' + sys.executable]
+
+        if sysconfig.get_config_var('CXX') == "g++":  # Check if using g++ to compile
+            # Check if user has g++ 8, if they do, use it to compile
+            if os.path.exists("/usr/bin/g++-8"):
+                cmake_args += ["-DCMAKE_CXX_COMPILER=/usr/bin/g++-8"]
 
         # Do not build c++ tests when packaging code.
         cmake_args += ['-DBUILD_TESTING=OFF']

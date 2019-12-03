@@ -10,7 +10,7 @@
 #include "musher_core.h"
 #include "utils.h"
 
-namespace Musher
+namespace musher
 {
     void MUSHER_API CPrintFunctionalMessage(const char* message);
 
@@ -18,15 +18,13 @@ namespace Musher
 
     bool MUSHER_API CAcceptDecode(const char* message, bool (*decodef)(const char*));
 
-    // std::unordered_map<std::string, std::variant<int, uint32_t, double, bool>> 
-    // template <class UnorderedMapIterator>
-    // void MUSHER_API CDecodeAudio(UnorderedMapIterator first, const std::string& filePath=std::string(), const std::vector<uint8_t>& fileData=std::vector<uint8_t>());
-
-    // template <class UnorderedMap, class AudioBufferType>
-    // void MUSHER_API CDecodeWav(UnorderedMap& wavDecodedData, const std::vector<uint8_t>& fileData, std::vector<std::vector<AudioBufferType>> samples)
     template <template <typename ...> class Map, typename K, typename V, typename AudioBufferType>
     void MUSHER_API CDecodeWav(Map<K, V>& wavDecodedData, const std::vector<uint8_t>& fileData, std::vector<std::vector<AudioBufferType>> samples)
     {
+        if (!samples.empty()){
+            std::string err_message = "Audio Buffer must be empty";
+            throw std::runtime_error(err_message);
+        }
         // -----------------------------------------------------------
         // HEADER CHUNK
         std::string headerChunkID (fileData.begin(), fileData.begin() + 4);
@@ -165,6 +163,13 @@ namespace Musher
         wavDecodedData["stereo"] = stereo;
         wavDecodedData["samples_per_channel"] = numSamplesPerChannel;
         wavDecodedData["length_in_seconds"] = lengthInSeconds;
+    }
+
+    bool CDecodeAudio(const char* message, bool (*decodef)(const char*))
+    {
+        // *decodef("hello")
+        std::cout << "Hello from Accept Decode!" << std::endl;
+        return decodef(message);
     }
 }
 

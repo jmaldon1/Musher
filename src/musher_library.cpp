@@ -11,7 +11,7 @@
 #include "musher_library.h"
 #include "utils.h"
 
-namespace Musher
+namespace musher
 {
 
 	// std::unordered_map<std::string, std::variant<int, uint32_t, double, bool>> MUSHER_API um;

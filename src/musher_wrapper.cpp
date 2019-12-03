@@ -38,58 +38,6 @@ PyObject* PrintFunctionalMessage(PyObject* self, PyObject* args)
 }
 
 
-PyObject* DecodeWav(PyObject* self, PyObject* args)
-{
-    /* Arguments passed in from Python */
-    const char* message;
-    PyObject* listObj;
-
-    /* Process arguments from Python */
-    if (!PyArg_ParseTuple(args, "sO!",
-                    &message,
-                    &PyList_Type,
-                    &listObj))
-        return NULL;
-
-    PyObject *wavDecodedDataDict = PyDict_New();
-    try{
-        std::vector<uint8_t> fileData;
-        const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
-        fileData = CLoadAudioFile(filePath);
-
-        std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
-        std::vector< std::vector<double> > audioBuffer;
-        CDecodeWav(wavDecodedData, fileData, audioBuffer);
-
-        for (const auto & [ key, value ] : wavDecodedData) {
-            // TODO: Possibly fix this to not have to use const_cast
-            char* key_copy = new char[key.length()]();;
-            strcpy(key_copy, key.c_str());
-            // const_cast<char *>(key.c_str())
-            PyObject* k = Py_BuildValue("s", key_copy);
-            PyObject* v = variantToPyobject(value);
-            PyDict_SetItem(wavDecodedDataDict, k, v);
-        }
-    }
-    catch( const std::exception& e )
-    { /* Catch all standard exceptions */
-        PyErr_SetString(PyExc_Exception, e.what());
-        return NULL;
-    }
-    catch ( ... ) 
-    { /* Catch all other exceptions */
-        PyErr_SetString(PyExc_Exception, "Unknown error occured.");
-        return NULL;
-    }
-
-    /* Call function */
-    // CDecodeWav(message);
-
-    /* Return nothing */
-    return wavDecodedDataDict;
-}
-
-
 PyObject* LoadAudioFile(PyObject* self, PyObject* args)
 {
     /* Arguments passed in from Python */
@@ -105,16 +53,7 @@ PyObject* LoadAudioFile(PyObject* self, PyObject* args)
     std::vector<uint8_t> fileData;
     try{
         fileData = CLoadAudioFile(filePath);
-
-        /* convert uint8_t vector to int vector */
-        // std::vector<int> fileDataInt;
-        // std::transform(fileData.begin(), fileData.end(), std::back_inserter(fileDataInt), unint8_t_to_int);
-
-        // for (std::vector<int>::const_iterator i = fileDataInt.begin(); i != fileDataInt.end(); ++i)
-        //     std::cout << *i << ' ';
-
-        // PyObject* pyIntList = vector_to_list_int(fileDataInt);
-        PyObject* pyIntList = vector_to_list_uint8_t(fileData);
+        PyObject* pyIntList = vectorToList(fileData);
         return pyIntList;
 
     }
@@ -180,6 +119,47 @@ PyObject* LoadAudioFile(PyObject* self, PyObject* args)
     // return Py_BuildValue("");
 }
 
+PyObject* DecodeWav(PyObject* self, PyObject* args)
+{
+    /* Arguments passed in from Python */
+    PyObject* listObj;
+
+    /* Process arguments from Python */
+    if (!PyArg_ParseTuple(args, "O!",
+                    &PyList_Type,
+                    &listObj))
+        return NULL;
+
+    PyObject* wavDecodedDataDict = PyDict_New();
+    try{
+
+        std::vector<uint8_t> fileData;
+        fileData = listToVector<uint8_t>(listObj);
+
+        std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
+        std::vector< std::vector<double> > audioBuffer;
+        CDecodeWav(wavDecodedData, fileData, audioBuffer);
+
+        for (const auto & [ key, value ] : wavDecodedData) {
+            PyObject* k = basicTypeToPyobject(key);
+            PyObject* v = variantToPyobject(value);
+            PyDict_SetItem(wavDecodedDataDict, k, v);
+        }
+    }
+    catch( const std::exception& e )
+    { /* Catch all standard exceptions */
+        PyErr_SetString(PyExc_Exception, e.what());
+        return NULL;
+    }
+    catch ( ... ) 
+    { /* Catch all other exceptions */
+        PyErr_SetString(PyExc_Exception, "Unknown error occured.");
+        return NULL;
+    }
+
+    /* Return nothing */
+    return wavDecodedDataDict;
+}
 
 /* define the functions provided by the module */
 static PyMethodDef cFuncs[] =

@@ -88,10 +88,8 @@ endmacro()
 # package_add_test(test_musher_utils "${MUSHER_TEST_SOURCE_DIR}/test_musher_utils.cpp" "${MUSHER_CPP_TEST_INCLUDES}")
 
 
-package_add_test(test_musher_library "${MUSHER_TEST_SOURCE_DIR}/test_musher_library.cpp" ${MUSHER_SOURCES} ${MUSHER_CPP_TEST_INCLUDES})
-package_add_test(test_musher_utils "${MUSHER_TEST_SOURCE_DIR}/test_musher_utils.cpp" ${MUSHER_SOURCES} ${MUSHER_CPP_TEST_INCLUDES})
-# package_add_test(test_musher_library "${MUSHER_TEST_SOURCE_DIR}/test_musher_library.cpp" ${MUSHER_SOURCES})
-# package_add_test(test_musher_utils "${MUSHER_TEST_SOURCE_DIR}/test_musher_utils.cpp" ${MUSHER_SOURCES})
+package_add_test(test_musher_library "${MUSHER_TEST_SOURCE_DIR}/test_musher_library.cpp" ${MUSHER_LIBRARY_SOURCES})
+package_add_test(test_musher_utils "${MUSHER_TEST_SOURCE_DIR}/test_musher_utils.cpp" ${MUSHER_LIBRARY_SOURCES})
 
 
 # if (MSVC)

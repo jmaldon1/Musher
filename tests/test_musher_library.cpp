@@ -12,6 +12,8 @@
 /* TEST INCLUDES */
 #include "test_load_audio_file.h"
 
+using namespace musher;
+
 
 // IndependentMethod is a test case - here, we have 2 tests for this 1 test case
 TEST(PrintFunctionalMessage, PrintsMessage) {
@@ -48,14 +50,6 @@ TEST(AudioFileDecoding, LoadsAudioFileTest) {
 }
 
 
-// template <class ...Fs>
-// struct overload : Fs... {
-//   overload(Fs const&... fs) : Fs{fs}...
-//   {}
-
-//   using Fs::operator()...;
-// };
-
 TEST(AudioFileDecoding, DecodeWav) {
     std::vector<uint8_t> fileData;
     const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
@@ -69,7 +63,6 @@ TEST(AudioFileDecoding, DecodeWav) {
     uint32_t actualSampleRate;
     if (std::holds_alternative<uint32_t>(wavDecodedData["sample_rate"]))
         actualSampleRate = (uint32_t)std::visit([](uint32_t arg) {return arg;}, wavDecodedData["sample_rate"]);
-    // std::cout << actualSampleRate << std::endl;
 
     EXPECT_EQ( expectedSampleRate, actualSampleRate );
 
@@ -77,7 +70,6 @@ TEST(AudioFileDecoding, DecodeWav) {
     int actualBitDepth;
     if (std::holds_alternative<int>(wavDecodedData["bit_depth"]))
         actualBitDepth = (int)std::visit([](int arg) {return arg;}, wavDecodedData["bit_depth"]);
-    // std::cout << actualBitDepth << std::endl;
 
     EXPECT_EQ( expectedBitDepth, actualBitDepth );
 
@@ -85,7 +77,6 @@ TEST(AudioFileDecoding, DecodeWav) {
     int actualChannels;
     if (std::holds_alternative<int>(wavDecodedData["channels"]))
         actualChannels = (int)std::visit([](int arg) {return arg;}, wavDecodedData["channels"]);
-    // std::cout << actualChannels << std::endl;
 
     EXPECT_EQ( expectedChannels, actualChannels );
 
@@ -93,7 +84,6 @@ TEST(AudioFileDecoding, DecodeWav) {
     bool actualMono;
     if (std::holds_alternative<bool>(wavDecodedData["mono"]))
         actualMono = (bool)std::visit([](bool arg) {return arg;}, wavDecodedData["mono"]);
-    // std::cout << actualMono << std::endl;
 
     EXPECT_EQ( expectedMono, actualMono );
 
@@ -101,7 +91,6 @@ TEST(AudioFileDecoding, DecodeWav) {
     bool actualStereo;
     if (std::holds_alternative<bool>(wavDecodedData["stereo"]))
         actualStereo = (bool)std::visit([](bool arg) {return arg;}, wavDecodedData["stereo"]);
-    // std::cout << actualStereo << std::endl;
 
     EXPECT_EQ( expectedStereo, actualStereo );
 
@@ -109,7 +98,6 @@ TEST(AudioFileDecoding, DecodeWav) {
     double actualLengthInSeconds;
     if (std::holds_alternative<double>(wavDecodedData["length_in_seconds"]))
         actualLengthInSeconds = (double)std::visit([](double arg) {return arg;}, wavDecodedData["length_in_seconds"]);
-    // std::cout << actualLengthInSeconds << std::endl;
 
     EXPECT_EQ( expectedLengthInSeconds, actualLengthInSeconds );
 
@@ -117,43 +105,6 @@ TEST(AudioFileDecoding, DecodeWav) {
     int actualNumSamplesPerChannel;
     if (std::holds_alternative<int>(wavDecodedData["samples_per_channel"]))
         actualNumSamplesPerChannel = (int)std::visit([](int arg) {return arg;}, wavDecodedData["samples_per_channel"]);
-    // std::cout << actualNumSamplesPerChannel << std::endl;
 
     EXPECT_EQ( expectedNumSamplesPerChannel, actualNumSamplesPerChannel );
-
-
-
-    // struct {
-    //     void operator()(int a) { std::cout << "int!\n" << a; }
-    //     void operator()(double) { std::cout << "double!\n"; }
-    //     void operator()(uint32_t) { std::cout << "uint32!\n"; }
-    //     void operator()(bool) { std::cout << "bool!\n"; }
-    //   } visitor;
-
-
-    // int k2 = (int)std::visit([](int arg) {return arg;}, wavDecodedData["sample_rate"]);
-    // int k3 = (int)k2;
-    // std::variant<int, uint32_t, double, bool> my_var;
-    // std::variant<int, uint32_t, double, bool> k2 = std::visit(
-    //     overload(
-    //       [](const int a){return a;},
-    //       [](const uint32_t b){return b;}
-    //       // [](const double a){return a;},
-    //       // [](const bool a){return a;}
-    //     ),
-    //     wavDecodedData["sample_rate"]
-    // );
-
-    // std::visit([](auto arg) {
-    //     if (std::holds_alternative<int>(arg))
-    //         auto v_int = std::get<int>(arg);
-    //     else if (std::holds_alternative<char>(arg))
-    //         auto v_chart = std::get<char>(arg);
-    //     else if (std::holds_alternative<double>(arg))
-    //         auto v_double = std::get<double>(arg);
-    //     else if (std::holds_alternative<bool>(arg))
-    //         auto v_bool = std::get<bool>(arg);
-    //     else if (std::holds_alternative<std::string>(arg))
-    //         auto v_str = std::get<std::string>(arg);
-    //     }, wavDecodedData["sample_rate"]);
 }

@@ -5,6 +5,7 @@
 
 #include "utils.h"
 
+using namespace musher;
 
 TEST(TestUtils, Uint8_tVectorToHexString) {
 	std::vector<uint8_t> actual = {1, 2, 3, 4, 5};

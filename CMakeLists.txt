@@ -40,11 +40,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/src" CACHE INTERNAL "")
 set(MUSHER_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include" CACHE INTERNAL "")
 
-SET(MUSHER_LIBRARY_INLUDES
-	"${MUSHER_INCLUDE_DIR}/musher_core.h"
-	"${MUSHER_INCLUDE_DIR}/musher_library.h"
-	"${MUSHER_INCLUDE_DIR}/utils.h"
-	)
+# SET(MUSHER_LIBRARY_INLUDES
+# 	"${MUSHER_INCLUDE_DIR}/musher_core.h"
+# 	"${MUSHER_INCLUDE_DIR}/musher_library.h"
+# 	"${MUSHER_INCLUDE_DIR}/utils.h"
+# 	)
 
 # set(MUSHER_LIBRARY_SOURCES
 #     "${SOURCE_DIR}/musher_library.cpp"
@@ -55,17 +55,15 @@ SET(MUSHER_LIBRARY_INLUDES
 # 	"${MUSHER_INCLUDE_DIR}/python_utils.h"
 # 	)
 
-# set(MUSHER_WRAPPER_SOURCES
-#     "${SOURCE_DIR}/musher_wrapper.cpp"
-#     "${SOURCE_DIR}/python_utils.cpp"
-# 	)
-	
-set(MUSHER_SOURCES
-    "${SOURCE_DIR}/utils.cpp"
-	"${SOURCE_DIR}/python_utils.cpp"
-    "${SOURCE_DIR}/musher_library.cpp"
+set(MUSHER_WRAPPER_SOURCES
     "${SOURCE_DIR}/musher_wrapper.cpp"
-)
+    "${SOURCE_DIR}/python_utils.cpp"
+	)
+	
+set(MUSHER_LIBRARY_SOURCES
+    "${SOURCE_DIR}/utils.cpp"
+    "${SOURCE_DIR}/musher_library.cpp"
+	)
 
 # ################################
 # # Building
@@ -95,7 +93,7 @@ if(BUILD_PYTHON_MODULE)
 	# Python module
 	# Call build function within buildTools
 	# musher_add_module(musher MODULE ${MUSHER_WRAPPER_SOURCES} ${MUSHER_LIBRARY_INLUDES} ${MUSHER_WRAPPER_INCLUDES})
-	musher_add_module(musher MODULE ${MUSHER_SOURCES})
+	musher_add_module(musher MODULE ${MUSHER_LIBRARY_SOURCES} ${MUSHER_WRAPPER_SOURCES})
 	# Allow module to find includes
 	target_include_directories(musher PRIVATE ${MUSHER_INCLUDE_DIR})
 

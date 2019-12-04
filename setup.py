@@ -37,12 +37,15 @@ class BuildCppTests(distutils.cmd.Command):
     description = 'Build c++ tests for musher library'
     user_options = [
         ('debug', None, 'sets config to Debug, config set to Release by default'),
-        ('run-tests', 'r', 'set to run tests after building')
+        ('run-tests', 'r', 'set to run tests after building'),
+        # https://github.com/google/googletest/blob/master/googletest/docs/advanced.md#running-a-subset-of-the-tests
+        ('filter=', 'f', 'Choose which tests to run, this will be passed to --gtest_filter'),
     ]
 
     def initialize_options(self):
         self.debug = False
         self.run_tests = False
+        self.filter = ""
 
     def finalize_options(self):
         pass
@@ -100,7 +103,12 @@ class BuildCppTests(distutils.cmd.Command):
                 print("=" * 35)
                 print(f"Running Test '{test}'")
                 print("=" * 35)
-                subprocess.check_call([test_path], cwd=ROOT_DIR)
+                test_args = [test_path]
+                if self.filter:
+                    test_args += [f"--gtest_filter={self.filter}"]
+                    subprocess.check_call(test_args, cwd=ROOT_DIR)
+                else:
+                    subprocess.check_call(test_args, cwd=ROOT_DIR)
 
 
 class CMakeExtension(Extension):

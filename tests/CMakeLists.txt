@@ -67,7 +67,7 @@ set_target_properties(gmock_main PROPERTIES FOLDER extern)
 macro(package_add_test TESTNAME)
     add_executable(${TESTNAME} ${ARGN}) 
     # target_link_libraries(${TESTNAME} gtest gmock gtest_main ${MUSHER_LIB})
-    target_link_libraries(${TESTNAME} gtest gmock gtest_main)
+    target_link_libraries(${TESTNAME} gtest gmock gtest_main wavelib)
     target_include_directories(${TESTNAME} PRIVATE ${MUSHER_INCLUDE_DIR} ${MUSHER_TEST_INCLUDE_DIR})
     add_test(NAME ${TESTNAME} COMMAND ${TESTNAME})
     set_target_properties(${TESTNAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/test_bin)
@@ -90,16 +90,3 @@ endmacro()
 
 package_add_test(test_musher_library "${MUSHER_TEST_SOURCE_DIR}/test_musher_library.cpp" ${MUSHER_LIBRARY_SOURCES})
 package_add_test(test_musher_utils "${MUSHER_TEST_SOURCE_DIR}/test_musher_utils.cpp" ${MUSHER_LIBRARY_SOURCES})
-
-
-# if (MSVC)
-#     # POSSIBLE FIX FOR MSVC
-# 	# set(CONFIGURATION "Release")
-# 	add_custom_command(TARGET test_musher_cpp POST_BUILD
-# 	    COMMAND ${CMAKE_COMMAND} -E copy_directory
-# 	        "${CMAKE_BINARY_DIR}/$<CONFIGURATION>"
-# 	        # $<PROJECT_SOURCE_DIR:test_musher_cpp>
-# 	        ${PROJECT_SOURCE_DIR}
-# 	)
-# 	# message( ${CMAKE_BINARY_DIR} )
-# endif()

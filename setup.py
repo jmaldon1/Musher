@@ -63,6 +63,9 @@ class BuildCppTests(distutils.cmd.Command):
         # Do not compile python module when building c++ code.
         cmake_args += ['-DBUILD_PYTHON_MODULE=OFF']
 
+        if self.debug:
+            cmake_args += ['-DCMAKE_BUILD_TYPE=Debug']
+
         cfg = 'Debug' if self.debug else 'Release'
         build_args = ['--config', cfg]
 

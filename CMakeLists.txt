@@ -87,7 +87,7 @@ set(MUSHER_LIBRARY_SOURCES
 
 # windows dll export
 # add_definitions(-DMUSHER_EXPORT)
-
+add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/wavelib" "dependencies/wavelib")
 
 if(BUILD_PYTHON_MODULE)
 	# Python module
@@ -96,6 +96,9 @@ if(BUILD_PYTHON_MODULE)
 	musher_add_module(musher MODULE ${MUSHER_LIBRARY_SOURCES} ${MUSHER_WRAPPER_SOURCES})
 	# Allow module to find includes
 	target_include_directories(musher PRIVATE ${MUSHER_INCLUDE_DIR})
+
+	# Link wavelib dependency
+	target_link_libraries(musher PRIVATE wavelib)
 
 	# Link library to python module
 	# target_link_libraries(musher PRIVATE ${MUSHER_LIB})
@@ -113,9 +116,3 @@ endif()
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
     add_subdirectory(tests)
 endif()
-
-# # https://cliutils.gitlab.io/modern-cmake/chapters/testing.html
-# # Override for anyone wanting to enable testing on their package and this package.
-# if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MYPROJECT_BUILD_TESTING) AND BUILD_TESTING)
-#     add_subdirectory(tests)
-# endif()

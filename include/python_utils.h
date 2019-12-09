@@ -6,7 +6,9 @@
 #include <typeinfo>
 #include <iostream>
 
-std::unordered_map<std::string, std::string> uMapTypeList({
+#include "utils.h"
+
+std::unordered_map<std::string, std::string> uMapCppToPythonTypes({
     {typeid(int).name(),         "i"},
     {typeid(uint32_t).name(),    "I"},
     {typeid(uint16_t).name(),    "H"},
@@ -26,7 +28,7 @@ std::unordered_map<std::string, std::string> uMapTypeList({
  * @param var any arithmetic type
  * @return PyObject of the same type as c++ type
  */
-template< class basicType,
+template< typename basicType,
     typename = std::enable_if_t<std::is_arithmetic<basicType>::value> >
 PyObject* basicTypeToPyobject(const basicType &var)
 {   
@@ -41,18 +43,15 @@ PyObject* basicTypeToPyobject(const basicType &var)
     }
 
     /* Find the type of the variable in the unordered map */
-    std::unordered_map<std::string, std::string>::const_iterator got = uMapTypeList.find(typeName);
+    std::unordered_map<std::string, std::string>::const_iterator got = uMapCppToPythonTypes.find(typeName);
 
-    if ( got == uMapTypeList.end() )
+    if ( got == uMapCppToPythonTypes.end() )
     {
         std::string err_message = "Could not match C++ data type to Pyobject type";
         throw std::runtime_error(err_message);
     }
 
-    char* pyType = new char[got->second.length()]();
-    strcpy(pyType, got->second.c_str());
-
-    return Py_BuildValue(pyType, var);
+    return Py_BuildValue(got->second.c_str(), var);
 }
 
 /**
@@ -63,12 +62,8 @@ PyObject* basicTypeToPyobject(const basicType &var)
  * @return PyObject of the same type as c++ type
  */
 PyObject* basicTypeToPyobject(const std::string &var)
-{   
-    /* Make a copy of var that is char* because Py_BuildValue cannot accept a const char* */
-    char* varCopy = new char[var.length()]();
-    strcpy(varCopy, var.c_str());
-
-    return Py_BuildValue("s", varCopy);
+{ 
+    return Py_BuildValue("s", var.c_str());
 }
 
 template<class T>
@@ -79,9 +74,9 @@ T pyObjectToBasicType(PyObject* pyObj)
     std::string typeName = typeid(basicType).name();
 
     /* Find the type of the variable in the unordered map */
-    std::unordered_map<std::string, std::string>::const_iterator got = uMapTypeList.find(typeName);
+    std::unordered_map<std::string, std::string>::const_iterator got = uMapCppToPythonTypes.find(typeName);
 
-    if ( got == uMapTypeList.end() )
+    if ( got == uMapCppToPythonTypes.end() )
     {
         std::string err_message = "Could not match Pyobject type to C++ data type.";
         throw std::runtime_error(err_message);

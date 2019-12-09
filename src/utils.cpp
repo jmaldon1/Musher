@@ -35,7 +35,7 @@ namespace musher
      * @param s String that contains 2 single quotes
      * @return string between single quotes
      */
-    std::string get_str_between_two_squotes(const std::string &s)
+    std::string strBetweenSQuotes(const std::string &s)
     {
         std::string squote = "'";
         // Find 1st quote starting from beginning of string
@@ -54,7 +54,7 @@ namespace musher
     {
         int16_t result;
         
-        if (!is_big_endian())
+        if (!isBigEndian())
             result = (source[startIndex + 1] << 8) | source[startIndex];
         else
             result = (source[startIndex] << 8) | source[startIndex + 1];
@@ -67,7 +67,7 @@ namespace musher
     {
         int32_t result;
         
-        if (!is_big_endian())
+        if (!isBigEndian())
             result = (source[startIndex + 3] << 24) | (source[startIndex + 2] << 16) | (source[startIndex + 1] << 8) | source[startIndex];
         else
             result = (source[startIndex] << 24) | (source[startIndex + 1] << 16) | (source[startIndex + 2] << 8) | source[startIndex + 3];
@@ -76,7 +76,7 @@ namespace musher
     }
 
 
-    bool is_big_endian(void)
+    bool isBigEndian(void)
     {
         union {
             uint32_t i;

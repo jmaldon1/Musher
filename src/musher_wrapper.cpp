@@ -59,10 +59,9 @@ PyObject* LoadAudioFile(PyObject* self, PyObject* args)
     }
     catch( const std::runtime_error& e )
     {
-        const std::string unknownFilePath = get_str_between_two_squotes(e.what());
-        const char* unknownFilePathChar = unknownFilePath.c_str();
+        const std::string unknownFilePath = strBetweenSQuotes(e.what());
         /* Raise a filenotfounderror in python */
-        PyErr_SetFromErrnoWithFilename(PyExc_FileNotFoundError, unknownFilePathChar);
+        PyErr_SetFromErrnoWithFilename(PyExc_FileNotFoundError, unknownFilePath.c_str());
         return NULL;
     }
     catch( const std::exception& e )
@@ -137,8 +136,8 @@ PyObject* DecodeWav(PyObject* self, PyObject* args)
         fileData = listToVector<uint8_t>(listObj);
 
         std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
-        std::vector< std::vector<double> > audioBuffer;
-        CDecodeWav(wavDecodedData, fileData, audioBuffer);
+        // std::vector< std::vector<double> > audioBuffer;
+        std::vector< std::vector<double> > normalizedSamples = CDecodeWav<double>(wavDecodedData, fileData);
 
         for (const auto & [ key, value ] : wavDecodedData)
         {

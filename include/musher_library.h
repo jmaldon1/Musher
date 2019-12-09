@@ -18,9 +18,11 @@ namespace musher
 
     // bool MUSHER_API CAcceptDecode(const char* message, bool (*decodef)(const char*));
 
-    template <template <typename ...> class Map, typename K, typename V, typename AudioBufferType>
-    void MUSHER_API CDecodeWav(Map<K, V>& wavDecodedData, const std::vector<uint8_t>& fileData, std::vector<std::vector<AudioBufferType>> samples)
-    {
+    template <typename AudioBufferType, template <typename ...> class Map, typename K, typename V>
+    std::vector< std::vector<AudioBufferType> > MUSHER_API CDecodeWav(Map<K, V>& wavDecodedData, const std::vector<uint8_t>& fileData)
+    {   
+        std::vector< std::vector<AudioBufferType> > samples;
+
         if (!samples.empty()){
             std::string err_message = "Audio Buffer must be empty";
             throw std::runtime_error(err_message);
@@ -118,25 +120,30 @@ namespace musher
                 int sampleIndex = samplesStartIndex + (numBytesPerBlock * i) + channel * numBytesPerSample;
                 
                 if (bitDepth == 8)
-                {
-                    AudioBufferType sample = singleByteToSample<AudioBufferType>(fileData[sampleIndex]);
+                {   
+                    /* normalize samples to between -1 and 1 */
+                    AudioBufferType sample = normalizeInt8_t<AudioBufferType>(fileData[sampleIndex]);
                     samples[channel].push_back (sample);
                 }
                 else if (bitDepth == 16)
                 {
                     int16_t sampleAsInt = twoBytesToInt(fileData, sampleIndex);
-                    AudioBufferType sample = sixteenBitIntToSample<AudioBufferType>(sampleAsInt);
-                    samples[channel].push_back (sample);
+                    /* normalize samples to between -1 and 1 */
+                    AudioBufferType sample = normalizeInt16_t<AudioBufferType>(sampleAsInt);
+                    // samples[channel].push_back (sample);
+                    samples[channel].push_back (sampleAsInt);
                 }
                 else if (bitDepth == 24)
                 {
                     int32_t sampleAsInt = 0;
                     sampleAsInt = (fileData[sampleIndex + 2] << 16) | (fileData[sampleIndex + 1] << 8) | fileData[sampleIndex];
                     
-                    if (sampleAsInt & 0x800000) //  if the 24th bit is set, this is a negative number in 24-bit world
+                    if (sampleAsInt & 0x800000) // if the 24th bit is set, this is a negative number in 24-bit world
                         sampleAsInt = sampleAsInt | ~0xFFFFFF; // so make sure sign is extended to the 32 bit float
 
-                    AudioBufferType sample = (AudioBufferType)sampleAsInt / (AudioBufferType)8388608.;
+                    /* normalize samples to between -1 and 1 */
+                    AudioBufferType sample = normalizeInt32_t<AudioBufferType>(sampleAsInt);
+                    // AudioBufferType sample = (AudioBufferType)sampleAsInt / (AudioBufferType)8388608.;
                     samples[channel].push_back (sample);
                 }
                 else
@@ -163,6 +170,9 @@ namespace musher
         wavDecodedData["stereo"] = stereo;
         wavDecodedData["samples_per_channel"] = numSamplesPerChannel;
         wavDecodedData["length_in_seconds"] = lengthInSeconds;
+
+        return samples;
+
     }
 
     // bool CDecodeAudio(const char* message, bool (*decodef)(const char*))

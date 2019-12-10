@@ -1,5 +1,6 @@
 test_bin
 *.dylib
+dependencies/wavelib
 
 # VSCODE
 .vscode/

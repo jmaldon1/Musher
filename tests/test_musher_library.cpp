@@ -136,7 +136,10 @@ TEST(WaveletTransform, DiscreteWaveleteTransform) {
     fileData = CLoadAudioFile(filePath);
     std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
     std::vector< std::vector<double> > normalizedSamples;
+    std::vector<double> flattenedNormalizedSamples;
+
     normalizedSamples = CDecodeWav<double>(wavDecodedData, fileData);
+    flattenedNormalizedSamples = flatten2DVector(normalizedSamples);
     int numSamplesPerChannel = variantToType<int>(wavDecodedData["samples_per_channel"]);
 
     // std::vector< std::vector<double> >::const_iterator row; 
@@ -162,30 +165,33 @@ TEST(WaveletTransform, DiscreteWaveleteTransform) {
     const char *name = "db4";
     obj = wave_init(name);// Initialize the wavelet
 
-    int loop = 0;
+    // int loop = 0;
     int cDMinLen;
     size_t cALen;
-    std::vector<double> cA, cD, cDSum, cDFiltered, decimatedSignal, meanRemovedSignal, meanRemovedSignalPartial;
     double decimatedSignalSum, decimatedSignalMean;
+    std::vector<double> cD, cDSum, cDFiltered, cDDecimatedSignal, cDMeanRemovedSignal, cDMeanRemovedSignalPartial;
+    std::vector<double> cA, cAFiltered, cAAbsolute, cAMeanRemovedSignal, cAMeanRemovedSignalPartial;
     for (int level = 0; level < totalLevels; level++)
     {
         // J = 1;
 
         /* DWT */
         if (level == 0){
-            wt = wt_init(obj,(char*) "dwt", numSamplesPerChannel, J);// Initialize the wavelet transform object
+            wt = wt_init(obj,(char*) "dwt", numSamplesPerChannel, J); // Initialize the wavelet transform object
             setDWTExtension(wt, (char*) "sym");
             setWTConv(wt, (char*) "direct");
 
             /* Input is the samples */
             inp = (double*)malloc(sizeof(double)* numSamplesPerChannel);
             for (int i = 0; i < numSamplesPerChannel; ++i) {
-                inp[i] = normalizedSamples[0][i];
+                inp[i] = flattenedNormalizedSamples[i];
             }
-            dwt(wt, inp);// Perform DWT
+            dwt(wt, inp); // Perform DWT
 
             cDMinLen = wt->length[1] / maxDecimation + 1;
             cDSum.resize(cDMinLen, 0.0);
+
+            cDMeanRemovedSignalPartial.resize(cDMinLen);
         }
         else{
             cALen = cA.size();
@@ -213,51 +219,41 @@ TEST(WaveletTransform, DiscreteWaveleteTransform) {
                 cD.push_back(wt->output[i]);
         }
 
+        /* Perform One Pole filter on cD */
         cDFiltered = onePoolFilter(cD);
-
-        // for (auto & element : cDFiltered) {
-        //     std::cout << element << std::endl;
-        // }
 
         /* Decimate */
         int dc = pow(2, (totalLevels - level - 1));
         for (int ax = 0; ax < cDFiltered.size(); ax += dc)
         {
-            decimatedSignal.push_back(std::abs(cDFiltered[ax]));
+            cDDecimatedSignal.push_back(std::abs(cDFiltered[ax]));
         }
 
-        // for (auto & element : decimatedSignal) {
-        //     std::cout << element << std::endl;
-        // }
-
-        decimatedSignalSum = std::accumulate(decimatedSignal.begin(), decimatedSignal.end(), 0.0);
-        decimatedSignalMean =  decimatedSignalSum / static_cast<double>(decimatedSignal.size());
-
-        // std::cout << decimatedSignalMean << std::endl;
+        decimatedSignalSum = std::accumulate(cDDecimatedSignal.begin(), cDDecimatedSignal.end(), 0.0);
+        decimatedSignalMean =  decimatedSignalSum / static_cast<double>(cDDecimatedSignal.size());
 
         /* Remove the mean */
         auto removeMean = [decimatedSignalMean]( const double x ) { return x - decimatedSignalMean; };
         std::transform(
-               decimatedSignal.begin(),
-               decimatedSignal.end(),
-               std::back_inserter(meanRemovedSignal),
+               cDDecimatedSignal.begin(),
+               cDDecimatedSignal.end(),
+               std::back_inserter(cDMeanRemovedSignal),
                removeMean );
-        
-        // for (auto & element : meanRemovedSignal) {
-        //     std::cout << element << std::endl;
-        // }
 
         /* Reconstruct */
-        meanRemovedSignalPartial.resize(cDMinLen);
-        std::copy_n ( meanRemovedSignal.begin(), cDMinLen, meanRemovedSignalPartial.begin() );
-        /* Add elements of cDSum and meanRemovedSignalPartial together and store into cDSum */
+        // cDMeanRemovedSignalPartial.resize(cDMinLen);
+        std::copy_n ( cDMeanRemovedSignal.begin(), cDMinLen, cDMeanRemovedSignalPartial.begin() );
+        /* Add elements of cDSum and cDMeanRemovedSignalPartial together and store into cDSum */
         std::transform ( 
                     cDSum.begin(),
                     cDSum.end(),
-                    meanRemovedSignalPartial.begin(),
+                    cDMeanRemovedSignalPartial.begin(),
                     cDSum.begin(),
                     std::plus<double>() );
-    
+
+        // cDSum = performSignalTransforms(cD, cDSum, cDFiltered, cDDecimatedSignal, cDMeanRemovedSignal, cDMeanRemovedSignalPartial, cDMinLen, totalLevels, level);
+        // cDSum.clear();
+        // cDSum = cDTemp;    
         // for (auto & element : cDSum) {
         //     std::cout << element << std::endl;
         // }
@@ -320,14 +316,66 @@ TEST(WaveletTransform, DiscreteWaveleteTransform) {
         wt_free(wt);
         cD.clear();
         cDFiltered.clear();
-        decimatedSignal.clear();
-        meanRemovedSignal.clear();
+        cDDecimatedSignal.clear();
+        cDMeanRemovedSignal.clear();
+        cDMeanRemovedSignalPartial.clear();
         free(inp);
     }
 
-    for (auto & element : cA) {
-        std::cout << element << std::endl;
-    }
+    // for (auto & element : cA) {
+    //     std::cout << element << std::endl;
+    // }
+
+    cAFiltered = onePoolFilter(cA);
+
+    // for (auto & element : cA) {
+    //     std::cout << element << std::endl;
+    // }
+
+    auto absoluteVal = [decimatedSignalMean]( const double x ) { return std::abs(x); };
+    std::transform(
+            cAFiltered.begin(),
+            cAFiltered.end(),
+            std::back_inserter(cAAbsolute),
+            absoluteVal );
+    
+    double cAAbsoluteSum = std::accumulate(cAAbsolute.begin(), cAAbsolute.end(), 0.0);
+    double cAAbsoluteMean =  cAAbsoluteSum / static_cast<double>(cAAbsolute.size());
+
+    auto removeMean = [cAAbsoluteMean]( const double x ) { return x - cAAbsoluteMean; };
+    std::transform(
+            cAAbsolute.begin(),
+            cAAbsolute.end(),
+            std::back_inserter(cAMeanRemovedSignal),
+            removeMean );
+    
+    // for (auto & element : cAMeanRemovedSignal) {
+    //     std::cout << element << std::endl;
+    // }
+    
+
+    cAMeanRemovedSignalPartial.resize(cDMinLen);
+    std::copy_n ( cAMeanRemovedSignal.begin(), cDMinLen, cAMeanRemovedSignalPartial.begin() );
+    /* Add elements of cDSum and cDMeanRemovedSignalPartial together and store into cDSum */
+    std::transform ( 
+                cDSum.begin(),
+                cDSum.end(),
+                cAMeanRemovedSignalPartial.begin(),
+                cDSum.begin(),
+                std::plus<double>() );
+    
+    std::vector<double> b(cDSum.size() * 2, 0.0);
+
+    std::vector<double> reversecDSum(cDSum);
+    std::reverse(reversecDSum.begin(), reversecDSum.end());
+    
+
+    // for (auto & element : cDSum) {
+    //     std::cout << element << std::endl;
+    // }
+
+
+    fftConvolve(b, reversecDSum);
 
     // for (i = wt->length[0]; i < wt->outlength; ++i) {
     //         std::cout << wt->output[i] << std::endl;

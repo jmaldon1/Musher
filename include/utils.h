@@ -4,6 +4,12 @@
 #include <string>
 #include <vector>
 #include <variant>
+#include <math.h>
+#include <numeric>
+#include <valarray>
+#include <complex>
+
+#include "FftComplex.h"
 
 namespace musher
 {
@@ -59,6 +65,15 @@ namespace musher
         return t;
     }
 
+    template< typename T >
+    std::vector<T> flatten2DVector(const std::vector<std::vector<T>> &orig)
+    {   
+        std::vector<T> ret;
+        for(const auto &v: orig)
+            ret.insert(ret.end(), v.begin(), v.end());                                                                                         
+        return ret;
+    }
+
     template< typename vecType,
             typename = std::enable_if_t<std::is_floating_point<vecType>::value> >
     std::vector<vecType> onePoolFilter(const std::vector< vecType > &vec)
@@ -75,6 +90,51 @@ namespace musher
                onePoolEquation );
 
         return filteredSignal;
+    }
+
+    typedef std::complex<double> Complex;
+    typedef std::valarray<Complex> CArray;
+    void fft(CArray &x);
+
+    template< typename vecType,
+            typename = std::enable_if_t<std::is_arithmetic<vecType>::value> >
+    std::vector<vecType> fftConvolve(const std::vector< vecType > &vec1, const std::vector< vecType > &vec2)
+    {
+        std::vector<vecType> ret;
+
+        if (vec1.empty() || vec2.empty())
+            return ret;
+        
+        // axes = [0]
+        // other_axes = []
+
+        size_t s1 = vec1.size();
+        size_t s2 = vec2.size();
+
+        /* Convert vector of doubles to vector of complex */
+        // std::vector< std::complex<double> > cvec(s1);
+        // auto makeComplex = []( const double x ) { return std::complex<double>(x, 0.0); };
+        // std::transform(
+        //     vec1.begin(),
+        //     vec1.end(),
+        //     std::back_inserter(cvec),
+        //     makeComplex );
+
+        // const Complex test[10];
+        // std::vector<Complex> a(vec1.begin(), vec1.end());
+        // const std::vector<Complex> sp1(vec1);
+        // const std::vector<Complex> sp2(vec2);
+        // CArray data(test, 8);
+        // std::vector<std::complex<double>> a(10);
+
+        // Complex *a = reinterpret_cast<Complex *>(vec1.data());
+        // CArray data(a, s1);
+
+        // fft(data);
+
+        // complex_result = False
+
+        return ret;
     }
     
 }

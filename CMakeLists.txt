@@ -63,6 +63,7 @@ set(MUSHER_WRAPPER_SOURCES
 set(MUSHER_LIBRARY_SOURCES
     "${SOURCE_DIR}/utils.cpp"
     "${SOURCE_DIR}/musher_library.cpp"
+    "${SOURCE_DIR}/FftComplex.cpp"
 	)
 
 # ################################

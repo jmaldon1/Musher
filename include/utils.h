@@ -8,6 +8,7 @@
 #include <numeric>
 #include <valarray>
 #include <complex>
+#include <fstream>
 
 #include "FftComplex.h"
 
@@ -20,6 +21,23 @@ namespace musher
     bool isBigEndian(void);
     int16_t twoBytesToInt (const std::vector<uint8_t>& source, const int startIndex);
     int32_t fourBytesToInt (const std::vector<uint8_t>& source, const int startIndex);
+
+    template <typename T>
+    void outputVectorToFile(const std::vector<T>& vec, std::string& filename)
+    {
+        std::ofstream os;
+        os.open(filename);
+
+        os << "{\n";
+        for (int i = 0; i < vec.size(); ++i)
+        {
+            os << d << ", ";
+            if (i % 32 == 0)
+                os << "\n";
+        }
+        os << "};";
+    }
+
     template <typename AudioBufferType>
     AudioBufferType normalizeInt8_t(const uint8_t sample)
     {

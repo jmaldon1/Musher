@@ -4,6 +4,11 @@ if (POLICY CMP0048)
 	cmake_policy(SET CMP0048 NEW)
 endif (POLICY CMP0048)
 
+# use g++-8 for gnu 
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+	set(CMAKE_CXX_COMPILER "/usr/bin/g++-8")
+endif()
+
 project(musher LANGUAGES CXX)
 
 # Turn off with 'cmake -DBUILD_PYTHON_MODULE=OFF'
@@ -27,11 +32,6 @@ if(APPLE)
 	# This requires your mac to be updated to Catalina 
 	# or else there will be a compilation error trying to find C++ libs
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15)
-endif()
-
-# use g++-8 for gnu 
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-	set(CMAKE_CXX_COMPILER "/usr/bin/g++-8")
 endif()
 
 set(CMAKE_CXX_STANDARD 17)

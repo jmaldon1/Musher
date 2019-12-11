@@ -42,11 +42,13 @@ TEST(AudioFileDecoding, AudioFileNotFoundTest) {
     }, std::runtime_error );
 }
 
-
 TEST(AudioFileDecoding, LoadsAudioFileTest) {
     std::vector<uint8_t> fileData;
     std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
 	fileData = CLoadAudioFile(filePath);
+    
+    std::string outputFile = "./tests/test_include/filedata.txt";
+    outputVectorToFile<uint8_t>(fileData, outputFile);
 
     std::string fileDataHex = uint8_vector_to_hex_string(fileData);
     EXPECT_EQ( FileDataHexCantinaBand3sec, fileDataHex );

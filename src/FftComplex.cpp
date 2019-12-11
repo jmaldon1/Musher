@@ -23,6 +23,9 @@
 
 #include <algorithm>
 #define _USE_MATH_DEFINES // for windows
+#ifdef _WIN32
+#  include <math.h>
+#endif
 #include <cmath>
 #include <cstddef>
 #include <cstdint>

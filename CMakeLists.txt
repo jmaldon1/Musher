@@ -36,81 +36,26 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Set variable for source and include directory
-set(SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/src" CACHE INTERNAL "")
-set(MUSHER_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include" CACHE INTERNAL "")
+set(MUSHER_LIBRARY_DIR "${CMAKE_CURRENT_LIST_DIR}/core/library")
+set(MUSHER_PY_WRAPPER_DIR "${CMAKE_CURRENT_LIST_DIR}/core/py_wrapper")
 
-# SET(MUSHER_LIBRARY_INLUDES
-# 	"${MUSHER_INCLUDE_DIR}/musher_core.h"
-# 	"${MUSHER_INCLUDE_DIR}/musher_library.h"
-# 	"${MUSHER_INCLUDE_DIR}/utils.h"
-# 	)
+set(MUSHER_LIBRARY_INCLUDE_DIR "${MUSHER_LIBRARY_DIR}/include")
+set(MUSHER_LIBRARY_SOURCE_DIR "${MUSHER_LIBRARY_DIR}")
 
-# set(MUSHER_LIBRARY_SOURCES
-#     "${SOURCE_DIR}/musher_library.cpp"
-#     "${SOURCE_DIR}/utils.cpp"
-#     )
+set(MUSHER_PY_WRAPPER_INCLUDE_DIR "${MUSHER_PY_WRAPPER_DIR}/include")
+set(MUSHER_PY_WRAPPER_SOURCE_DIR "${MUSHER_PY_WRAPPER_DIR}")
 
-# set(MUSHER_WRAPPER_INCLUDES
-# 	"${MUSHER_INCLUDE_DIR}/python_utils.h"
-# 	)
-
-set(MUSHER_WRAPPER_SOURCES
-    "${SOURCE_DIR}/musher_wrapper.cpp"
-    "${SOURCE_DIR}/python_utils.cpp"
-	)
-	
-set(MUSHER_LIBRARY_SOURCES
-    "${SOURCE_DIR}/utils.cpp"
-    "${SOURCE_DIR}/musher_library.cpp"
-    "${SOURCE_DIR}/FftComplex.cpp"
-	)
 
 # ################################
 # # Building
 # ################################
-# musher_library needs to be STATIC (link during build time) for it to link with other libraries correctly
-# If not set to STATIC, python will have a runtime linking error when pip installing then importing musher
-# Atleast for MacOSX and Windows
-# if (APPLE OR WIN32)
-# 	set(LIB_TYPE STATIC)
-# else()
-# 	set(LIB_TYPE SHARED)
-# endif()
-
-# musher_add_library(${MUSHER_LIB} ${LIB_TYPE} ${MUSHER_LIBRARY_SOURCES} ${MUSHER_LIBRARY_INLUDES})
-# target_include_directories(${MUSHER_LIB} PRIVATE ${MUSHER_INCLUDE_DIR})
-
-# fix GNU filesystem c++17 linking error
-# if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-	# target_link_libraries(${MUSHER_LIB} PRIVATE stdc++fs)
-# endif()
-
-# windows dll export
-# add_definitions(-DMUSHER_EXPORT)
 add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/wavelib" "dependencies/wavelib")
+add_subdirectory(core/library)
 
 if(BUILD_PYTHON_MODULE)
-	# Python module
-	# Call build function within buildTools
-	# musher_add_module(musher MODULE ${MUSHER_WRAPPER_SOURCES} ${MUSHER_LIBRARY_INLUDES} ${MUSHER_WRAPPER_INCLUDES})
-	musher_add_module(musher MODULE ${MUSHER_LIBRARY_SOURCES} ${MUSHER_WRAPPER_SOURCES})
-	# Allow module to find includes
-	target_include_directories(musher PRIVATE ${MUSHER_INCLUDE_DIR})
-
-	# Link wavelib dependency
-	target_link_libraries(musher PRIVATE wavelib)
-
-	# Link library to python module
-	# target_link_libraries(musher PRIVATE ${MUSHER_LIB})
-
-	# fix GNU filesystem c++17 linking error
-	if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-		target_link_libraries(musher PRIVATE stdc++fs)
-	endif()
+	add_subdirectory(core/py_wrapper)
 
 endif()
-
 # ################################
 # # Testing
 # ################################

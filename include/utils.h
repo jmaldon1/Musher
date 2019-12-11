@@ -22,21 +22,21 @@ namespace musher
     int16_t twoBytesToInt (const std::vector<uint8_t>& source, const int startIndex);
     int32_t fourBytesToInt (const std::vector<uint8_t>& source, const int startIndex);
 
-    template <typename T>
-    void outputVectorToFile(const std::vector<T>& vec, std::string& filename)
-    {
-        std::ofstream os;
-        os.open(filename);
+    // template <typename T>
+    // void outputVectorToFile(const std::vector<T>& vec, std::string& filename)
+    // {
+    //     std::ofstream os;
+    //     os.open(filename);
 
-        os << "{\n";
-        for (int i = 0; i < vec.size(); ++i)
-        {
-            os << d << ", ";
-            if (i % 32 == 0)
-                os << "\n";
-        }
-        os << "};";
-    }
+    //     os << "{\n";
+    //     for (int i = 0; i < vec.size(); ++i)
+    //     {
+    //         os << vec[i] << ", ";
+    //         if (i % 32 == 0)
+    //             os << "\n";
+    //     }
+    //     os << "};";
+    // }
 
     template <typename AudioBufferType>
     AudioBufferType normalizeInt8_t(const uint8_t sample)
@@ -169,9 +169,9 @@ namespace musher
         /* Inverse fast fourier transform */
         Fft::inverseTransform(products);
 
-        for (auto & element : products) {
-            std::cout << element << std::endl;
-        }
+        // for (auto & element : products) {
+        //     std::cout << element << std::endl;
+        // }
 
         return ret;
     }

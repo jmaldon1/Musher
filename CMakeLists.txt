@@ -8,6 +8,8 @@ endif (POLICY CMP0048)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 	set(CMAKE_CXX_COMPILER "/usr/bin/g++-8")
 endif()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(musher LANGUAGES CXX)
 
@@ -33,8 +35,6 @@ if(APPLE)
 	# or else there will be a compilation error trying to find C++ libs
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15)
 endif()
-
-set(CMAKE_CXX_STANDARD 17)
 
 set(MUSHER_LIBRARY_DIR "${CMAKE_CURRENT_LIST_DIR}/core/library")
 set(MUSHER_PY_WRAPPER_DIR "${CMAKE_CURRENT_LIST_DIR}/core/py_wrapper")

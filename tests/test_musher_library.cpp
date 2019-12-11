@@ -1,12 +1,18 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
-#include <filesystem>
 #include <variant>
 #include <unordered_map>
 #include <math.h>
 #include <numeric>
 #include "gtest/gtest.h"
+
+/* use experimental filesystem on linux */
+#if defined(WIN32) || defined(__APPLE__)
+#  include <filesystem>
+#else
+#  include <experimental/filesystem>
+#endif
 
 #include "musher_library.h"
 #include "utils.h"
@@ -14,6 +20,13 @@
 
 /* TEST INCLUDES */
 // #include "test_load_audio_file.h"
+
+/* use experimental filesystem on linux */
+#if defined(WIN32) || defined(__APPLE__)
+	namespace fs = std::filesystem;
+#else
+	namespace fs = std::experimental::filesystem;
+#endif
 
 using namespace musher;
 

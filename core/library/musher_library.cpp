@@ -2,14 +2,29 @@
 #include <string>
 #include <iterator>
 #include <fstream>
-#include <filesystem>
 #include <vector>
 #include <stdexcept>
 #include <unordered_map>
 #include <variant>
 
+/* use experimental filesystem on linux */
+#if defined(WIN32) || defined(__APPLE__)
+#  include <filesystem>
+#else
+#  include <experimental/filesystem>
+#endif
+
+
+
 #include "musher_library.h"
 #include "utils.h"
+
+#if defined(WIN32) || defined(__APPLE__)
+	namespace fs = std::filesystem;
+#else
+	namespace fs = std::experimental::filesystem;
+#endif
+
 
 namespace musher
 {
@@ -34,10 +49,10 @@ namespace musher
 	std::vector<uint8_t> CLoadAudioFile(const std::string& filePath)
 	{
 		std::error_code e;
-		std::filesystem::path audioFileAbsPath = std::filesystem::canonical(filePath, e);
+		fs::path audioFileAbsPath = fs::canonical(filePath, e);
 		if( e.value() != 0 ) {
 			// ERROR
-			std::filesystem::path absolutePath = std::filesystem::absolute(filePath);
+			fs::path absolutePath = fs::absolute(filePath);
 			std::string eMessage = "No file found at ";
 			eMessage += "'";
 			eMessage += absolutePath.string();

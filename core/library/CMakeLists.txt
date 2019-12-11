@@ -2,6 +2,7 @@ set(MUSHER_LIBRARY_SOURCES
     "${MUSHER_LIBRARY_SOURCE_DIR}/utils.cpp"
     "${MUSHER_LIBRARY_SOURCE_DIR}/musher_library.cpp"
     "${MUSHER_LIBRARY_SOURCE_DIR}/FftComplex.cpp"
+    "${MUSHER_LIBRARY_SOURCE_DIR}/FftRealPair.cpp"
 )
 
 if (APPLE OR WIN32)

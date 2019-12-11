@@ -10,7 +10,8 @@
 #include <complex>
 #include <fstream>
 
-#include "FftComplex.h"
+// #include "FftComplex.h"
+#include "FftRealPair.h"
 
 namespace musher
 {
@@ -136,38 +137,62 @@ namespace musher
         
         while (v2.size() != good_size)
             v2.push_back(0.0);
+        
+        // std::vector<double> im(v1.size());
+
+        // Fft::transform(v1, im);
+
+
+        
+        // std::vector<vecType> d(v1.size());
+
+        // Fft::convolve(v1, v2, d);
+
+        // for (auto & element : v1) {
+        //     std::cout << element << std::endl;
+        // }
 
         /* Convert vector of doubles to vector of complex */
-        auto makeComplex = []( const vecType x ) { return std::complex<vecType>(x, 0.0); };
-        std::vector< std::complex< vecType> > cv1(v1.size());
-        std::transform(
-            v1.begin(),
-            v1.end(),
-            cv1.begin(),
-            makeComplex );
+        // auto makeComplex = []( const vecType x ) { return std::complex<vecType>(x, 0.0); };
+        // std::vector< std::complex< vecType> > cv1(v1.size());
+        // std::transform(
+        //     v1.begin(),
+        //     v1.end(),
+        //     cv1.begin(),
+        //     makeComplex );
 
-        std::vector< std::complex< vecType> > cv2(v2.size());
-        std::transform(
-            v2.begin(),
-            v2.end(),
-            cv2.begin(),
-            makeComplex );
+        // std::vector< std::complex< vecType> > cv2(v2.size());
+        // std::transform(
+        //     v2.begin(),
+        //     v2.end(),
+        //     cv2.begin(),
+        //     makeComplex );
+        
 
-        /* Fast fourier transform */
-        Fft::transform(cv1);
-        Fft::transform(cv2);
 
-        /* Element-wise multiplication of 2 vectors */
-        std::vector< std::complex< vecType> > products(cv1.size());
-        std::transform(
-                cv1.begin(),
-                cv1.end(),
-                cv2.begin(),
-                products.begin(),
-                std::multiplies< std::complex< vecType> >() );
+        // /* Fast fourier transform */
+        // Fft::transform(cv1);
 
-        /* Inverse fast fourier transform */
-        Fft::inverseTransform(products);
+        // for (auto & element : cv1) {
+        //     std::cout << element << std::endl;
+        // }
+
+        // Fft::transform(cv2);
+
+        // /* Element-wise multiplication of 2 vectors */
+        // std::vector< std::complex< vecType> > products(cv1.size());
+        // std::transform(
+        //         cv1.begin(),
+        //         cv1.end(),
+        //         cv2.begin(),
+        //         products.begin(),
+        //         std::multiplies< std::complex< vecType> >() );
+
+        // /* Inverse fast fourier transform */
+        // Fft::inverseTransform(products);
+
+        // for (size_t i = 0; i < cv1.size(); i++)  // Scaling (because this FFT implementation omits it)
+		//     products[i] = products[i] / static_cast<double>(cv1.size());
 
         // for (auto & element : products) {
         //     std::cout << element << std::endl;

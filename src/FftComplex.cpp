@@ -22,6 +22,7 @@
  */
 
 #include <algorithm>
+#define _USE_MATH_DEFINES // for windows
 #include <cmath>
 #include <cstddef>
 #include <cstdint>

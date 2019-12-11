@@ -94,45 +94,66 @@ namespace musher
 
     typedef std::complex<double> Complex;
     typedef std::valarray<Complex> CArray;
-    void fft(CArray &x);
+    size_t next_fast_len(size_t n);
 
     template< typename vecType,
             typename = std::enable_if_t<std::is_arithmetic<vecType>::value> >
     std::vector<vecType> fftConvolve(const std::vector< vecType > &vec1, const std::vector< vecType > &vec2)
     {
+        std::vector<vecType> v1(vec1);
+        std::vector<vecType> v2(vec2);
         std::vector<vecType> ret;
 
-        if (vec1.empty() || vec2.empty())
+        if (v1.empty() || v2.empty())
             return ret;
-        
-        // axes = [0]
-        // other_axes = []
 
-        size_t s1 = vec1.size();
-        size_t s2 = vec2.size();
+        size_t s1 = v1.size();
+        size_t s2 = v2.size();
+        size_t shape = s1 + s2 - 1;
+
+        /* Pad inputs to an efficient length */
+        size_t good_size = next_fast_len(shape);
+        while (v1.size() != good_size)
+            v1.push_back(0.0);
+        
+        while (v2.size() != good_size)
+            v2.push_back(0.0);
 
         /* Convert vector of doubles to vector of complex */
-        // std::vector< std::complex<double> > cvec(s1);
-        // auto makeComplex = []( const double x ) { return std::complex<double>(x, 0.0); };
-        // std::transform(
-        //     vec1.begin(),
-        //     vec1.end(),
-        //     std::back_inserter(cvec),
-        //     makeComplex );
+        auto makeComplex = []( const vecType x ) { return std::complex<vecType>(x, 0.0); };
+        std::vector< std::complex< vecType> > cv1(v1.size());
+        std::transform(
+            v1.begin(),
+            v1.end(),
+            cv1.begin(),
+            makeComplex );
 
-        // const Complex test[10];
-        // std::vector<Complex> a(vec1.begin(), vec1.end());
-        // const std::vector<Complex> sp1(vec1);
-        // const std::vector<Complex> sp2(vec2);
-        // CArray data(test, 8);
-        // std::vector<std::complex<double>> a(10);
+        std::vector< std::complex< vecType> > cv2(v2.size());
+        std::transform(
+            v2.begin(),
+            v2.end(),
+            cv2.begin(),
+            makeComplex );
 
-        // Complex *a = reinterpret_cast<Complex *>(vec1.data());
-        // CArray data(a, s1);
+        /* Fast fourier transform */
+        Fft::transform(cv1);
+        Fft::transform(cv2);
 
-        // fft(data);
+        /* Element-wise multiplication of 2 vectors */
+        std::vector< std::complex< vecType> > products(cv1.size());
+        std::transform(
+                cv1.begin(),
+                cv1.end(),
+                cv2.begin(),
+                products.begin(),
+                std::multiplies< std::complex< vecType> >() );
 
-        // complex_result = False
+        /* Inverse fast fourier transform */
+        Fft::inverseTransform(products);
+
+        for (auto & element : products) {
+            std::cout << element << std::endl;
+        }
 
         return ret;
     }

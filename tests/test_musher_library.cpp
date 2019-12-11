@@ -364,23 +364,28 @@ TEST(WaveletTransform, DiscreteWaveleteTransform) {
                 cDSum.begin(),
                 std::plus<double>() );
     
-    std::vector<double> b(cDSum.size() * 2, 0.0);
+    size_t dataLen = cDSum.size();
+    std::vector<double> b(dataLen * 2);
+
+    int g = 0;
+    for (int i = dataLen / 2; i < (dataLen / 2) + dataLen; ++i){
+        b[i] = cDSum[g];
+        g += 1;
+    }
 
     std::vector<double> reversecDSum(cDSum);
     std::reverse(reversecDSum.begin(), reversecDSum.end());
     
-
-    // for (auto & element : cDSum) {
+    // for (auto & element : b) {
     //     std::cout << element << std::endl;
     // }
-
 
     fftConvolve(b, reversecDSum);
 
     // for (i = wt->length[0]; i < wt->outlength; ++i) {
     //         std::cout << wt->output[i] << std::endl;
     // }
-    wt_summary(wt);
+    // wt_summary(wt);
     wave_free(obj);
     free(out);
     // free(inp);

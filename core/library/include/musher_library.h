@@ -9,6 +9,7 @@
 
 #include "musher_core.h"
 #include "utils.h"
+#include "wavelib.h"
 
 namespace musher
 {
@@ -173,6 +174,224 @@ namespace musher
 
         return samples;
 
+    }
+
+    template< typename vecType,
+            typename = std::enable_if_t< std::is_floating_point<vecType>::value> >
+    double beatDetection(std::vector< vecType > &flattenedNormalizedSamples, int numSamplesPerChannel, uint32_t sampleRate)
+    {
+        wave_object obj;
+        wt_object wt;
+        int J = 1;
+        double epsilon = 1e-15;
+
+        const int totalLevels = 4;
+        const int maxDecimation = pow(2, (totalLevels - 1));
+
+        double minNdx = 60. / 220 * (sampleRate / maxDecimation);
+        double maxNdx = 60. / 40 * (sampleRate / maxDecimation);
+
+        const char *name = "db4";
+        obj = wave_init(name);// Initialize the wavelet
+
+        size_t cDMinLen;
+        double decimatedSignalSum, decimatedSignalMean;
+        std::vector<vecType> cD, cDSum, cDFiltered, cDDecimatedSignal, cDMeanRemovedSignal, cDMeanRemovedSignalPartial;
+        std::vector<vecType> cA, cAFiltered, cAMeanRemovedSignalPartial;
+        for (int level = 0; level < totalLevels; level++)
+        {
+            /* Discrete Wavelet Transform */
+            if (level == 0) {
+                wt = wt_init(obj,(char*) "dwt", numSamplesPerChannel, J); // Initialize the wavelet transform object
+                setDWTExtension(wt, (char*) "sym");
+                setWTConv(wt, (char*) "direct");
+
+                dwt(wt, flattenedNormalizedSamples.data()); // Perform DWT
+
+                cDMinLen = wt->length[1] / maxDecimation + 1;
+                cDSum.resize(cDMinLen, 0.0);
+
+                cDMeanRemovedSignalPartial.resize(cDMinLen);
+            } else {
+                // cALen = cA.size();
+                wt = wt_init(obj,(char*) "dwt", cA.size(), J);// Initialize the wavelet transform object
+                setDWTExtension(wt, (char*) "sym");
+                setWTConv(wt, (char*) "direct");
+
+                dwt(wt, cA.data());// Perform DWT
+            }
+
+            /* Fill cA */
+            cA.clear();
+            for (int i = 0; i < wt->length[0]; ++i) {
+                    cA.push_back(wt->output[i]);
+            }
+
+            /* Fill cD */
+            for (int i = wt->length[1]; i < wt->outlength; ++i) {
+                    cD.push_back(wt->output[i]);
+            }
+
+            /* Perform One Pole filter on cD */
+            cDFiltered = onePoolFilter(cD);
+
+            /* Decimate */
+            int dc = pow(2, (totalLevels - level - 1));
+            for (int ax = 0; ax < cDFiltered.size(); ax += dc)
+            {
+                cDDecimatedSignal.push_back(std::abs(cDFiltered[ax]));
+            }
+
+            decimatedSignalSum = std::accumulate(cDDecimatedSignal.begin(), cDDecimatedSignal.end(), 0.0);
+            decimatedSignalMean =  decimatedSignalSum / static_cast<double>(cDDecimatedSignal.size());
+
+            /* Remove the mean */
+            auto removeMean = [decimatedSignalMean]( const vecType x ) { return x - decimatedSignalMean; };
+            std::transform(
+                cDDecimatedSignal.begin(),
+                cDDecimatedSignal.end(),
+                std::back_inserter(cDMeanRemovedSignal),
+                removeMean );
+
+            /* Reconstruct */
+            std::copy_n ( cDMeanRemovedSignal.begin(), cDMinLen, cDMeanRemovedSignalPartial.begin() );
+            /* Perform element-wise sum of 2 vectors and store into cDSum */
+            std::transform ( 
+                        cDSum.begin(),
+                        cDSum.end(),
+                        cDMeanRemovedSignalPartial.begin(),
+                        cDSum.begin(),
+                        std::plus<vecType>() );
+
+            /* Clear variables */
+            wt_free(wt);
+            cD.clear();
+            cDFiltered.clear();
+            cDDecimatedSignal.clear();
+            cDMeanRemovedSignal.clear();
+            cDMeanRemovedSignalPartial.clear();
+        }
+        wave_free(obj);
+
+        /* Check if cA has any useful data */
+        bool zeros = std::all_of(cA.begin(), cA.end(), [](const int i) { return i == 0; });
+        if (zeros)
+            return 0.0;
+
+        /* Filter cA */
+        cAFiltered = onePoolFilter(cA);
+
+        /* Make cAFiltered absolute */
+        std::vector<vecType> cAAbsolute(cAFiltered.size());
+        auto absoluteVal = []( const vecType x ) { return std::abs(x); };
+        std::transform(
+                cAFiltered.begin(),
+                cAFiltered.end(),
+                cAAbsolute.begin(),
+                absoluteVal );
+        
+        double cAAbsoluteSum = std::accumulate(cAAbsolute.begin(), cAAbsolute.end(), 0.0);
+        double cAAbsoluteMean =  cAAbsoluteSum / static_cast<double>(cAAbsolute.size());
+
+        std::vector<vecType> cAMeanRemovedSignal(cAAbsolute.size());
+        auto removeMean = [cAAbsoluteMean]( const vecType x ) { return x - cAAbsoluteMean; };
+        std::transform(
+                cAAbsolute.begin(),
+                cAAbsolute.end(),
+                cAMeanRemovedSignal.begin(),
+                removeMean );
+        
+        // for (auto & element : cAMeanRemovedSignal) {
+        //     std::cout << element << std::endl;
+        // }
+        
+
+        cAMeanRemovedSignalPartial.resize(cDMinLen);
+        std::copy_n ( cAMeanRemovedSignal.begin(), cDMinLen, cAMeanRemovedSignalPartial.begin() );
+        /* Add elements of cDSum and cDMeanRemovedSignalPartial together and store into cDSum */
+        std::transform ( 
+                    cDSum.begin(),
+                    cDSum.end(),
+                    cAMeanRemovedSignalPartial.begin(),
+                    cDSum.begin(),
+                    std::plus<vecType>() );
+        
+        size_t dataLen = cDSum.size();
+        std::vector<vecType> b(dataLen * 2);
+
+        /* Fill a section of b with cDSum data */
+        int g = 0;
+        for (int i = dataLen / 2; i < (dataLen / 2) + dataLen; ++i){
+            b[i] = cDSum[g];
+            g += 1;
+        }
+
+        /* Reverse cDSum */
+        std::vector<vecType> reversecDSum(cDSum);
+        std::reverse(reversecDSum.begin(), reversecDSum.end());
+
+        /* Perform an array flipped convolution, which is a correlation on the data.  */
+        std::vector<vecType> correl = fftConvolve<vecType>(b, reversecDSum);
+        correl.pop_back(); // We don't need the last element
+        size_t midpoint = correl.size() / 2;
+        std::vector<vecType> correlMidpointTmp(correl.begin() + midpoint, correl.end());
+        std::vector<vecType> slicedCorrelMidpointTmp(correlMidpointTmp.begin() + std::floor(minNdx), correlMidpointTmp.begin() + std::floor(maxNdx));
+
+        /* Simple Peak Detection */
+        double peakIndex = peakDetect(slicedCorrelMidpointTmp);
+        if (peakIndex == 0.0)
+            return 0.0;
+        double peakIndexAdjusted = peakIndex + minNdx;
+        double bpm = 60. / peakIndexAdjusted * (sampleRate / maxDecimation);
+
+        return bpm;
+    }
+
+    template< typename vecType,
+            typename = std::enable_if_t< std::is_floating_point<vecType>::value> >
+    double beatsOverWindow(std::vector< vecType > &flattenedNormalizedSamples, int numSamplesPerChannel, uint32_t sampleRate, int windowSeconds)
+    {
+        int windowSamples = windowSeconds * sampleRate;
+        int sampleIndex = 0;
+        int maxWindowIndex = numSamplesPerChannel / windowSamples;
+        // seconds_mid = numpy.zeros(max_window_ndx)
+        std::vector<vecType> bpms(maxWindowIndex, 0.0);
+        std::vector<vecType> secondsMid(maxWindowIndex, 0.0);
+
+        // std::cout << windowSamples << std::endl;
+
+        // std::cout << maxWindowIndex << std::endl;
+
+        // data = samps[samps_ndx:samps_ndx + window_samps]
+        // seconds_mid[window_ndx] = \
+        //     seconds[samps_ndx:samps_ndx + window_samps].mean()
+
+        /* Fill vector from 0 to size of samples with increasing numbers */
+        std::vector<vecType> seconds(flattenedNormalizedSamples.size());
+        std::iota (seconds.begin(), seconds.end(), 0);
+
+        // auto removeMean = [cAAbsoluteMean]( const vecType x ) { return x - cAAbsoluteMean; };
+        // std::transform(
+        //         cAAbsolute.begin(),
+        //         cAAbsolute.end(),
+        //         cAMeanRemovedSignal.begin(),
+        //         [cAAbsoluteMean]( const vecType x ) { return x cAAbsoluteMean; } );
+
+
+        for (int windowIndex = 0; windowIndex < maxWindowIndex; windowIndex++)
+        {
+            typename std::vector<vecType>::iterator sampIt = flattenedNormalizedSamples.begin() + sampleIndex;
+            std::vector<vecType> slicesSamples(sampIt, sampIt + windowSamples);
+
+            // secondsMid[windowIndex]
+        }
+
+        for (auto & element : seconds) {
+            std::cout << element << std::endl;
+        }
+
+
+        return 0.0;
     }
 
     // bool CDecodeAudio(const char* message, bool (*decodef)(const char*))

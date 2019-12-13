@@ -4,6 +4,8 @@ if (POLICY CMP0048)
 	cmake_policy(SET CMP0048 NEW)
 endif (POLICY CMP0048)
 
+set(CMAKE_VERSION 3.10)
+
 # use g++-8 for gnu 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 	set(CMAKE_CXX_COMPILER "/usr/bin/g++-8")
@@ -49,12 +51,12 @@ set(MUSHER_PY_WRAPPER_SOURCE_DIR "${MUSHER_PY_WRAPPER_DIR}")
 # ################################
 # # Building
 # ################################
+# add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/wavelib" "dependencies/wavelib")
 add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/wavelib" "dependencies/wavelib")
 add_subdirectory(core/library)
 
 if(BUILD_PYTHON_MODULE)
 	add_subdirectory(core/py_wrapper)
-
 endif()
 # ################################
 # # Testing

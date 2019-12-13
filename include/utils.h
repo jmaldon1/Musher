@@ -110,8 +110,6 @@ namespace musher
         return filteredSignal;
     }
 
-    typedef std::complex<double> Complex;
-    typedef std::valarray<Complex> CArray;
     size_t next_fast_len(size_t n);
 
     template< typename vecType,

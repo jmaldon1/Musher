@@ -78,18 +78,6 @@ TEST(AudioFileDecoding, DecodeWav) {
     std::vector< std::vector<double> > normalizedSamples;
     normalizedSamples = CDecodeWav<double>(wavDecodedData, fileData);
 
-    // std::vector< std::vector<double> >::const_iterator row; 
-    // std::vector<double>::const_iterator col; 
-
-    // std::cout << "LOOPING" << std::endl;
-    // for (row = normalizedSamples.begin(); row != normalizedSamples.end(); ++row)
-    // { 
-    //      for (col = row->begin(); col != row->end(); ++col)
-    //      { 
-    //         std::cout << *col; 
-    //      } 
-    // } 
-
     uint32_t expectedSampleRate = 22050;
     uint32_t actualSampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
 
@@ -128,7 +116,7 @@ TEST(AudioFileDecoding, DecodeWav) {
 
 TEST(AudioFileDecoding, BeatDetection) {
     std::vector<uint8_t> fileData;
-    const std::string filePath = "./tests/audio_files/Faded.wav";
+    const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
     fileData = CLoadAudioFile(filePath);
     std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
     std::vector< std::vector<double> > normalizedSamples;
@@ -141,7 +129,7 @@ TEST(AudioFileDecoding, BeatDetection) {
     double bpm = bpmsOverWindow(flattenedNormalizedSamples, flattenedNormalizedSamples.size(), sampleRate, 3);
 
     std::cout << bpm << std::endl;
-    // EXPECT_EQ( bpm, 80.0 );
+    EXPECT_EQ( bpm, 80.0 );
     // for (auto & element : seconds) {
     //     std::cout << element << std::endl;
     // }

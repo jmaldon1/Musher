@@ -92,10 +92,17 @@ namespace musher
         if (orig.size() > 2){
             std::string err_message = "This is not a 2D vector";
             throw std::runtime_error(err_message);
+        } else if (orig.size() == 1){
+            return orig[0];
         }
         std::vector<T> a(orig[0]);
         std::vector<T> b(orig[1]);
         std::vector<T> result ;
+
+        if (a.size() == 0)
+            return b;
+        if (b.size() == 0)
+            return a;
 
         auto m = std::min( a.size(), b.size() ) ;
 
@@ -107,7 +114,7 @@ namespace musher
         if( m < a.size() ) result.insert( result.end(), a.begin()+m, a.end() ) ;
         if( m < b.size() ) result.insert( result.end(), b.begin()+m, b.end() ) ;
 
-        return result ;
+        return result;
     }
 
     template< typename vecType,

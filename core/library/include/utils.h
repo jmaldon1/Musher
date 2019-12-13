@@ -95,6 +95,21 @@ namespace musher
     }
 
     template< typename vecType,
+            typename = std::enable_if_t< std::is_floating_point<vecType>::value> >
+    double median(std::vector< vecType > &inVec)
+    {
+        std::vector<vecType> vec(inVec);
+        std::sort(vec.begin(), vec.end());
+        double median;
+        if (vec.size() % 2 == 0)
+            median = 0.5 * (vec[vec.size() / 2 - 1] + vec[vec.size() / 2]);
+        else
+            median = vec[vec.size() / 2];
+        
+        return median;
+    }
+
+    template< typename vecType,
             typename = std::enable_if_t<std::is_floating_point<vecType>::value> >
     std::vector<vecType> onePoolFilter(const std::vector< vecType > &vec)
     {

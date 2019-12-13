@@ -126,15 +126,6 @@ TEST(AudioFileDecoding, DecodeWav) {
     EXPECT_EQ( expectedNumSamplesPerChannel, actualNumSamplesPerChannel );
 }
 
-double RMS_Error(double *data, double *rec, int N) {
-    int i;
-    double sum = 0;
-    for (i = 0; i < N; ++i) {
-        sum += (data[i] - rec[i])*(data[i] - rec[i]);
-    }
-    return sqrt(sum/((double)N-1));
-}
-
 TEST(AudioFileDecoding, BeatDetection) {
     std::vector<uint8_t> fileData;
     const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
@@ -145,9 +136,19 @@ TEST(AudioFileDecoding, BeatDetection) {
 
     normalizedSamples = CDecodeWav<double>(wavDecodedData, fileData);
     flattenedNormalizedSamples = flatten2DVector(normalizedSamples);
+    
+    // for (auto & element : flattenedNormalizedSamples) {
+    //     std::cout << element << std::endl;
+    // }
+    // std::cout << size(flattenedNormalizedSamples) << std::endl;
     int numSamplesPerChannel = variantToType<int>(wavDecodedData["samples_per_channel"]);
     uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
 
-    beatsOverWindow(flattenedNormalizedSamples, numSamplesPerChannel, sampleRate, 3);
-    beatDetection(flattenedNormalizedSamples, numSamplesPerChannel, sampleRate);
+    double bpm = bpmsOverWindow(flattenedNormalizedSamples, numSamplesPerChannel, sampleRate, 3);
+
+    std::cout << bpm << std::endl;
+    // EXPECT_EQ( bpm, 80.0 );
+    // for (auto & element : seconds) {
+    //     std::cout << element << std::endl;
+    // }
 }

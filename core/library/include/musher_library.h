@@ -131,8 +131,8 @@ namespace musher
                     int16_t sampleAsInt = twoBytesToInt(fileData, sampleIndex);
                     /* normalize samples to between -1 and 1 */
                     AudioBufferType sample = normalizeInt16_t<AudioBufferType>(sampleAsInt);
-                    // samples[channel].push_back (sample);
-                    samples[channel].push_back (sampleAsInt);
+                    samples[channel].push_back (sample);
+                    // samples[channel].push_back (sampleAsInt);
                 }
                 else if (bitDepth == 24)
                 {
@@ -145,7 +145,8 @@ namespace musher
                     /* normalize samples to between -1 and 1 */
                     AudioBufferType sample = normalizeInt32_t<AudioBufferType>(sampleAsInt);
                     // AudioBufferType sample = (AudioBufferType)sampleAsInt / (AudioBufferType)8388608.;
-                    samples[channel].push_back (sample);
+                    // samples[channel].push_back (sample);
+                    samples[channel].push_back (sampleAsInt);
                 }
                 else
                 {
@@ -173,17 +174,15 @@ namespace musher
         wavDecodedData["length_in_seconds"] = lengthInSeconds;
 
         return samples;
-
     }
 
     template< typename vecType,
             typename = std::enable_if_t< std::is_floating_point<vecType>::value> >
-    double beatDetection(std::vector< vecType > &flattenedNormalizedSamples, int numSamplesPerChannel, uint32_t sampleRate)
+    double bpmDetection(std::vector< vecType > &flattenedNormalizedSamples, int numSamplesPerChannel, uint32_t sampleRate)
     {
         wave_object obj;
         wt_object wt;
         int J = 1;
-        double epsilon = 1e-15;
 
         const int totalLevels = 4;
         const int maxDecimation = pow(2, (totalLevels - 1));
@@ -202,7 +201,7 @@ namespace musher
         {
             /* Discrete Wavelet Transform */
             if (level == 0) {
-                wt = wt_init(obj,(char*) "dwt", numSamplesPerChannel, J); // Initialize the wavelet transform object
+                wt = wt_init(obj,(char*) "dwt", flattenedNormalizedSamples.size(), J); // Initialize the wavelet transform object
                 setDWTExtension(wt, (char*) "sym");
                 setWTConv(wt, (char*) "direct");
 
@@ -213,7 +212,6 @@ namespace musher
 
                 cDMeanRemovedSignalPartial.resize(cDMinLen);
             } else {
-                // cALen = cA.size();
                 wt = wt_init(obj,(char*) "dwt", cA.size(), J);// Initialize the wavelet transform object
                 setDWTExtension(wt, (char*) "sym");
                 setWTConv(wt, (char*) "direct");
@@ -231,6 +229,14 @@ namespace musher
             for (int i = wt->length[1]; i < wt->outlength; ++i) {
                     cD.push_back(wt->output[i]);
             }
+
+            // for (auto & element : cD) {
+            //     std::cout << element << std::endl;
+            // }
+
+            // std::cout << flattenedNormalizedSamples.size() << std::endl;
+
+            // throw std::runtime_error("HERE");
 
             /* Perform One Pole filter on cD */
             cDFiltered = onePoolFilter(cD);
@@ -274,7 +280,7 @@ namespace musher
         wave_free(obj);
 
         /* Check if cA has any useful data */
-        bool zeros = std::all_of(cA.begin(), cA.end(), [](const int i) { return i == 0; });
+        bool zeros = std::all_of(cA.begin(), cA.end(), [](const vecType d) { return d == 0.0; });
         if (zeros)
             return 0.0;
 
@@ -345,11 +351,12 @@ namespace musher
         double bpm = 60. / peakIndexAdjusted * (sampleRate / maxDecimation);
 
         return bpm;
+        return 0.0;
     }
 
     template< typename vecType,
             typename = std::enable_if_t< std::is_floating_point<vecType>::value> >
-    double beatsOverWindow(std::vector< vecType > &flattenedNormalizedSamples, int numSamplesPerChannel, uint32_t sampleRate, int windowSeconds)
+    double bpmsOverWindow(std::vector< vecType > &flattenedNormalizedSamples, int numSamplesPerChannel, uint32_t sampleRate, int windowSeconds)
     {
         int windowSamples = windowSeconds * sampleRate;
         int sampleIndex = 0;
@@ -358,40 +365,33 @@ namespace musher
         std::vector<vecType> bpms(maxWindowIndex, 0.0);
         std::vector<vecType> secondsMid(maxWindowIndex, 0.0);
 
-        // std::cout << windowSamples << std::endl;
+        // /* Fill vector from 0 to size of samples with increasing numbers */
+        // std::vector<vecType> arangeSamples(flattenedNormalizedSamples.size());
+        // std::iota (arangeSamples.begin(), arangeSamples.end(), 0);
 
-        // std::cout << maxWindowIndex << std::endl;
-
-        // data = samps[samps_ndx:samps_ndx + window_samps]
-        // seconds_mid[window_ndx] = \
-        //     seconds[samps_ndx:samps_ndx + window_samps].mean()
-
-        /* Fill vector from 0 to size of samples with increasing numbers */
-        std::vector<vecType> seconds(flattenedNormalizedSamples.size());
-        std::iota (seconds.begin(), seconds.end(), 0);
-
-        // auto removeMean = [cAAbsoluteMean]( const vecType x ) { return x - cAAbsoluteMean; };
+        // std::vector<vecType> seconds(arangeSamples.size());
         // std::transform(
-        //         cAAbsolute.begin(),
-        //         cAAbsolute.end(),
-        //         cAMeanRemovedSignal.begin(),
-        //         [cAAbsoluteMean]( const vecType x ) { return x cAAbsoluteMean; } );
-
+        //         arangeSamples.begin(),
+        //         arangeSamples.end(),
+        //         seconds.begin(),
+        //         [&sampleRate]( const vecType x ) { return x / static_cast<double>(sampleRate); } );
 
         for (int windowIndex = 0; windowIndex < maxWindowIndex; windowIndex++)
         {
             typename std::vector<vecType>::iterator sampIt = flattenedNormalizedSamples.begin() + sampleIndex;
             std::vector<vecType> slicesSamples(sampIt, sampIt + windowSamples);
 
-            // secondsMid[windowIndex]
+            // std::vector<vecType> slicedSeconds(sampIt, sampIt + windowSamples);
+            // double secondsSum = std::accumulate(slicedSeconds.begin(), slicedSeconds.end(), 0.0);
+            // double secondsMid =  cAAbsoluteSum / static_cast<double>(slicedSeconds.size());
+            
+            double bpm = bpmDetection(slicesSamples, numSamplesPerChannel, sampleRate);
+            bpms[windowIndex] = bpm;
+
+            sampleIndex += windowSamples;
         }
 
-        for (auto & element : seconds) {
-            std::cout << element << std::endl;
-        }
-
-
-        return 0.0;
+        return std::round(median(bpms));
     }
 
     // bool CDecodeAudio(const char* message, bool (*decodef)(const char*))

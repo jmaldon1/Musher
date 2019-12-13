@@ -131,8 +131,8 @@ namespace musher
                     int16_t sampleAsInt = twoBytesToInt(fileData, sampleIndex);
                     /* normalize samples to between -1 and 1 */
                     AudioBufferType sample = normalizeInt16_t<AudioBufferType>(sampleAsInt);
-                    samples[channel].push_back (sample);
-                    // samples[channel].push_back (sampleAsInt);
+                    // samples[channel].push_back (sample);
+                    samples[channel].push_back (sampleAsInt);
                 }
                 else if (bitDepth == 24)
                 {
@@ -178,7 +178,7 @@ namespace musher
 
     template< typename vecType,
             typename = std::enable_if_t< std::is_floating_point<vecType>::value> >
-    double bpmDetection(std::vector< vecType > &flattenedNormalizedSamples, int numSamplesPerChannel, uint32_t sampleRate)
+    double bpmDetection(std::vector< vecType > &flattenedNormalizedSamples, uint32_t sampleRate)
     {
         wave_object obj;
         wt_object wt;
@@ -216,7 +216,7 @@ namespace musher
                 setDWTExtension(wt, (char*) "sym");
                 setWTConv(wt, (char*) "direct");
 
-                dwt(wt, cA.data());// Perform DWT
+                dwt(wt, cA.data()); // Perform DWT
             }
 
             /* Fill cA */
@@ -229,14 +229,6 @@ namespace musher
             for (int i = wt->length[1]; i < wt->outlength; ++i) {
                     cD.push_back(wt->output[i]);
             }
-
-            // for (auto & element : cD) {
-            //     std::cout << element << std::endl;
-            // }
-
-            // std::cout << flattenedNormalizedSamples.size() << std::endl;
-
-            // throw std::runtime_error("HERE");
 
             /* Perform One Pole filter on cD */
             cDFiltered = onePoolFilter(cD);
@@ -306,11 +298,6 @@ namespace musher
                 cAAbsolute.end(),
                 cAMeanRemovedSignal.begin(),
                 removeMean );
-        
-        // for (auto & element : cAMeanRemovedSignal) {
-        //     std::cout << element << std::endl;
-        // }
-        
 
         cAMeanRemovedSignalPartial.resize(cDMinLen);
         std::copy_n ( cAMeanRemovedSignal.begin(), cDMinLen, cAMeanRemovedSignalPartial.begin() );
@@ -351,16 +338,15 @@ namespace musher
         double bpm = 60. / peakIndexAdjusted * (sampleRate / maxDecimation);
 
         return bpm;
-        return 0.0;
     }
 
     template< typename vecType,
             typename = std::enable_if_t< std::is_floating_point<vecType>::value> >
-    double bpmsOverWindow(std::vector< vecType > &flattenedNormalizedSamples, int numSamplesPerChannel, uint32_t sampleRate, int windowSeconds)
+    double bpmsOverWindow(std::vector< vecType > &flattenedNormalizedSamples, size_t numSamples, uint32_t sampleRate, int windowSeconds)
     {
         int windowSamples = windowSeconds * sampleRate;
         int sampleIndex = 0;
-        int maxWindowIndex = numSamplesPerChannel / windowSamples;
+        int maxWindowIndex = numSamples / windowSamples;
         // seconds_mid = numpy.zeros(max_window_ndx)
         std::vector<vecType> bpms(maxWindowIndex, 0.0);
         std::vector<vecType> secondsMid(maxWindowIndex, 0.0);
@@ -385,7 +371,7 @@ namespace musher
             // double secondsSum = std::accumulate(slicedSeconds.begin(), slicedSeconds.end(), 0.0);
             // double secondsMid =  cAAbsoluteSum / static_cast<double>(slicedSeconds.size());
             
-            double bpm = bpmDetection(slicesSamples, numSamplesPerChannel, sampleRate);
+            double bpm = bpmDetection(slicesSamples, sampleRate);
             bpms[windowIndex] = bpm;
 
             sampleIndex += windowSamples;

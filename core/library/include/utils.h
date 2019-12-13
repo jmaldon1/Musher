@@ -86,12 +86,28 @@ namespace musher
     }
 
     template< typename T >
-    std::vector<T> flatten2DVector(const std::vector<std::vector<T>> &orig)
+    std::vector<T> interleave2DVector(const std::vector<std::vector<T>> &orig)
     {   
-        std::vector<T> ret;
-        for(const auto &v: orig)
-            ret.insert(ret.end(), v.begin(), v.end());                                                                                         
-        return ret;
+        /* Interleave 2 vectors */
+        if (orig.size() > 2){
+            std::string err_message = "This is not a 2D vector";
+            throw std::runtime_error(err_message);
+        }
+        std::vector<T> a(orig[0]);
+        std::vector<T> b(orig[1]);
+        std::vector<T> result ;
+
+        auto m = std::min( a.size(), b.size() ) ;
+
+        for( std::size_t i=0 ; i<m ; ++i )
+        {
+            result.push_back(a[i]) ;
+            result.push_back(b[i]) ;
+        }
+        if( m < a.size() ) result.insert( result.end(), a.begin()+m, a.end() ) ;
+        if( m < b.size() ) result.insert( result.end(), b.begin()+m, b.end() ) ;
+
+        return result ;
     }
 
     template< typename vecType,

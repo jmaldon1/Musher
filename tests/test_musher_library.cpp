@@ -128,23 +128,17 @@ TEST(AudioFileDecoding, DecodeWav) {
 
 TEST(AudioFileDecoding, BeatDetection) {
     std::vector<uint8_t> fileData;
-    const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
+    const std::string filePath = "./tests/audio_files/Faded.wav";
     fileData = CLoadAudioFile(filePath);
     std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
     std::vector< std::vector<double> > normalizedSamples;
     std::vector<double> flattenedNormalizedSamples;
 
     normalizedSamples = CDecodeWav<double>(wavDecodedData, fileData);
-    flattenedNormalizedSamples = flatten2DVector(normalizedSamples);
-    
-    // for (auto & element : flattenedNormalizedSamples) {
-    //     std::cout << element << std::endl;
-    // }
-    // std::cout << size(flattenedNormalizedSamples) << std::endl;
-    int numSamplesPerChannel = variantToType<int>(wavDecodedData["samples_per_channel"]);
+    flattenedNormalizedSamples = interleave2DVector(normalizedSamples);
     uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
 
-    double bpm = bpmsOverWindow(flattenedNormalizedSamples, numSamplesPerChannel, sampleRate, 3);
+    double bpm = bpmsOverWindow(flattenedNormalizedSamples, flattenedNormalizedSamples.size(), sampleRate, 3);
 
     std::cout << bpm << std::endl;
     // EXPECT_EQ( bpm, 80.0 );

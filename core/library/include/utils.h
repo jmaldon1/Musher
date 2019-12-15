@@ -73,7 +73,7 @@ namespace musher
         basicType t;
         std::visit(
           overload(
-            [&t](basicType arg) { t = arg; },
+            [&t](const basicType arg) { t = arg; },
             [](auto&&) { 
                 std::string err_message = "The template type was not found within the variant.";
                 throw std::runtime_error(err_message); 
@@ -92,27 +92,25 @@ namespace musher
         if (orig.size() > 2){
             std::string err_message = "This is not a 2D vector";
             throw std::runtime_error(err_message);
-        } else if (orig.size() == 1){
+        } else if (orig.size() == 1) {
             return orig[0];
+        } else if (orig.empty()) {
+            std::string err_message = "2D Vector is empty";
+            throw std::runtime_error(err_message);
         }
         std::vector<T> a(orig[0]);
         std::vector<T> b(orig[1]);
-        std::vector<T> result ;
+        std::vector<T> result;
 
-        if (a.size() == 0)
-            return b;
-        if (b.size() == 0)
-            return a;
+        auto m = std::min( a.size(), b.size() );
 
-        auto m = std::min( a.size(), b.size() ) ;
-
-        for( std::size_t i=0 ; i<m ; ++i )
+        for( size_t i = 0 ; i < m ; ++i )
         {
-            result.push_back(a[i]) ;
-            result.push_back(b[i]) ;
+            result.push_back(a[i]);
+            result.push_back(b[i]);
         }
-        if( m < a.size() ) result.insert( result.end(), a.begin()+m, a.end() ) ;
-        if( m < b.size() ) result.insert( result.end(), b.begin()+m, b.end() ) ;
+        if( m < a.size() ) result.insert( result.end(), a.begin()+m, a.end() );
+        if( m < b.size() ) result.insert( result.end(), b.begin()+m, b.end() );
 
         return result;
     }

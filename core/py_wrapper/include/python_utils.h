@@ -116,6 +116,7 @@ namespace musher
     template<typename ...types>
     PyObject* variantToPyobject(const std::variant<types...> &var)
     {   
+        /* We define all posible types here because we want to be able to loop through a variant */
         PyObject* basicPyType;
         std::visit(
         overload(

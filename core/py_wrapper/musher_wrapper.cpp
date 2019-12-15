@@ -135,7 +135,7 @@ PyObject* DecodeWav(PyObject* self, PyObject* args)
         std::vector<uint8_t> fileData;
         fileData = listToVector<uint8_t>(listObj);
 
-        std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
+        std::unordered_map< std::string, std::variant<int, uint32_t, double, bool, std::string> > wavDecodedData;
         // std::vector< std::vector<double> > audioBuffer;
         std::vector< std::vector<double> > normalizedSamples = CDecodeWav<double>(wavDecodedData, fileData);
 

@@ -163,6 +163,7 @@ namespace musher
         if (samples.size() > 0)
             numSamplesPerChannel = static_cast<int>(samples[0].size());
         double lengthInSeconds = static_cast<double>(numSamplesPerChannel) / static_cast<double>(sampleRate);
+        std::string fileType = "wav";
 
         /* Add the decoded info into the unordered map */
         wavDecodedData["sample_rate"] = sampleRate;
@@ -172,6 +173,7 @@ namespace musher
         wavDecodedData["stereo"] = stereo;
         wavDecodedData["samples_per_channel"] = numSamplesPerChannel;
         wavDecodedData["length_in_seconds"] = lengthInSeconds;
+        wavDecodedData["filetype"] = fileType;
 
         return samples;
     }

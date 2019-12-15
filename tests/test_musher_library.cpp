@@ -16,7 +16,11 @@
 
 #include "musher_library.h"
 #include "utils.h"
-// #include "wavelib.h"
+#define MINIMP3_IMPLEMENTATION
+// #define MINIMP3_IMPLEMENTATION
+#define MINIMP3_ALLOW_MONO_STEREO_TRANSITION
+#define MINIMP3_SKIP_ID3V1
+#include "minimp3_ex.h"
 
 /* TEST INCLUDES */
 // #include "test_load_audio_file.h"
@@ -73,7 +77,7 @@ TEST(AudioFileDecoding, DecodeWav) {
     const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
     fileData = CLoadAudioFile(filePath);
 
-    std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
+    std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
     /* Sample should only be of type double or float */
     std::vector< std::vector<double> > normalizedSamples;
     normalizedSamples = CDecodeWav<double>(wavDecodedData, fileData);
@@ -112,13 +116,18 @@ TEST(AudioFileDecoding, DecodeWav) {
     int actualNumSamplesPerChannel = variantToType<int>(wavDecodedData["samples_per_channel"]);
 
     EXPECT_EQ( expectedNumSamplesPerChannel, actualNumSamplesPerChannel );
+
+    std::string expectedFileType = "wav";
+    std::string actualFileType = variantToType<std::string>(wavDecodedData["filetype"]);
+
+    EXPECT_EQ( expectedFileType, actualFileType );
 }
 
 TEST(AudioFileDecoding, BeatDetection) {
     std::vector<uint8_t> fileData;
     const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
     fileData = CLoadAudioFile(filePath);
-    std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
+    std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
     std::vector< std::vector<double> > normalizedSamples;
     std::vector<double> flattenedNormalizedSamples;
 
@@ -128,9 +137,41 @@ TEST(AudioFileDecoding, BeatDetection) {
 
     double bpm = bpmsOverWindow(flattenedNormalizedSamples, flattenedNormalizedSamples.size(), sampleRate, 3);
 
-    std::cout << bpm << std::endl;
+    // std::cout << bpm << std::endl;
     EXPECT_EQ( bpm, 80.0 );
     // for (auto & element : seconds) {
     //     std::cout << element << std::endl;
     // }
+}
+
+TEST(AudioFileDecoding, DecodeMp3) {
+    const std::string filePath = "./tests/audio_files/FadedMP3.mp3";
+    mp3dec_t mp3d;
+    mp3dec_file_info_t info;
+    if (mp3dec_load(&mp3d, filePath.c_str(), &info, NULL, NULL))
+    {
+        /* error */
+        throw std::runtime_error("BAD MP3");
+    }
+
+    std::vector<mp3d_sample_t> samples(info.buffer, info.buffer + info.samples);
+    // for (auto & element : samples) {
+    //     std::cout << element << std::endl;
+    // }
+    // std::cout << samples[0] << std::endl;
+    for(int i=10000; i<20000; ++i)
+        std::cout << samples[i] << std::endl;
+
+    // std::vector<uint8_t> fileData;
+    // const std::string filePath = "./tests/audio_files/Faded.wav";
+    // fileData = CLoadAudioFile(filePath);
+
+    // std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
+    // /* Sample should only be of type double or float */
+    // std::vector< std::vector<double> > normalizedSamples;
+    // normalizedSamples = CDecodeWav<double>(wavDecodedData, fileData);
+
+
+    // for(int i=10000; i<20000; ++i)
+    //     std::cout << normalizedSamples[1][i] << std::endl;
 }

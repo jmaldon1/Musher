@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <math.h>
 #include <numeric>
+#include <complex>
 #include "gtest/gtest.h"
 
 /* use experimental filesystem on linux */
@@ -16,11 +17,6 @@
 
 #include "musher_library.h"
 #include "utils.h"
-#define MINIMP3_IMPLEMENTATION
-// #define MINIMP3_IMPLEMENTATION
-#define MINIMP3_ALLOW_MONO_STEREO_TRANSITION
-#define MINIMP3_SKIP_ID3V1
-#include "minimp3_ex.h"
 
 /* TEST INCLUDES */
 // #include "test_load_audio_file.h"
@@ -73,14 +69,11 @@ TEST(AudioFileDecoding, LoadsAudioFileTest) {
 
 
 TEST(AudioFileDecoding, DecodeWav) {
-    std::vector<uint8_t> fileData;
+    std::vector< double > normalizedSamples;
     const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
-    fileData = CLoadAudioFile(filePath);
-
     std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
-    /* Sample should only be of type double or float */
-    std::vector< std::vector<double> > normalizedSamples;
-    normalizedSamples = CDecodeWav<double>(wavDecodedData, fileData);
+
+    normalizedSamples = CDecodeWav<double>(wavDecodedData, filePath);
 
     uint32_t expectedSampleRate = 22050;
     uint32_t actualSampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
@@ -121,21 +114,22 @@ TEST(AudioFileDecoding, DecodeWav) {
     std::string actualFileType = variantToType<std::string>(wavDecodedData["filetype"]);
 
     EXPECT_EQ( expectedFileType, actualFileType );
+
+    int expected_avg_bitrate_kbps = 352;
+    int actual_avg_bitrate_kbps = variantToType<int>(wavDecodedData["avg_bitrate_kbps"]);
+
+    EXPECT_EQ( expected_avg_bitrate_kbps, actual_avg_bitrate_kbps );
 }
 
 TEST(AudioFileDecoding, BeatDetection) {
-    std::vector<uint8_t> fileData;
+    std::vector< double > normalizedSamples;
     const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
-    fileData = CLoadAudioFile(filePath);
     std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
-    std::vector< std::vector<double> > normalizedSamples;
-    std::vector<double> flattenedNormalizedSamples;
 
-    normalizedSamples = CDecodeWav<double>(wavDecodedData, fileData);
-    flattenedNormalizedSamples = interleave2DVector(normalizedSamples);
+    normalizedSamples = CDecodeWav<double>(wavDecodedData, filePath);
     uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
 
-    double bpm = bpmsOverWindow(flattenedNormalizedSamples, flattenedNormalizedSamples.size(), sampleRate, 3);
+    double bpm = bpmsOverWindow(normalizedSamples, normalizedSamples.size(), sampleRate, 3);
 
     // std::cout << bpm << std::endl;
     EXPECT_EQ( bpm, 80.0 );
@@ -145,33 +139,26 @@ TEST(AudioFileDecoding, BeatDetection) {
 }
 
 TEST(AudioFileDecoding, DecodeMp3) {
-    const std::string filePath = "./tests/audio_files/FadedMP3.mp3";
-    mp3dec_t mp3d;
-    mp3dec_file_info_t info;
-    if (mp3dec_load(&mp3d, filePath.c_str(), &info, NULL, NULL))
-    {
-        /* error */
-        throw std::runtime_error("BAD MP3");
-    }
+    std::vector< double > normalizedSamples;
+    const std::string filePathMp3 = "./tests/audio_files/126bpm.mp3";
+    std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
 
-    std::vector<mp3d_sample_t> samples(info.buffer, info.buffer + info.samples);
-    // for (auto & element : samples) {
-    //     std::cout << element << std::endl;
-    // }
-    // std::cout << samples[0] << std::endl;
-    for(int i=10000; i<20000; ++i)
-        std::cout << samples[i] << std::endl;
+    normalizedSamples = CDecodeMp3<double>(wavDecodedData, filePathMp3);
 
-    // std::vector<uint8_t> fileData;
-    // const std::string filePath = "./tests/audio_files/Faded.wav";
-    // fileData = CLoadAudioFile(filePath);
+    uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
 
-    // std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
-    // /* Sample should only be of type double or float */
-    // std::vector< std::vector<double> > normalizedSamples;
-    // normalizedSamples = CDecodeWav<double>(wavDecodedData, fileData);
-
-
-    // for(int i=10000; i<20000; ++i)
-    //     std::cout << normalizedSamples[1][i] << std::endl;
+    double bpm = bpmsOverWindow(normalizedSamples, normalizedSamples.size(), sampleRate, 3);
+    std::cout << bpm << std::endl;
 }
+
+// TEST(AudioFileDecoding, Windowing) {
+//     // inputSize = 1024
+//     // input = [1] * inputSize
+//     std::vector<double> inp(1024, 1.0);
+//     std::vector<double> out;
+//     out = blackmanHarris92dB(inp);
+
+//     for (auto & element : out) {
+//         std::cout << element << std::endl;
+//     }
+// }

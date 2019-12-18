@@ -14,8 +14,7 @@
 #  include <experimental/filesystem>
 #endif
 
-
-
+#define MINIMP3_IMPLEMENTATION
 #include "musher_library.h"
 #include "utils.h"
 

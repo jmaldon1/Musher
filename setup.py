@@ -28,7 +28,8 @@ with codecs.open('README.md', encoding='utf-8') as fobj:
 
 # List of all C++ test names
 cpp_tests_list = [
-    'test_musher_cpp'
+    'test_musher_library',
+    'test_musher_utils',
 ]
 
 
@@ -36,27 +37,34 @@ class BuildCppTests(distutils.cmd.Command):
     description = 'Build c++ tests for musher library'
     user_options = [
         ('debug', None, 'sets config to Debug, config set to Release by default'),
-        ('run-tests', 'r', 'set to run tests after building')
+        ('run-tests', 'r', 'set to run tests after building'),
+        # https://github.com/google/googletest/blob/master/googletest/docs/advanced.md#running-a-subset-of-the-tests
+        ('filter=', 'f', 'Choose which tests to run, this will be passed to --gtest_filter'),
     ]
 
     def initialize_options(self):
         self.debug = False
         self.run_tests = False
+        self.filter = ""
 
     def finalize_options(self):
         pass
 
     def run(self):
-        if sysconfig.get_config_var('CXX') == "g++":  # Check if using g++ to compile
-            # Check if user has g++ 8, if they do, use it to compile
-            if os.path.exists("/usr/bin/g++-8"):
-                os.environ["CXX"] = "/usr/bin/g++-8"
         # extdir = os.path.abspath(
         #     os.path.dirname(self.get_ext_fullpath(ext.name)))
         cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + ROOT_DIR]
 
+        if sysconfig.get_config_var('CXX') == "g++":  # Check if using g++ to compile
+            # Check if user has g++ 8, if they do, use it to compile
+            if os.path.exists("/usr/bin/g++-8"):
+                cmake_args += ["-DCMAKE_CXX_COMPILER=/usr/bin/g++-8"]
+
         # Do not compile python module when building c++ code.
         cmake_args += ['-DBUILD_PYTHON_MODULE=OFF']
+
+        if self.debug:
+            cmake_args += ['-DCMAKE_BUILD_TYPE=Debug']
 
         cfg = 'Debug' if self.debug else 'Release'
         build_args = ['--config', cfg]
@@ -95,7 +103,15 @@ class BuildCppTests(distutils.cmd.Command):
                 else:
                     test_file_path = test
                     test_path = os.path.abspath(os.path.join(test_bin_dir, test_file_path))
-                subprocess.check_call([test_path], cwd=ROOT_DIR)
+                print("=" * 35)
+                print(f"Running Test '{test}'")
+                print("=" * 35)
+                test_args = [test_path]
+                if self.filter:
+                    test_args += [f"--gtest_filter={self.filter}"]
+                    subprocess.check_call(test_args, cwd=ROOT_DIR)
+                else:
+                    subprocess.check_call(test_args, cwd=ROOT_DIR)
 
 
 class CMakeExtension(Extension):
@@ -122,16 +138,16 @@ class CMakeBuild(build_ext):
             self.build_extension(ext)
 
     def build_extension(self, ext):
-        if sysconfig.get_config_var('CXX') == "g++":  # Check if using g++ to compile
-            # Check if user has g++ 8, if they do, use it to compile
-            if os.path.exists("/usr/bin/g++-8"):
-                os.environ["CXX"] = "g++-8"
-
         extdir = os.path.abspath(
             os.path.dirname(self.get_ext_fullpath(ext.name)))
         # Output library to root directory
         cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
                       '-DPYTHON_EXECUTABLE=' + sys.executable]
+
+        if sysconfig.get_config_var('CXX') == "g++":  # Check if using g++ to compile
+            # Check if user has g++ 8, if they do, use it to compile
+            if os.path.exists("/usr/bin/g++-8"):
+                cmake_args += ["-DCMAKE_CXX_COMPILER=/usr/bin/g++-8"]
 
         # Do not build c++ tests when packaging code.
         cmake_args += ['-DBUILD_TESTING=OFF']

@@ -11,11 +11,14 @@
 #include "python_utils.h"
 
 
+using namespace musher;
+
+
 /* Unordered map of python decode functions mapped to their C++ function equivalent */
-typedef bool (*DecodeFunction)(const char*); // function pointer type
-std::unordered_map<std::string, DecodeFunction> uMapDecodeFuncs({
-    {"DecodeWav", &CDecodeWav}
-});
+// typedef bool (*DecodeFunction)(const char*); // function pointer type
+// std::unordered_map<std::string, DecodeFunction> uMapDecodeFuncs({
+//     {"DecodeWav", &CDecodeWav}
+// });
 
 
 PyObject* PrintFunctionalMessage(PyObject* self, PyObject* args)
@@ -35,30 +38,14 @@ PyObject* PrintFunctionalMessage(PyObject* self, PyObject* args)
 }
 
 
-PyObject* DecodeWav(PyObject* self, PyObject* args)
-{
-    /* Arguments passed in from Python */
-    const char* message;
-
-    /* Process arguments from Python */
-    PyArg_ParseTuple(args, "s",
-                    &message);
-
-    /* Call function */
-    CDecodeWav(message);
-
-    /* Return nothing */
-    return Py_BuildValue("");
-}
-
-
 PyObject* LoadAudioFile(PyObject* self, PyObject* args)
 {
     /* Arguments passed in from Python */
     const char* filePath;
 
     /* Process arguments from Python */
-    PyArg_ParseTuple(args, "s", &filePath);
+    if (!PyArg_ParseTuple(args, "s", &filePath))
+        return NULL;
 
     /* 
     Must convert all c++ exceptions to python exceptions to prevent seg faults
@@ -66,25 +53,15 @@ PyObject* LoadAudioFile(PyObject* self, PyObject* args)
     std::vector<uint8_t> fileData;
     try{
         fileData = CLoadAudioFile(filePath);
-
-        /* convert uint8_t vector to int vector */
-        // std::vector<int> fileDataInt;
-        // std::transform(fileData.begin(), fileData.end(), std::back_inserter(fileDataInt), unint8_t_to_int);
-
-        // for (std::vector<int>::const_iterator i = fileDataInt.begin(); i != fileDataInt.end(); ++i)
-        //     std::cout << *i << ' ';
-
-        // PyObject* pyIntList = vector_to_list_int(fileDataInt);
-        PyObject* pyIntList = vector_to_list_uint8_t(fileData);
+        PyObject* pyIntList = vectorToList(fileData);
         return pyIntList;
 
     }
     catch( const std::runtime_error& e )
     {
-        const std::string unknownFilePath = get_str_between_two_squotes(e.what());
-        const char* unknownFilePathChar = unknownFilePath.c_str();
+        const std::string unknownFilePath = strBetweenSQuotes(e.what());
         /* Raise a filenotfounderror in python */
-        PyErr_SetFromErrnoWithFilename(PyExc_FileNotFoundError, unknownFilePathChar);
+        PyErr_SetFromErrnoWithFilename(PyExc_FileNotFoundError, unknownFilePath.c_str());
         return NULL;
     }
     catch( const std::exception& e )
@@ -141,6 +118,48 @@ PyObject* LoadAudioFile(PyObject* self, PyObject* args)
     // return Py_BuildValue("");
 }
 
+PyObject* DecodeWav(PyObject* self, PyObject* args)
+{
+    /* Arguments passed in from Python */
+    PyObject* listObj;
+
+    /* Process arguments from Python */
+    if (!PyArg_ParseTuple(args, "O!",
+                    &PyList_Type,
+                    &listObj))
+        return NULL;
+
+    PyObject* wavDecodedDataDict = PyDict_New();
+    try
+    {
+        std::vector<uint8_t> fileData;
+        fileData = listToVector<uint8_t>(listObj);
+
+        std::unordered_map< std::string, std::variant<int, uint32_t, double, bool> > wavDecodedData;
+        // std::vector< std::vector<double> > audioBuffer;
+        std::vector< std::vector<double> > normalizedSamples = CDecodeWav<double>(wavDecodedData, fileData);
+
+        for (const auto & [ key, value ] : wavDecodedData)
+        {
+            PyObject* k = basicTypeToPyobject(key);
+            PyObject* v = variantToPyobject(value);
+            PyDict_SetItem(wavDecodedDataDict, k, v);
+        }
+    }
+    catch( const std::exception& e )
+    { /* Catch all standard exceptions */
+        PyErr_SetString(PyExc_Exception, e.what());
+        return NULL;
+    }
+    catch ( ... ) 
+    { /* Catch all other exceptions */
+        PyErr_SetString(PyExc_Exception, "Unknown error occured.");
+        return NULL;
+    }
+
+    /* Return nothing */
+    return wavDecodedDataDict;
+}
 
 /* define the functions provided by the module */
 static PyMethodDef cFuncs[] =
@@ -159,7 +178,7 @@ static PyMethodDef cFuncs[] =
         "Load audio file from path"
     },
     {
-        "DecodeWav",
+        "decode_wav",
         DecodeWav,
         METH_VARARGS,
         "Decode Wav file"

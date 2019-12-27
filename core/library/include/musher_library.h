@@ -434,13 +434,11 @@ namespace musher
         double threshold = -1000.0;
         bool interpolate = true;
         std::string sort_by = "height";
-        peaks = peakDetect(sliced_correl_midpoint_tmp_abs, threshold, interpolate, sort_by);
+        int max_peaks = 100;
+        peaks = peakDetect(sliced_correl_midpoint_tmp_abs, threshold, interpolate, sort_by, max_peaks);
 
-        /* A custom comparer that will find the highest (max) peak in a vector of peaks (tuples) */
-        const auto compare_peak_values = [](const auto& lhs, const auto& rhs)
-        { return std::get<1>(lhs) < std::get<1>(rhs); };
-        auto peak_it = std::max_element(peaks.begin(), peaks.end(), compare_peak_values);
-        const double peak_index = std::get<0>(*peak_it);
+        /* Get the first item from peaks because we want the highest peak */
+        const double peak_index = std::get<0>(peaks[0]);
  
         if (peak_index == 0.0)
             return 0.0;

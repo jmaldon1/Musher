@@ -117,4 +117,30 @@ namespace musher
         }
         return bestfac;
     }
+    
+    std::tuple< double , double > quadraticInterpolation(double a, double b, double y, int middle_point_index)
+    {
+        /* 
+        Smith, J.O. "Quadratic Interpolation of Spectral Peaks", in 
+        Spectral Audio Signal Processing,
+        https://ccrma.stanford.edu/~jos/sasp/Quadratic_Interpolation_Spectral_Peaks.html, online book, 
+        2011 edition,
+        accessed 12/18/2019.
+
+        α(a) = left point value of parabola
+        β(b) = middle point value of parabola
+        γ(y) = right point value of parabola
+
+        Interpolated peak location is given in bins (spectral samples) by:
+        p = 1/2 ((α - γ) / (α - 2β + γ))
+
+        The peak magnitude estimate is:
+        y(p) = β - 1/4(α - γ)p
+        */
+
+       double p = 0.5 * ((a - y) / (a - 2 * b + y));
+       double peak_location = static_cast<double>(middle_point_index) + p;
+       double peak_height_estimate = b - 0.25 * (a - y) * p;
+       return std::make_tuple(peak_location, peak_height_estimate);
+    }
 }

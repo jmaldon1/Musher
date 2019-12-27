@@ -9,6 +9,7 @@
 #include <valarray>
 #include <complex>
 #include <fstream>
+#include <tuple>
 
 #include "pocketfft.h"
 
@@ -146,37 +147,37 @@ namespace musher
         return filteredSignal;
     }
 
-    template< typename vecType,
-            typename = std::enable_if_t< std::is_floating_point<vecType>::value> >
-    double peakDetect(std::vector< vecType > &correlVec)
-    {
-        std::vector<vecType> vecAbs(correlVec.size());
-        /* Find the max of the */
-        auto absoluteVal = []( const double x ) { return std::abs(x); };
-        std::transform(
-                correlVec.begin(),
-                correlVec.end(),
-                vecAbs.begin(),
-                absoluteVal );
+    // template< typename vecType,
+    //         typename = std::enable_if_t< std::is_floating_point<vecType>::value> >
+    // double peakDetect(std::vector< vecType > &correlVec)
+    // {
+    //     std::vector<vecType> vecAbs(correlVec.size());
+    //     /* Find the max of the input */
+    //     auto absoluteVal = []( const double x ) { return std::abs(x); };
+    //     std::transform(
+    //             correlVec.begin(),
+    //             correlVec.end(),
+    //             vecAbs.begin(),
+    //             absoluteVal );
 
-        double max = *max_element(vecAbs.begin(), vecAbs.end());
+    //     double max = *max_element(vecAbs.begin(), vecAbs.end());
 
-        /* Check if the max is positive */
-        auto itPositive = std::find(correlVec.begin(), correlVec.end(), max);
-        if (itPositive != correlVec.end()){
-            double peakIndex = itPositive - correlVec.begin();
-            return peakIndex;
-        }
+    //     /* Check if the max is positive */
+    //     auto itPositive = std::find(correlVec.begin(), correlVec.end(), max);
+    //     if (itPositive != correlVec.end()){
+    //         double peakIndex = itPositive - correlVec.begin();
+    //         return peakIndex;
+    //     }
         
-        /* Check if the max is negative */
-        auto itNegative = std::find(correlVec.begin(), correlVec.end(), -max);
-        if (itNegative != correlVec.end()){
-            double peakIndex = itNegative - correlVec.begin();
-            return peakIndex;
-        }
-        // throw std::runtime_error("No Peak Detected...");
-        return 0.0;
-    }
+    //     /* Check if the max is negative */
+    //     auto itNegative = std::find(correlVec.begin(), correlVec.end(), -max);
+    //     if (itNegative != correlVec.end()){
+    //         double peakIndex = itNegative - correlVec.begin();
+    //         return peakIndex;
+    //     }
+    //     // throw std::runtime_error("No Peak Detected...");
+    //     return 0.0;
+    // }
 
     size_t next_fast_len(size_t n);
 
@@ -411,6 +412,155 @@ namespace musher
                 calculate_magnitude );
 
         return ret;
+    }
+
+    std::tuple< double , double > quadraticInterpolation(double a, double b, double y, int middle_point_index);
+
+    template< typename vecType,
+            typename = std::enable_if_t< std::is_floating_point<vecType>::value> >
+    std::vector< std::tuple< vecType, vecType > > peakDetect(const std::vector<vecType> &inp, vecType threshold=-1000.0, bool interpolate=true, std::string sort_by="position", int max_num_peaks=0)
+    {   
+        int inp_size = inp.size();
+        if (inp_size < 2){
+            std::string err_msg = "Peak detection input vector must be greater than 2.";
+            throw std::runtime_error(err_msg);
+        }
+
+        std::vector< std::tuple< vecType, vecType > > estimated_peaks;
+
+        /* Start at the beginning */
+        int i = 0;
+        
+        /* Check if lower bound is a peak */
+        if (inp[i] > inp[i+1] && inp[i] > threshold) {
+            std::tuple<vecType, vecType> peak(i, inp[i]);
+            estimated_peaks.push_back(peak);
+        }
+
+        while (true) {
+            /*  Down 
+                [0, 3, 4, 3, 2, 1, 1, 0]
+                       ^  ^  ^  ^  ^
+            */
+            while (i + 1 < inp_size - 1 && inp[i] >= inp[i + 1]) {
+                i++;
+            }
+
+            /*  Up 
+                [0, 0, 1, 2, 3, 4, 3, 2]
+                       ^  ^  ^  ^ 
+            */
+            while (i + 1 < inp_size - 1 && inp[i] < inp[i + 1]) {
+                i++;
+            }
+            /* Do not register a peak here because we need to check for a flat peak */
+
+            /*  Flat peak 
+                [0, 0, 1, 1, 1, 1, 0, 0]
+                       ^  ^  ^  ^ 
+            */
+            int j = i;
+            while (j+1 < inp_size-1 && (inp[j] == inp[j+1])) {
+                j++;
+            }
+
+            if (i+1 >= inp_size-1) { // check the one just before the last position
+                if (i == inp_size - 2 && inp[i-1] < inp[i] && inp[i+1] < inp[i] && inp[i] > threshold) {
+                    vecType pos;
+                    vecType val;
+                    
+                    if (interpolate) {
+                        std::tie(pos, val) = quadraticInterpolation(inp[i-1], inp[i], inp[i+1], j);
+                    }
+                    else {
+                        pos = i;
+                        val = inp[i];
+                    }
+                    // std::cout << estimated_peaks << std::endl;
+                    std::tuple<vecType, vecType> peak(pos, val);
+                    estimated_peaks.push_back(peak);
+                }
+
+                /* Check if element before last is a peak right before breaking the loop */
+                int last_index = inp_size - 1;
+                if (inp_size - 2 < last_index && last_index <= inp_size-1 && inp[inp_size-1] > inp[inp_size-2] && inp[inp_size-1] > threshold) {
+                    std::tuple<vecType, vecType> peak(inp_size-1, inp[inp_size-1]);
+                    estimated_peaks.push_back(peak);
+                }
+                break;
+            }
+
+            /* Flat peak ends, check if we are going down */
+            if ((j+1 <= inp_size - 1) && inp[j] > inp[j + 1] && inp[j] > threshold) {
+                vecType pos;
+                vecType val;
+
+                if (j != i) {  /* Flat peak between i and j */
+                    if (interpolate) {
+                        /* Get the middle of the flat peak */
+                        pos = (i + j) * 0.5;
+                    }
+                    else {
+                        /* Get rising edge of flat peak */
+                        pos = i;
+                    }
+                    val = inp[i];
+                }
+                else {  /* Interpolate peak at i-1, i and i+1 */
+                    if (interpolate) {
+                        std::tie(pos, val) = quadraticInterpolation(inp[i-1], inp[i], inp[i+1], j);
+                    }
+                    else {
+                        pos = j;
+                        val = inp[j];
+                    }
+                }
+
+                if (pos > inp_size - 1)
+                    break;
+
+                std::tuple<vecType, vecType> peak(pos, val);
+                estimated_peaks.push_back(peak);
+            }
+        
+            /* No flat peak or we continue up after flat peak, so we start loop again */
+            i = j;
+        }
+
+        /* Sorting */
+        std::transform( sort_by.begin(),
+                        sort_by.end(),
+                        sort_by.begin(),
+                        [](unsigned char c){ return std::tolower(c); }
+                    );
+        
+        std::vector< std::tuple< vecType, vecType > > sorted_estimated_peaks = estimated_peaks;
+        if (sort_by == "position") {
+            /* Already sorted by position */
+        }
+        else if(sort_by == "height"){
+            std::sort(sorted_estimated_peaks.begin(),
+                      sorted_estimated_peaks.end(),
+                      [](auto const &t1, auto const &t2) {
+                        return std::get<1>(t1) > std::get<1>(t2); }
+                    );
+        }
+        else{
+            std::string err_msg = "Sorting by '" + sort_by + "' is not supported.";
+            throw std::runtime_error(err_msg);
+        }
+
+        /* Shrink to max number of peaks */
+        size_t num_peaks = max_num_peaks;
+        if ( num_peaks != 0 && num_peaks < sorted_estimated_peaks.size() ){
+            std::vector< std::tuple< vecType, vecType > > limited_num_of_sorted_estimated_peaks = sorted_estimated_peaks;
+            limited_num_of_sorted_estimated_peaks.resize(num_peaks);
+            limited_num_of_sorted_estimated_peaks.shrink_to_fit();
+ 
+            return limited_num_of_sorted_estimated_peaks;
+        }
+
+        return sorted_estimated_peaks;
     }
     
 }

@@ -65,7 +65,7 @@ TEST(TestUtils, Magnitude) {
     EXPECT_EQ(expected_magnitude, actual_magnitude);
 }
 
-TEST(TestUtils, FrequencySpectrum) {
+TEST(TestUtils, FrequencySpectrumTest) {
     size_t inp_size = 100;
     std::vector<double> expected_out(inp_size / 2 + 1, 0.0);
     expected_out[0] = inp_size;
@@ -77,4 +77,23 @@ TEST(TestUtils, FrequencySpectrum) {
     actual_out = convertToFrequencySpectrum(inp);
     
     ASSERT_TRUE(expected_out == actual_out);
+}
+
+TEST(TestUtils, QuadraticInterpolationTest) {
+    /* 
+        This test was based off the image on this page: 
+
+        https://ccrma.stanford.edu/~jos/sasp/Quadratic_Interpolation_Spectral_Peaks.html
+    */
+    double left_point_val = 2;
+    double middle_point_val = 4;
+    double right_point_val = 3;
+    int middle_point_index = 0;
+
+    double expected_peak_location = 0.166667;  // Just over 0
+    double expected_peak_height_estimate = 4.04167;  // Just over 4
+    auto [ actual_peak_location, actual_peak_height_estimate ] = quadraticInterpolation(left_point_val, middle_point_val, right_point_val, middle_point_index);
+    
+    EXPECT_NEAR(expected_peak_location, actual_peak_location, 0.00001);
+    EXPECT_NEAR(expected_peak_height_estimate, actual_peak_height_estimate, 0.00001);
 }

@@ -293,7 +293,7 @@ namespace musher
         {
             /* Discrete Wavelet Transform */
             if (level == 0) {
-                wt = wt_init(obj,(char*) "dwt", flattened_normalized_samples.size(), J); // Initialize the wavelet transform object on input
+                wt = wt_init(obj, (char*) "dwt", flattened_normalized_samples.size(), J); // Initialize the wavelet transform object on input
                 setDWTExtension(wt, (char*) "sym");
                 setWTConv(wt, (char*) "direct");
 
@@ -303,7 +303,7 @@ namespace musher
                 cD_sum.resize(cD_min_len, 0.0);
                 cD_mean_removed_signal_partial.resize(cD_min_len);
             } else {
-                wt = wt_init(obj,(char*) "dwt", cA.size(), J);// Initialize the wavelet transform object
+                wt = wt_init(obj,(char*) "dwt", cA.size(), J); // Initialize the wavelet transform object
                 setDWTExtension(wt, (char*) "sym");
                 setWTConv(wt, (char*) "direct");
 
@@ -434,8 +434,7 @@ namespace musher
         double threshold = -1000.0;
         bool interpolate = true;
         std::string sort_by = "height";
-        int max_peaks = 100;
-        peaks = peakDetect(sliced_correl_midpoint_tmp_abs, threshold, interpolate, sort_by, max_peaks);
+        peaks = peakDetect(sliced_correl_midpoint_tmp_abs, threshold, interpolate, sort_by);
 
         /* Get the first item from peaks because we want the highest peak */
         const double peak_index = std::get<0>(peaks[0]);

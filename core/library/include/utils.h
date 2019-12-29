@@ -418,22 +418,46 @@ namespace musher
 
     template< typename vecType,
             typename = std::enable_if_t< std::is_floating_point<vecType>::value> >
-    std::vector< std::tuple< vecType, vecType > > peakDetect(const std::vector<vecType> &inp, vecType threshold=-1000.0, bool interpolate=true, std::string sort_by="position", int max_num_peaks=0)
+    std::vector< std::tuple< vecType, vecType > > peakDetect(const std::vector<vecType> &inp,
+                                                             vecType threshold=-1000.0,
+                                                             bool interpolate=true,
+                                                             std::string sort_by="position",
+                                                             int max_num_peaks=0,
+                                                             vecType range=0,
+                                                             int min_pos=0,
+                                                             int max_pos=0 )
     {   
-        int inp_size = inp.size();
+        const int inp_size = inp.size();
         if (inp_size < 2){
             std::string err_msg = "Peak detection input vector must be greater than 2.";
             throw std::runtime_error(err_msg);
         }
 
+        if (min_pos != 0 && max_pos !=0 && min_pos >= max_pos) {
+            std::string err_msg = "Peak detection max position must be greater than min position.";
+            throw std::runtime_error(err_msg);
+        }
+
         std::vector< std::tuple< vecType, vecType > > estimated_peaks;
 
-        /* Start at the beginning */
+        vecType scale = 1;
+        if ( range > 0 ){
+            scale = range / static_cast<double>(inp_size - 1);
+        }
+        /* Start at minimum position */
         int i = 0;
+        if (min_pos > 0){
+            /* We are dividing by scale because the scale should have been accounted for when the user input the value */
+            i = (int) ceil(min_pos / scale);
+        }
+
+        if (max_pos == 0){
+            max_pos = (inp_size - 1) * scale;
+        }
         
         /* Check if lower bound is a peak */
         if (inp[i] > inp[i+1] && inp[i] > threshold) {
-            std::tuple<vecType, vecType> peak(i, inp[i]);
+            std::tuple<vecType, vecType> peak(i * scale, inp[i]);
             estimated_peaks.push_back(peak);
         }
 
@@ -460,11 +484,12 @@ namespace musher
                        ^  ^  ^  ^ 
             */
             int j = i;
-            while (j+1 < inp_size-1 && (inp[j] == inp[j+1])) {
+            while (j + 1 < inp_size - 1 && (inp[j] == inp[j+1])) {
                 j++;
             }
 
-            if (i+1 >= inp_size-1) { // check the one just before the last position
+            /* Check element right before the last element */
+            if (i + 1 >= inp_size - 1) {
                 if (i == inp_size - 2 && inp[i-1] < inp[i] && inp[i+1] < inp[i] && inp[i] > threshold) {
                     vecType pos;
                     vecType val;
@@ -476,15 +501,16 @@ namespace musher
                         pos = i;
                         val = inp[i];
                     }
-                    // std::cout << estimated_peaks << std::endl;
-                    std::tuple<vecType, vecType> peak(pos, val);
+                    std::tuple<vecType, vecType> peak(pos * scale, val);
                     estimated_peaks.push_back(peak);
                 }
 
+                /* We are dividing by scale because the scale should have been accounted for when the user input the value */
+                vecType scale_removed_max_pos = max_pos / scale;
                 /* Check if element before last is a peak right before breaking the loop */
                 int last_index = inp_size - 1;
-                if (inp_size - 2 < last_index && last_index <= inp_size-1 && inp[inp_size-1] > inp[inp_size-2] && inp[inp_size-1] > threshold) {
-                    std::tuple<vecType, vecType> peak(inp_size-1, inp[inp_size-1]);
+                if (scale_removed_max_pos > inp_size - 2 && scale_removed_max_pos <= inp_size - 1 && inp[inp_size-1] > inp[inp_size-2] && inp[inp_size-1] > threshold) {
+                    std::tuple<vecType, vecType> peak((inp_size - 1) * scale, inp[inp_size-1]);
                     estimated_peaks.push_back(peak);
                 }
                 break;
@@ -516,14 +542,14 @@ namespace musher
                     }
                 }
 
-                if (pos > inp_size - 1)
+                if (pos * scale > max_pos)
                     break;
 
-                std::tuple<vecType, vecType> peak(pos, val);
+                std::tuple<vecType, vecType> peak(pos * scale, val);
                 estimated_peaks.push_back(peak);
             }
         
-            /* No flat peak or we continue up after flat peak, so we start loop again */
+            /* No flat peak... We continue up, so we start loop again */
             i = j;
         }
 

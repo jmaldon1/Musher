@@ -293,7 +293,7 @@ namespace musher
         {
             /* Discrete Wavelet Transform */
             if (level == 0) {
-                wt = wt_init(obj,(char*) "dwt", flattened_normalized_samples.size(), J); // Initialize the wavelet transform object
+                wt = wt_init(obj, (char*) "dwt", flattened_normalized_samples.size(), J); // Initialize the wavelet transform object on input
                 setDWTExtension(wt, (char*) "sym");
                 setWTConv(wt, (char*) "direct");
 
@@ -301,14 +301,13 @@ namespace musher
 
                 cD_min_len = wt->length[1] / max_decimation + 1;
                 cD_sum.resize(cD_min_len, 0.0);
-
                 cD_mean_removed_signal_partial.resize(cD_min_len);
             } else {
-                wt = wt_init(obj,(char*) "dwt", cA.size(), J);// Initialize the wavelet transform object
+                wt = wt_init(obj,(char*) "dwt", cA.size(), J); // Initialize the wavelet transform object
                 setDWTExtension(wt, (char*) "sym");
                 setWTConv(wt, (char*) "direct");
 
-                dwt(wt, cA.data()); // Perform DWT
+                dwt(wt, cA.data()); // Perform remaining DWT's on cA
             }
 
             /* Fill cA */
@@ -381,6 +380,7 @@ namespace musher
                 cA_absolute.begin(),
                 absolute_val );
         
+        /* Get mean */
         double cA_absolute_sum = std::accumulate(cA_absolute.begin(), cA_absolute.end(), 0.0);
         double cA_absolute_mean =  cA_absolute_sum / static_cast<double>(cA_absolute.size());
 
@@ -423,8 +423,22 @@ namespace musher
         std::vector<vecType> correl_midpoint_tmp(correl.begin() + midpoint, correl.end());
         std::vector<vecType> sliced_correl_midpoint_tmp(correl_midpoint_tmp.begin() + std::floor(min_index), correl_midpoint_tmp.begin() + std::floor(max_index));
 
-        /* Simple Peak Detection */
-        double peak_index = peakDetect(sliced_correl_midpoint_tmp);
+        /* Peak Detection */
+        std::vector<vecType> sliced_correl_midpoint_tmp_abs(sliced_correl_midpoint_tmp.size());
+        std::transform(
+                sliced_correl_midpoint_tmp.begin(),
+                sliced_correl_midpoint_tmp.end(),
+                sliced_correl_midpoint_tmp_abs.begin(),
+                []( const vecType x ) { return std::abs(x); } );
+        std::vector< std::tuple< double, double > > peaks;
+        double threshold = -1000.0;
+        bool interpolate = true;
+        std::string sort_by = "height";
+        peaks = peakDetect(sliced_correl_midpoint_tmp_abs, threshold, interpolate, sort_by);
+
+        /* Get the first item from peaks because we want the highest peak */
+        const double peak_index = std::get<0>(peaks[0]);
+ 
         if (peak_index == 0.0)
             return 0.0;
         double peak_index_adjusted = peak_index + min_index;
@@ -440,29 +454,13 @@ namespace musher
         int window_samples = windowSeconds * sample_rate;
         int sample_index = 0;
         int max_windows_index = num_samples / window_samples;
-        // seconds_mid = numpy.zeros(max_window_ndx)
         std::vector<vecType> bpms(max_windows_index, 0.0);
         std::vector<vecType> seconds_mid(max_windows_index, 0.0);
-
-        // /* Fill vector from 0 to size of samples with increasing numbers */
-        // std::vector<vecType> arangeSamples(flattened_normalized_samples.size());
-        // std::iota (arangeSamples.begin(), arangeSamples.end(), 0);
-
-        // std::vector<vecType> seconds(arangeSamples.size());
-        // std::transform(
-        //         arangeSamples.begin(),
-        //         arangeSamples.end(),
-        //         seconds.begin(),
-        //         [&sample_rate]( const vecType x ) { return x / static_cast<double>(sample_rate); } );
 
         for (int window_index = 0; window_index < max_windows_index; window_index++)
         {
             typename std::vector<vecType>::iterator samp_it = flattened_normalized_samples.begin() + sample_index;
             std::vector<vecType> sliced_samples(samp_it, samp_it + window_samples);
-
-            // std::vector<vecType> slicedSeconds(samp_it, samp_it + window_samples);
-            // double secondsSum = std::accumulate(slicedSeconds.begin(), slicedSeconds.end(), 0.0);
-            // double seconds_mid =  cA_absolute_sum / static_cast<double>(slicedSeconds.size());
             
             double bpm = bpmDetection(sliced_samples, sample_rate);
             bpms[window_index] = bpm;

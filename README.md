@@ -97,6 +97,8 @@ Watch test file changes and rerun pytest on save (Requires [entr](https://bitbuc
 
 ```sh
 find ./tests \( -iname \*.py -o -iname \*.conf \) | entr pytest
+
+find . \( -iname \*.h -o -iname \*.cpp \) | entr python setup.py build_cpp_tests --r
 ```
 
 ### How to run C++ tests

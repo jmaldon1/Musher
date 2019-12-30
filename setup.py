@@ -30,6 +30,7 @@ with codecs.open('README.md', encoding='utf-8') as fobj:
 cpp_tests_list = [
     'test_musher_library',
     'test_musher_utils',
+    'test_peak_detection',
 ]
 
 

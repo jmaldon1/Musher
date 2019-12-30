@@ -90,3 +90,4 @@ endmacro()
 
 package_add_test(test_musher_library "${MUSHER_TEST_SOURCE_DIR}/test_musher_library.cpp" ${MUSHER_LIBRARY_SOURCES})
 package_add_test(test_musher_utils "${MUSHER_TEST_SOURCE_DIR}/test_musher_utils.cpp" ${MUSHER_LIBRARY_SOURCES})
+package_add_test(test_peak_detection "${MUSHER_TEST_SOURCE_DIR}/test_peak_detection.cpp" ${MUSHER_LIBRARY_SOURCES})

@@ -14,6 +14,33 @@
 
 namespace musher
 {
+    template <typename AudioBufferType>
+    struct WavDecoded {
+        uint32_t sample_rate;
+        int bit_depth;
+        int channels;
+        bool mono;
+        bool stereo;
+        int samples_per_channel;
+        double length_in_seconds;
+        std::string file_type;
+        int avg_bitrate_kbps;
+        std::vector<std::vector<AudioBufferType>> samples;
+        std::vector<double> normalized_samples;
+    };
+
+    struct Mp3Decoded {
+        uint32_t sample_rate;
+        int channels;
+        bool mono;
+        bool stereo;
+        int samples_per_channel;
+        double length_in_seconds;
+        std::string file_type;
+        int avg_bitrate_kbps;
+    };
+
+
     void MUSHER_API CPrintFunctionalMessage(const char* message);
 
     std::vector<uint8_t> MUSHER_API CLoadAudioFile(const std::string& filePath);
@@ -33,10 +60,10 @@ namespace musher
      * samples[0] holds channel 1
      * samples[1] holds channel 2 (Empty if mono file)
      */
-    template <typename AudioBufferType, template <typename ...> class Map, typename K, typename V>
-    std::vector< std::vector< AudioBufferType > > MUSHER_API CDecodeWav(Map<K, V>& wav_decoded_data, const std::vector<uint8_t>& file_data)
+    template <typename AudioBufferType>
+    WavDecoded<AudioBufferType> MUSHER_API CDecodeWavDualChannel(const std::vector<uint8_t>& file_data)
     {   
-        std::vector< std::vector<AudioBufferType> > samples;
+        std::vector<std::vector<AudioBufferType>> samples;
 
         if (!samples.empty()){
             std::string err_message = "Audio Buffer must be empty";
@@ -176,22 +203,34 @@ namespace musher
         int num_samples_per_channel = 0;
         if (samples.size() > 0)
             num_samples_per_channel = static_cast<int>(samples[0].size());
-        double lengthInSeconds = static_cast<double>(num_samples_per_channel) / static_cast<double>(sample_rate);
-        std::string fileType = "wav";
+        double length_in_seconds = static_cast<double>(num_samples_per_channel) / static_cast<double>(sample_rate);
+        std::string file_type = "wav";
         int avg_bitrate_kbps = (sample_rate * bit_depth * num_channels_int) / 1000;
 
         /* Add the decoded info into the unordered map */
-        wav_decoded_data["sample_rate"] = sample_rate;
-        wav_decoded_data["bit_depth"] = bit_depth;
-        wav_decoded_data["channels"] = num_channels_int;
-        wav_decoded_data["mono"] = mono;
-        wav_decoded_data["stereo"] = stereo;
-        wav_decoded_data["samples_per_channel"] = num_samples_per_channel;
-        wav_decoded_data["length_in_seconds"] = lengthInSeconds;
-        wav_decoded_data["filetype"] = fileType;
-        wav_decoded_data["avg_bitrate_kbps"] = avg_bitrate_kbps;
+        // wav_decoded_data["sample_rate"] = sample_rate;
+        // wav_decoded_data["bit_depth"] = bit_depth;
+        // wav_decoded_data["channels"] = num_channels_int;
+        // wav_decoded_data["mono"] = mono;
+        // wav_decoded_data["stereo"] = stereo;
+        // wav_decoded_data["samples_per_channel"] = num_samples_per_channel;
+        // wav_decoded_data["length_in_seconds"] = lengthInSeconds;
+        // wav_decoded_data["filetype"] = fileType;
+        // wav_decoded_data["avg_bitrate_kbps"] = avg_bitrate_kbps;
 
-        return samples;
+        WavDecoded<AudioBufferType> wav_decoded;
+        wav_decoded.sample_rate = sample_rate;
+        wav_decoded.bit_depth = bit_depth;
+        wav_decoded.channels = num_channels_int;
+        wav_decoded.mono = mono;
+        wav_decoded.stereo = stereo;
+        wav_decoded.samples_per_channel = num_samples_per_channel;
+        wav_decoded.length_in_seconds = length_in_seconds;
+        wav_decoded.file_type = file_type;
+        wav_decoded.avg_bitrate_kbps = avg_bitrate_kbps;
+        wav_decoded.samples = samples;
+
+        return wav_decoded;
     }
 
     /**
@@ -205,17 +244,35 @@ namespace musher
      * @param file_path path to wav file
      * @return std::vector< AudioBufferType > CDecodeWav interleaved samples
      */
-    template <typename AudioBufferType, template <typename ...> class Map, typename K, typename V>
-    std::vector< AudioBufferType > MUSHER_API CDecodeWav(Map<K, V>& wav_decoded_data, const std::string& file_path)
+    template <typename AudioBufferType>
+    WavDecoded<AudioBufferType> MUSHER_API CDecodeWav(const std::vector<uint8_t>& file_data)
+    {
+        WavDecoded wav_decoded = CDecodeWavDualChannel<double>(file_data);
+
+        /* Return interleaved samples */
+        wav_decoded.normalized_samples = interleave2DVector(wav_decoded.samples);
+        return wav_decoded;
+    }
+
+    /**
+     * @brief Overloaded wrapper around CDecodeWav that accepts a file path to a wav file and returns interleaved samples
+     * 
+     * @tparam AudioBufferType type of the final samples
+     * @tparam Map unordered or ordered map
+     * @tparam K string
+     * @tparam V variant
+     * @param wav_decoded_data map that will be used to store the music file analysis
+     * @param file_path path to wav file
+     * @return std::vector< AudioBufferType > CDecodeWav interleaved samples
+     */
+    template <typename AudioBufferType>
+    WavDecoded<AudioBufferType> MUSHER_API CDecodeWav(const std::string& file_path)
     {
         std::vector<uint8_t> file_data;
         file_data = CLoadAudioFile(file_path);
-        std::vector< std::vector<double> > normalized_samples;
-        normalized_samples = CDecodeWav<double>(wav_decoded_data, file_data);
-
-        /* Return interleaved samples */
-        return interleave2DVector(normalized_samples);
+        return CDecodeWav<AudioBufferType>(file_data);
     }
+
     
     /**
      * @brief Decodes a mp3 file, analysis stored into wav_decode_data
@@ -228,8 +285,8 @@ namespace musher
      * @param file_path path to mp3 file
      * @return std::vector< AudioBufferType > CDecodeMp3 interleaved samples
      */
-    template <typename AudioBufferType, template <typename ...> class Map, typename K, typename V>
-    std::vector< AudioBufferType > MUSHER_API CDecodeMp3(Map<K, V>& mp3_decoded_data, const std::string file_path)
+    template <typename AudioBufferType>
+    std::vector< AudioBufferType > MUSHER_API CDecodeMp3(Mp3Decoded& mp3_decoded, const std::string file_path)
     {
         mp3dec_t mp3d;
         mp3dec_file_info_t info;
@@ -241,22 +298,31 @@ namespace musher
 
         std::vector<int32_t> interleaved_samples(info.buffer, info.buffer + info.samples);
         int num_samples = static_cast<int>(info.samples);
-        int num_samples_per_channel = static_cast<int>(info.samples) / 2;
+        int samples_per_channel = static_cast<int>(info.samples) / 2;
         bool mono = info.channels == 1;
         bool stereo = info.channels == 2;
         uint32_t sample_rate = info.hz;
-        double len_in_seconds = static_cast<double>(num_samples_per_channel) / static_cast<double>(sample_rate);
-        std::string fileType = "mp3";
+        double length_in_seconds = static_cast<double>(samples_per_channel) / static_cast<double>(sample_rate);
+        std::string file_type = "mp3";
 
         /* Add the decoded info into the unordered map */
-        mp3_decoded_data["sample_rate"] = sample_rate;
-        mp3_decoded_data["channels"] = info.channels;
-        mp3_decoded_data["mono"] = mono;
-        mp3_decoded_data["stereo"] = stereo;
-        mp3_decoded_data["samples_per_channel"] = num_samples;
-        mp3_decoded_data["length_in_seconds"] = len_in_seconds;
-        mp3_decoded_data["filetype"] = fileType;
-        mp3_decoded_data["avg_bitrate_kbps"] = info.avg_bitrate_kbps;
+        // mp3_decoded_data["sample_rate"] = sample_rate;
+        // mp3_decoded_data["channels"] = info.channels;
+        // mp3_decoded_data["mono"] = mono;
+        // mp3_decoded_data["stereo"] = stereo;
+        // mp3_decoded_data["samples_per_channel"] = num_samples;
+        // mp3_decoded_data["length_in_seconds"] = len_in_seconds;
+        // mp3_decoded_data["filetype"] = fileType;
+        // mp3_decoded_data["avg_bitrate_kbps"] = info.avg_bitrate_kbps;
+
+        mp3_decoded.sample_rate = sample_rate;
+        mp3_decoded.channels = info.channels;
+        mp3_decoded.mono = mono;
+        mp3_decoded.stereo = stereo;
+        mp3_decoded.samples_per_channel = samples_per_channel;
+        mp3_decoded.length_in_seconds = length_in_seconds;
+        mp3_decoded.file_type = file_type;
+        mp3_decoded.avg_bitrate_kbps = info.avg_bitrate_kbps;
 
         std::vector<double> normalized_samples(interleaved_samples.size());
         std::transform(

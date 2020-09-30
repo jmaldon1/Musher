@@ -19,9 +19,9 @@ TEST(PeakDetection, LastPositionPeak) {
     std::vector< std::tuple< double, double > > peaks;
     peaks = peakDetect(inp, -1000.0, true);
 
-    auto [ expected_position, expected_value ] = peaks[0];
-    EXPECT_EQ(expected_position, 4.0);
-    EXPECT_EQ(expected_value, 2.0);
+    auto [ actual_position, actual_value ] = peaks[0];
+    EXPECT_EQ(actual_position, 4.0);
+    EXPECT_EQ(actual_value, 2.0);
 }
 
 
@@ -35,9 +35,9 @@ TEST(PeakDetection, FlatPeakMiddle1) {
     std::vector< std::tuple< double, double > > peaks;
     peaks = peakDetect(inp, -1000.0, true);
 
-    auto [ expected_position, expected_value ] = peaks[0];
-    EXPECT_EQ(expected_position, 2.0);
-    EXPECT_EQ(expected_value, 2.0);
+    auto [ actual_position, actual_value ] = peaks[0];
+    EXPECT_EQ(actual_position, 2.0);
+    EXPECT_EQ(actual_value, 2.0);
 }
 
 
@@ -50,9 +50,9 @@ TEST(PeakDetection, FlatPeakMiddle2) {
     std::vector< std::tuple< double, double > > peaks;
     peaks = peakDetect(inp, -1000.0, true);
 
-    auto [ expected_position, expected_value ] = peaks[0];
-    EXPECT_EQ(expected_position, 2.0);
-    EXPECT_EQ(expected_value, 2.0);
+    auto [ actual_position, actual_value ] = peaks[0];
+    EXPECT_EQ(actual_position, 2.0);
+    EXPECT_EQ(actual_value, 2.0);
     // std::cout << "POSITIONS: " << std::endl;
     // for (auto & element : peaks) {
     //     std::cout << std::get<0>(element) << std::endl;
@@ -74,9 +74,9 @@ TEST(PeakDetection, FlatToPeakInterpolation) {
     std::vector< std::tuple< double, double > > peaks;
     peaks = peakDetect(inp, -1000.0, true);
 
-    auto [ expected_position, expected_value ] = peaks[0];
-    EXPECT_NEAR(expected_position, 3.75, .01);
-    EXPECT_NEAR(expected_value, 3.125, .001);
+    auto [ actual_position, actual_value ] = peaks[0];
+    EXPECT_NEAR(actual_position, 3.75, .01);
+    EXPECT_NEAR(actual_value, 3.125, .001);
 }
 
 
@@ -119,17 +119,17 @@ TEST(PeakDetection, ManyPeaksWithInterpolation) {
     std::vector< std::tuple< double, double > > peaks;
     peaks = peakDetect(inp, -1000.0, true);
     
-    auto [ expected_position_0, expected_value_0 ] = peaks[0];
-    EXPECT_NEAR(expected_position_0, 1.16667, 0.00001);
-    EXPECT_NEAR(expected_value_0, 2.04167, 0.00001);
+    auto [ actual_position_0, actual_value_0 ] = peaks[0];
+    EXPECT_NEAR(actual_position_0, 1.16667, 0.00001);
+    EXPECT_NEAR(actual_value_0, 2.04167, 0.00001);
 
-    auto [ expected_position_1, expected_value_1 ] = peaks[1];
-    EXPECT_DOUBLE_EQ(expected_position_1, 3);
-    EXPECT_DOUBLE_EQ(expected_value_1, 2);
+    auto [ actual_position_1, actual_value_1 ] = peaks[1];
+    EXPECT_DOUBLE_EQ(actual_position_1, 3);
+    EXPECT_DOUBLE_EQ(actual_value_1, 2);
 
-    auto [ expected_position_2, expected_value_2 ] = peaks[2];
-    EXPECT_NEAR(expected_position_2, 4.83333, 0.00001);
-    EXPECT_NEAR(expected_value_2, 2.04167, 0.00001);
+    auto [ actual_position_2, actual_value_2 ] = peaks[2];
+    EXPECT_NEAR(actual_position_2, 4.83333, 0.00001);
+    EXPECT_NEAR(actual_value_2, 2.04167, 0.00001);
 }
 
 
@@ -142,17 +142,17 @@ TEST(PeakDetection, SortByPosition) {
     std::vector< std::tuple< double, double > > peaks;
     peaks = peakDetect(inp, -1000.0, false, "position");
     
-    auto [ expected_position_0, expected_value_0 ] = peaks[0];
-    EXPECT_EQ(expected_position_0, 1);
-    EXPECT_EQ(expected_value_0, 2);
+    auto [ actual_position_0, actual_value_0 ] = peaks[0];
+    EXPECT_EQ(actual_position_0, 1);
+    EXPECT_EQ(actual_value_0, 2);
 
-    auto [ expected_position_1, expected_value_1 ] = peaks[1];
-    EXPECT_EQ(expected_position_1, 3);
-    EXPECT_EQ(expected_value_1, 4);
+    auto [ actual_position_1, actual_value_1 ] = peaks[1];
+    EXPECT_EQ(actual_position_1, 3);
+    EXPECT_EQ(actual_value_1, 4);
 
-    auto [ expected_position_2, expected_value_2 ] = peaks[2];
-    EXPECT_EQ(expected_position_2, 5);
-    EXPECT_EQ(expected_value_2, 6);
+    auto [ actual_position_2, actual_value_2 ] = peaks[2];
+    EXPECT_EQ(actual_position_2, 5);
+    EXPECT_EQ(actual_value_2, 6);
 }
 
 
@@ -165,17 +165,17 @@ TEST(PeakDetection, SortByHeight) {
     std::vector< std::tuple< double, double > > peaks;
     peaks = peakDetect(inp, -1000.0, false, "height");
     
-    auto [ expected_position_0, expected_value_0 ] = peaks[0];
-    EXPECT_EQ(expected_position_0, 5);
-    EXPECT_EQ(expected_value_0, 6);
+    auto [ actual_position_0, actual_value_0 ] = peaks[0];
+    EXPECT_EQ(actual_position_0, 5);
+    EXPECT_EQ(actual_value_0, 6);
 
-    auto [ expected_position_1, expected_value_1 ] = peaks[1];
-    EXPECT_EQ(expected_position_1, 3);
-    EXPECT_EQ(expected_value_1, 4);
+    auto [ actual_position_1, actual_value_1 ] = peaks[1];
+    EXPECT_EQ(actual_position_1, 3);
+    EXPECT_EQ(actual_value_1, 4);
 
-    auto [ expected_position_2, expected_value_2 ] = peaks[2];
-    EXPECT_EQ(expected_position_2, 1);
-    EXPECT_EQ(expected_value_2, 2);
+    auto [ actual_position_2, actual_value_2 ] = peaks[2];
+    EXPECT_EQ(actual_position_2, 1);
+    EXPECT_EQ(actual_value_2, 2);
 }
 
 
@@ -188,8 +188,8 @@ TEST(PeakDetection, MaxPeaks) {
     std::vector< std::tuple< double, double > > peaks;
     peaks = peakDetect(inp, -1000.0, false, "position", 2);
     
-    size_t expected_num_of_peaks = 2;
-    EXPECT_EQ( expected_num_of_peaks, peaks.size() );
+    size_t actual_num_of_peaks = 2;
+    EXPECT_EQ( actual_num_of_peaks, peaks.size() );
 }
 
 
@@ -202,9 +202,9 @@ TEST(PeakDetection, MinPosition) {
     std::vector< std::tuple< double, double > > peaks;
     peaks = peakDetect(inp, -1000.0, false, "position", 0, 0.0, 2);
     
-    auto [ expected_position, expected_value ] = peaks[0];
-    EXPECT_EQ(expected_position, 2);
-    EXPECT_EQ(expected_value, 1);
+    auto [ actual_position, actual_value ] = peaks[0];
+    EXPECT_EQ(actual_position, 2);
+    EXPECT_EQ(actual_value, 1);
 }
 
 
@@ -217,9 +217,9 @@ TEST(PeakDetection, MaxPosition) {
     std::vector< std::tuple< double, double > > peaks;
     peaks = peakDetect(inp, -1000.0, false, "position", 0, 0.0, 0, 4);
     
-    auto [ expected_position, expected_value ] = peaks[0];
-    EXPECT_EQ(expected_position, 4);
-    EXPECT_EQ(expected_value, 1);
+    auto [ actual_position, actual_value ] = peaks[0];
+    EXPECT_EQ(actual_position, 4);
+    EXPECT_EQ(actual_value, 1);
 }
 
 
@@ -232,21 +232,21 @@ TEST(PeakDetection, Range) {
     std::vector< std::tuple< double, double > > peaks;
     peaks = peakDetect(inp, -1000.0, false, "position", 0, 3.0);
     
-    auto [ expected_position_0, expected_value_0 ] = peaks[0];
-    EXPECT_EQ(expected_position_0, 0);
-    EXPECT_EQ(expected_value_0, 5);
+    auto [ actual_position_0, actual_value_0 ] = peaks[0];
+    EXPECT_EQ(actual_position_0, 0);
+    EXPECT_EQ(actual_value_0, 5);
 
-    auto [ expected_position_1, expected_value_1 ] = peaks[1];
-    EXPECT_EQ(expected_position_1, 1);
-    EXPECT_EQ(expected_value_1, 1);
+    auto [ actual_position_1, actual_value_1 ] = peaks[1];
+    EXPECT_EQ(actual_position_1, 1);
+    EXPECT_EQ(actual_value_1, 1);
 
-    auto [ expected_position_2, expected_value_2 ] = peaks[2];
-    EXPECT_EQ(expected_position_2, 2);
-    EXPECT_EQ(expected_value_2, 2);
+    auto [ actual_position_2, actual_value_2 ] = peaks[2];
+    EXPECT_EQ(actual_position_2, 2);
+    EXPECT_EQ(actual_value_2, 2);
 
-    auto [ expected_position_3, expected_value_3 ] = peaks[3];
-    EXPECT_EQ(expected_position_3, 3);
-    EXPECT_EQ(expected_value_3, 1);
+    auto [ actual_position_3, actual_value_3 ] = peaks[3];
+    EXPECT_EQ(actual_position_3, 3);
+    EXPECT_EQ(actual_value_3, 1);
 }
 
 
@@ -261,11 +261,11 @@ TEST(PeakDetection, RangeWithMinAndMaxPositions) {
     /* Min and Max positions should be within the range */
     peaks = peakDetect(inp, -1000.0, false, "position", 0, 3.0, 2, 3);
 
-    auto [ expected_position_0, expected_value_0 ] = peaks[0];
-    EXPECT_EQ(expected_position_0, 2);
-    EXPECT_EQ(expected_value_0, 2);
+    auto [ actual_position_0, actual_value_0 ] = peaks[0];
+    EXPECT_EQ(actual_position_0, 2);
+    EXPECT_EQ(actual_value_0, 2);
 
-    auto [ expected_position_1, expected_value_1 ] = peaks[1];
-    EXPECT_EQ(expected_position_1, 3);
-    EXPECT_EQ(expected_value_1, 1);
+    auto [ actual_position_1, actual_value_1 ] = peaks[1];
+    EXPECT_EQ(actual_position_1, 3);
+    EXPECT_EQ(actual_value_1, 1);
 }

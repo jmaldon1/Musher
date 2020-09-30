@@ -69,67 +69,66 @@ TEST(AudioFileDecoding, LoadsAudioFileTest) {
 
 
 TEST(AudioFileDecoding, DecodeWav) {
-    std::vector< double > normalizedSamples;
     const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
-    std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
 
-    normalizedSamples = CDecodeWav<double>(wavDecodedData, filePath);
+    WavDecoded wav_decoded = CDecodeWav<double>(filePath);
 
-    uint32_t expectedSampleRate = 22050;
-    uint32_t actualSampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
+    uint32_t expected_sample_rate = 22050;
+    uint32_t actual_sample_rate = wav_decoded.sample_rate;
 
-    EXPECT_EQ( expectedSampleRate, actualSampleRate );
+    EXPECT_EQ( expected_sample_rate, actual_sample_rate );
 
-    int expectedBitDepth = 16;
-    int actualBitDepth = variantToType<int>(wavDecodedData["bit_depth"]);
+    int expected_bit_depth = 16;
+    int actual_bit_depth = wav_decoded.bit_depth;
 
-    EXPECT_EQ( expectedBitDepth, actualBitDepth );
+    EXPECT_EQ( expected_bit_depth, actual_bit_depth );
 
     int expectedChannels = 1;
-    int actualChannels = variantToType<int>(wavDecodedData["channels"]);
+    int actual_channels = wav_decoded.channels;
 
-    EXPECT_EQ( expectedChannels, actualChannels );
+    EXPECT_EQ( expectedChannels, actual_channels );
 
-    bool expectedMono = true;
-    bool actualMono = variantToType<bool>(wavDecodedData["mono"]);
+    bool expected_mono = true;
+    bool actual_mono = wav_decoded.mono;
 
-    EXPECT_EQ( expectedMono, actualMono );
+    EXPECT_EQ( expected_mono, actual_mono );
 
-    bool expectedStereo = false;
-    bool actualStereo = variantToType<bool>(wavDecodedData["stereo"]);
+    bool expected_stereo = false;
+    bool actual_stereo = wav_decoded.stereo;
 
-    EXPECT_EQ( expectedStereo, actualStereo );
+    EXPECT_EQ( expected_stereo, actual_stereo );
 
-    double expectedLengthInSeconds = 3.0;
-    double actualLengthInSeconds = variantToType<double>(wavDecodedData["length_in_seconds"]);
+    double expected_length_in_seconds = 3.0;
+    double actual_length_in_seconds = wav_decoded.length_in_seconds;
 
-    EXPECT_EQ( expectedLengthInSeconds, actualLengthInSeconds );
+    EXPECT_EQ( expected_length_in_seconds, actual_length_in_seconds );
 
-    int expectedNumSamplesPerChannel = 66150;
-    int actualNumSamplesPerChannel = variantToType<int>(wavDecodedData["samples_per_channel"]);
+    int expected_samples_per_channel = 66150;
+    int actual_samples_per_channel = wav_decoded.samples_per_channel;
 
-    EXPECT_EQ( expectedNumSamplesPerChannel, actualNumSamplesPerChannel );
+    EXPECT_EQ( expected_samples_per_channel, actual_samples_per_channel );
 
-    std::string expectedFileType = "wav";
-    std::string actualFileType = variantToType<std::string>(wavDecodedData["filetype"]);
+    std::string expected_file_type = "wav";
+    std::string actual_file_type = wav_decoded.file_type;
 
-    EXPECT_EQ( expectedFileType, actualFileType );
+    EXPECT_EQ( expected_file_type, actual_file_type );
 
     int expected_avg_bitrate_kbps = 352;
-    int actual_avg_bitrate_kbps = variantToType<int>(wavDecodedData["avg_bitrate_kbps"]);
+    int actual_avg_bitrate_kbps = wav_decoded.avg_bitrate_kbps;
 
     EXPECT_EQ( expected_avg_bitrate_kbps, actual_avg_bitrate_kbps );
 }
 
 TEST(AudioFileDecoding, BeatDetection) {
-    std::vector< double > normalizedSamples;
     const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
-    std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
+    // std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
 
-    normalizedSamples = CDecodeWav<double>(wavDecodedData, filePath);
-    uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
+    WavDecoded wav_decoded = CDecodeWav<double>(filePath);
+    // uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
+    uint32_t sampleRate = wav_decoded.sample_rate;
+    std::vector<double> normalized_samples = wav_decoded.normalized_samples;
 
-    double bpm = bpmsOverWindow(normalizedSamples, normalizedSamples.size(), sampleRate, 3);
+    double bpm = bpmsOverWindow(normalized_samples, normalized_samples.size(), sampleRate, 3);
 
     // std::cout << bpm << std::endl;
     EXPECT_EQ( bpm, 80.0 );
@@ -141,11 +140,13 @@ TEST(AudioFileDecoding, BeatDetection) {
 TEST(AudioFileDecoding, DecodeMp3) {
     std::vector< double > normalizedSamples;
     const std::string filePathMp3 = "./tests/audio_files/126bpm.mp3";
-    std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
+    Mp3Decoded mp3_decoded;
+    // std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
 
-    normalizedSamples = CDecodeMp3<double>(wavDecodedData, filePathMp3);
+    normalizedSamples = CDecodeMp3<double>(mp3_decoded, filePathMp3);
+    uint32_t sampleRate = mp3_decoded.sample_rate;
 
-    uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
+    // uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
 
     double bpm = bpmsOverWindow(normalizedSamples, normalizedSamples.size(), sampleRate, 3);
     std::cout << bpm << std::endl;

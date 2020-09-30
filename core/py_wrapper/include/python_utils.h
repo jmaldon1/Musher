@@ -25,7 +25,6 @@ namespace musher
         {typeid(char).name(),        "C"},
     });
 
-
     /**
      * @brief convert basic c++ type to basic Pyobject type
      * @details Only allow arithmetic types into this function
@@ -71,6 +70,37 @@ namespace musher
         return Py_BuildValue("s", var.c_str());
     }
 
+    /**
+     * @brief Create a key, value pair that will be used to create a python dictionary.
+     * 
+     * @tparam T 
+     * @param key Key name.
+     * @param val Value name.
+     * @return std::pair<PyObject*, PyObject*> A key, value tuple.
+     */
+    template <typename T>
+    std::pair<PyObject*, PyObject*> createKVPair(const char* key, T val)
+    {
+        PyObject* pykey = basicTypeToPyobject(key);
+        PyObject* pyval = basicTypeToPyobject(val);
+        return std::make_pair(pykey, pyval);
+    }
+
+   /**
+     * @brief Create a key, value pair where the val is already a PyObject
+     * that will be used to create a python dictionary.
+     * 
+     * @tparam T 
+     * @param key Key name.
+     * @param val Value name.
+     * @return std::pair<PyObject*, PyObject*> A key, value tuple.
+     */
+    std::pair<PyObject*, PyObject*> createKVPairFromPyObject(const char* key, PyObject* val)
+    {
+        PyObject* pykey = basicTypeToPyobject(key);
+        return std::make_pair(pykey, val);
+    }
+
     template<class T>
     T pyObjectToBasicType(PyObject* pyObj)
     {
@@ -89,7 +119,7 @@ namespace musher
 
         std::string typeStr = got->second;
 
-        // /* Parse PyObject into corresponding c++ type */
+        /* Parse PyObject into corresponding c++ type */
         if(!PyArg_Parse(pyObj, typeStr.c_str(), &basicType))
         {
             PyTypeObject* type = pyObj->ob_type;

@@ -129,21 +129,30 @@ PyObject* DecodeWav(PyObject* self, PyObject* args)
                     &listObj))
         return NULL;
 
-    PyObject* wavDecodedDataDict = PyDict_New();
+    PyObject* wav_decoded_data_dict = PyDict_New();
     try
     {
-        std::vector<uint8_t> fileData;
-        fileData = listToVector<uint8_t>(listObj);
+        std::vector<uint8_t> file_data;
+        file_data = listToVector<uint8_t>(listObj);
 
-        std::unordered_map< std::string, std::variant<int, uint32_t, double, bool, std::string> > wavDecodedData;
-        // std::vector< std::vector<double> > audioBuffer;
-        std::vector< std::vector<double> > normalizedSamples = CDecodeWav<double>(wavDecodedData, fileData);
+        WavDecoded wav_decoded = CDecodeWav<double>(file_data);
 
-        for (const auto & [ key, value ] : wavDecodedData)
+        std::vector<std::pair<PyObject*, PyObject*>> kvPair;
+        kvPair.push_back(createKVPair("sample_rate", wav_decoded.sample_rate));
+        kvPair.push_back(createKVPair("bit_depth", wav_decoded.bit_depth));
+        kvPair.push_back(createKVPair("channels", wav_decoded.channels));
+        kvPair.push_back(createKVPair("mono", wav_decoded.mono));
+        kvPair.push_back(createKVPair("stereo", wav_decoded.stereo));
+        kvPair.push_back(createKVPair("length_in_seconds", wav_decoded.length_in_seconds));
+        kvPair.push_back(createKVPair("file_type", wav_decoded.file_type));
+        kvPair.push_back(createKVPair("avg_bitrate_kbps", wav_decoded.avg_bitrate_kbps));
+
+        PyObject* py_normalized_samples = vectorToList(wav_decoded.normalized_samples);
+        kvPair.push_back(createKVPairFromPyObject("normalized_samples", py_normalized_samples));
+
+        for (const auto& [k, v] : kvPair)
         {
-            PyObject* k = basicTypeToPyobject(key);
-            PyObject* v = variantToPyobject(value);
-            PyDict_SetItem(wavDecodedDataDict, k, v);
+            PyDict_SetItem(wav_decoded_data_dict, k, v);
         }
     }
     catch( const std::exception& e )
@@ -158,7 +167,7 @@ PyObject* DecodeWav(PyObject* self, PyObject* args)
     }
 
     /* Return nothing */
-    return wavDecodedDataDict;
+    return wav_decoded_data_dict;
 }
 
 /* define the functions provided by the module */

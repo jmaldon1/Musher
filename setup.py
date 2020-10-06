@@ -31,6 +31,7 @@ cpp_tests_list = [
     'test_musher_library',
     'test_musher_utils',
     'test_peak_detection',
+    'test_hpcp',
 ]
 
 

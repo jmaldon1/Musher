@@ -14,7 +14,6 @@
 
 namespace musher
 {
-    template <typename AudioBufferType>
     struct WavDecoded {
         uint32_t sample_rate;
         int bit_depth;
@@ -25,7 +24,7 @@ namespace musher
         double length_in_seconds;
         std::string file_type;
         int avg_bitrate_kbps;
-        std::vector<std::vector<AudioBufferType>> samples;
+        std::vector<std::vector<double>> samples;
         std::vector<double> normalized_samples;
     };
 
@@ -50,20 +49,19 @@ namespace musher
     /**
      * @brief Decodes a wav file, analysis stored into wav_decode_data
      * 
-     * @tparam AudioBufferType type of the returned samples
+     * @tparam double type of the returned samples
      * @tparam Map unordered or ordered map
      * @tparam K string
      * @tparam V variant
      * @param wav_decoded_data map that will be used to store the music file analysis
      * @param file_path path to wav file
-     * @return std::vector< std::vector< AudioBufferType > > CDecodeWav 2D vector of samples,
+     * @return std::vector< std::vector< double > > CDecodeWav 2D vector of samples,
      * samples[0] holds channel 1
      * samples[1] holds channel 2 (Empty if mono file)
      */
-    template <typename AudioBufferType>
-    WavDecoded<AudioBufferType> MUSHER_API CDecodeWavDualChannel(const std::vector<uint8_t>& file_data)
+    WavDecoded MUSHER_API CDecodeWavDualChannel(const std::vector<uint8_t>& file_data)
     {   
-        std::vector<std::vector<AudioBufferType>> samples;
+        std::vector<std::vector<double>> samples;
 
         if (!samples.empty()){
             std::string err_message = "Audio Buffer must be empty";
@@ -164,14 +162,14 @@ namespace musher
                 if (bit_depth == 8)
                 {   
                     /* normalize samples to between -1 and 1 */
-                    AudioBufferType sample = normalizeInt8_t<AudioBufferType>(file_data[sample_index]);
+                    double sample = normalizeInt8_t<double>(file_data[sample_index]);
                     samples[channel].push_back (sample);
                 }
                 else if (bit_depth == 16)
                 {
                     int16_t sample_as_int = twoBytesToInt(file_data, sample_index);
                     /* normalize samples to between -1 and 1 */
-                    AudioBufferType sample = normalizeInt16_t<AudioBufferType>(sample_as_int);
+                    double sample = normalizeInt16_t<double>(sample_as_int);
                     // samples[channel].push_back (sample);
                     samples[channel].push_back (sample_as_int);
                 }
@@ -184,8 +182,8 @@ namespace musher
                         sample_as_int = sample_as_int | ~0xFFFFFF; // so make sure sign is extended to the 32 bit float
 
                     /* normalize samples to between -1 and 1 */
-                    AudioBufferType sample = normalizeInt32_t<AudioBufferType>(sample_as_int);
-                    // AudioBufferType sample = (AudioBufferType)sample_as_int / (AudioBufferType)8388608.;
+                    double sample = normalizeInt32_t<double>(sample_as_int);
+                    // double sample = (double)sample_as_int / (double)8388608.;
                     // samples[channel].push_back (sample);
                     samples[channel].push_back (sample_as_int);
                 }
@@ -218,7 +216,7 @@ namespace musher
         // wav_decoded_data["filetype"] = fileType;
         // wav_decoded_data["avg_bitrate_kbps"] = avg_bitrate_kbps;
 
-        WavDecoded<AudioBufferType> wav_decoded;
+        WavDecoded wav_decoded;
         wav_decoded.sample_rate = sample_rate;
         wav_decoded.bit_depth = bit_depth;
         wav_decoded.channels = num_channels_int;
@@ -236,16 +234,15 @@ namespace musher
     /**
      * @brief Overloaded wrapper around CDecodeWav that accepts a file path to a wav file and returns interleaved samples
      * 
-     * @tparam AudioBufferType type of the final samples
+     * @tparam double type of the final samples
      * @tparam Map unordered or ordered map
      * @tparam K string
      * @tparam V variant
      * @param wav_decoded_data map that will be used to store the music file analysis
      * @param file_path path to wav file
-     * @return std::vector< AudioBufferType > CDecodeWav interleaved samples
+     * @return std::vector< double > CDecodeWav interleaved samples
      */
-    template <typename AudioBufferType>
-    WavDecoded<AudioBufferType> MUSHER_API CDecodeWav(const std::vector<uint8_t>& file_data)
+    WavDecoded MUSHER_API CDecodeWav(const std::vector<uint8_t>& file_data)
     {
         WavDecoded wav_decoded = CDecodeWavDualChannel<double>(file_data);
 
@@ -257,36 +254,34 @@ namespace musher
     /**
      * @brief Overloaded wrapper around CDecodeWav that accepts a file path to a wav file and returns interleaved samples
      * 
-     * @tparam AudioBufferType type of the final samples
+     * @tparam double type of the final samples
      * @tparam Map unordered or ordered map
      * @tparam K string
      * @tparam V variant
      * @param wav_decoded_data map that will be used to store the music file analysis
      * @param file_path path to wav file
-     * @return std::vector< AudioBufferType > CDecodeWav interleaved samples
+     * @return std::vector< double > CDecodeWav interleaved samples
      */
-    template <typename AudioBufferType>
-    WavDecoded<AudioBufferType> MUSHER_API CDecodeWav(const std::string& file_path)
+    
+    WavDecoded MUSHER_API CDecodeWav(const std::string& file_path)
     {
-        std::vector<uint8_t> file_data;
-        file_data = CLoadAudioFile(file_path);
-        return CDecodeWav<AudioBufferType>(file_data);
+        std::vector<uint8_t> file_data = CLoadAudioFile(file_path);
+        return CDecodeWav<double>(file_data);
     }
 
     
     /**
      * @brief Decodes a mp3 file, analysis stored into wav_decode_data
      * 
-     * @tparam AudioBufferType type of the final samples
+     * @tparam double type of the final samples
      * @tparam Map unordered or ordered map
      * @tparam K string
      * @tparam V variant
      * @param wav_decoded_data map that will be used to store the music file analysis
      * @param file_path path to mp3 file
-     * @return std::vector< AudioBufferType > CDecodeMp3 interleaved samples
+     * @return std::vector< double > CDecodeMp3 interleaved samples
      */
-    template <typename AudioBufferType>
-    std::vector< AudioBufferType > MUSHER_API CDecodeMp3(Mp3Decoded& mp3_decoded, const std::string file_path)
+    std::vector< double > MUSHER_API CDecodeMp3(Mp3Decoded& mp3_decoded, const std::string file_path)
     {
         mp3dec_t mp3d;
         mp3dec_file_info_t info;
@@ -329,14 +324,13 @@ namespace musher
             interleaved_samples.begin(),
             interleaved_samples.end(),
             normalized_samples.begin(),
-            []( const int32_t x ) { return normalizeInt32_t<AudioBufferType>(x); } );
+            []( const int32_t x ) { return normalizeInt32_t<double>(x); } );
 
         return normalized_samples;
     }
 
-    template< typename vecType,
-            typename = std::enable_if_t< std::is_floating_point<vecType>::value> >
-    double bpmDetection(std::vector< vecType > &flattened_normalized_samples, uint32_t sample_rate)
+    
+    double bpmDetection(std::vector< double > &flattened_normalized_samples, uint32_t sample_rate)
     {
         wave_object obj;
         wt_object wt;
@@ -353,8 +347,8 @@ namespace musher
 
         size_t cD_min_len;
         double decimated_signal_sum, decimated_signal_mean;
-        std::vector<vecType> cD, cD_sum, cD_filtered, cD_decimated_signal, cD_mean_removed_signal, cD_mean_removed_signal_partial;
-        std::vector<vecType> cA, cA_filtered, cA_mean_removed_signal_partial;
+        std::vector<double> cD, cD_sum, cD_filtered, cD_decimated_signal, cD_mean_removed_signal, cD_mean_removed_signal_partial;
+        std::vector<double> cA, cA_filtered, cA_mean_removed_signal_partial;
         for (int level = 0; level < total_levels; level++)
         {
             /* Discrete Wavelet Transform */
@@ -402,7 +396,7 @@ namespace musher
 
             /* Remove the mean */
             cD_mean_removed_signal.resize(cD_decimated_signal.size());
-            auto remove_mean = [decimated_signal_mean]( const vecType x ) { return x - decimated_signal_mean; };
+            auto remove_mean = [decimated_signal_mean]( const double x ) { return x - decimated_signal_mean; };
             std::transform(
                 cD_decimated_signal.begin(),
                 cD_decimated_signal.end(),
@@ -417,7 +411,7 @@ namespace musher
                         cD_sum.end(),
                         cD_mean_removed_signal_partial.begin(),
                         cD_sum.begin(),
-                        std::plus<vecType>() );
+                        std::plus<double>() );
 
             /* Clear variables */
             wt_free(wt);
@@ -430,7 +424,7 @@ namespace musher
         wave_free(obj);
 
         /* Check if cA has any useful data */
-        bool zeros = std::all_of(cA.begin(), cA.end(), [](const vecType d) { return d == 0.0; });
+        bool zeros = std::all_of(cA.begin(), cA.end(), [](const double d) { return d == 0.0; });
         if (zeros)
             return 0.0;
 
@@ -438,8 +432,8 @@ namespace musher
         cA_filtered = onePoleFilter(cA);
 
         /* Make cA_filtered absolute */
-        std::vector<vecType> cA_absolute(cA_filtered.size());
-        auto absolute_val = []( const vecType x ) { return std::abs(x); };
+        std::vector<double> cA_absolute(cA_filtered.size());
+        auto absolute_val = []( const double x ) { return std::abs(x); };
         std::transform(
                 cA_filtered.begin(),
                 cA_filtered.end(),
@@ -450,8 +444,8 @@ namespace musher
         double cA_absolute_sum = std::accumulate(cA_absolute.begin(), cA_absolute.end(), 0.0);
         double cA_absolute_mean =  cA_absolute_sum / static_cast<double>(cA_absolute.size());
 
-        std::vector<vecType> cA_mean_removed_signal(cA_absolute.size());
-        auto remove_mean = [cA_absolute_mean]( const vecType x ) { return x - cA_absolute_mean; };
+        std::vector<double> cA_mean_removed_signal(cA_absolute.size());
+        auto remove_mean = [cA_absolute_mean]( const double x ) { return x - cA_absolute_mean; };
         std::transform(
                 cA_absolute.begin(),
                 cA_absolute.end(),
@@ -466,10 +460,10 @@ namespace musher
                     cD_sum.end(),
                     cA_mean_removed_signal_partial.begin(),
                     cD_sum.begin(),
-                    std::plus<vecType>() );
+                    std::plus<double>() );
         
         size_t data_len = cD_sum.size();
-        std::vector<vecType> b(data_len * 2);
+        std::vector<double> b(data_len * 2);
 
         /* Fill a section of b with cD_sum data */
         int k = 0;
@@ -479,23 +473,23 @@ namespace musher
         }
 
         /* Reverse cD_sum */
-        std::vector<vecType> reverse_cD(cD_sum);
+        std::vector<double> reverse_cD(cD_sum);
         std::reverse(reverse_cD.begin(), reverse_cD.end());
 
         /* Perform an array flipped convolution, which is the same as a cross-correlation on the samples.  */
-        std::vector<vecType> correl = fftConvolve<vecType>(b, reverse_cD);
+        std::vector<double> correl = fftConvolve<double>(b, reverse_cD);
         correl.pop_back(); // We don't need the last element
         size_t midpoint = correl.size() / 2;
-        std::vector<vecType> correl_midpoint_tmp(correl.begin() + midpoint, correl.end());
-        std::vector<vecType> sliced_correl_midpoint_tmp(correl_midpoint_tmp.begin() + std::floor(min_index), correl_midpoint_tmp.begin() + std::floor(max_index));
+        std::vector<double> correl_midpoint_tmp(correl.begin() + midpoint, correl.end());
+        std::vector<double> sliced_correl_midpoint_tmp(correl_midpoint_tmp.begin() + std::floor(min_index), correl_midpoint_tmp.begin() + std::floor(max_index));
 
         /* Peak Detection */
-        std::vector<vecType> sliced_correl_midpoint_tmp_abs(sliced_correl_midpoint_tmp.size());
+        std::vector<double> sliced_correl_midpoint_tmp_abs(sliced_correl_midpoint_tmp.size());
         std::transform(
                 sliced_correl_midpoint_tmp.begin(),
                 sliced_correl_midpoint_tmp.end(),
                 sliced_correl_midpoint_tmp_abs.begin(),
-                []( const vecType x ) { return std::abs(x); } );
+                []( const double x ) { return std::abs(x); } );
         std::vector< std::tuple< double, double > > peaks;
         double threshold = -1000.0;
         bool interpolate = true;
@@ -513,20 +507,19 @@ namespace musher
         return bpm;
     }
 
-    template< typename vecType,
-            typename = std::enable_if_t< std::is_floating_point<vecType>::value> >
-    double bpmsOverWindow(std::vector< vecType > &flattened_normalized_samples, size_t num_samples, uint32_t sample_rate, int windowSeconds)
+    
+    double bpmsOverWindow(std::vector< double > &flattened_normalized_samples, size_t num_samples, uint32_t sample_rate, int windowSeconds)
     {
         int window_samples = windowSeconds * sample_rate;
         int sample_index = 0;
         int max_windows_index = num_samples / window_samples;
-        std::vector<vecType> bpms(max_windows_index, 0.0);
-        std::vector<vecType> seconds_mid(max_windows_index, 0.0);
+        std::vector<double> bpms(max_windows_index, 0.0);
+        std::vector<double> seconds_mid(max_windows_index, 0.0);
 
         for (int window_index = 0; window_index < max_windows_index; window_index++)
         {
-            typename std::vector<vecType>::iterator samp_it = flattened_normalized_samples.begin() + sample_index;
-            std::vector<vecType> sliced_samples(samp_it, samp_it + window_samples);
+            typename std::vector<double>::iterator samp_it = flattened_normalized_samples.begin() + sample_index;
+            std::vector<double> sliced_samples(samp_it, samp_it + window_samples);
             
             double bpm = bpmDetection(sliced_samples, sample_rate);
             bpms[window_index] = bpm;

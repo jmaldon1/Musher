@@ -15,15 +15,17 @@
 
 namespace musher {
 
-enum WeightType {
-    NONE, COSINE, SQUARED_COSINE
-};
-WeightType weight_type;
+enum WeightType { NONE, COSINE, SQUARED_COSINE };
+enum NormalizeType { N_NONE, N_UNIT_MAX, N_UNIT_SUM };
 
-enum NormalizeType {
-    N_NONE, N_UNIT_MAX, N_UNIT_SUM
+struct HarmonicPeak {
+    /* Constructor */ 
+    HarmonicPeak(double semitone, double harmonic_strength = 0.0)
+      : semitone(semitone), harmonic_strength(harmonic_strength) {}
+
+    double semitone;
+    double harmonic_strength;
 };
-NormalizeType normalized;
 
 std::string uint8_vector_to_hex_string(const std::vector<uint8_t>& v);
 std::string strBetweenSQuotes(const std::string &s);
@@ -154,35 +156,90 @@ std::vector<std::tuple<double, double>> spectralPeaks(const std::vector<double> 
                                                       int min_pos=0,
                                                       int max_pos=0);
 
-void HPCP(const std::vector<double>& frequencies,
-            const std::vector<double>& magnitudes,
-            int size=12,
-            double reference_frequency=440.0,
-            int harmonics=0,
-            bool band_preset=true,
-            double band_split_frequency=500.0,
-            double min_frequency=40.0,
-            double max_frequency=5000.0,
-            std::string weigh_type="squared cosine",
-            bool non_linear=false,
-            double window_size=1.0,
-            double sample_rate=44100.,
-            bool max_shifted=false,
-            std::string normalized="unit max");
+void addContributionWithWeight(double freq,
+                               double mag_lin,
+                               double reference_frequency,
+                               double window_size,
+                               WeightType weight_type,
+                               double harmonic_weight,
+                               std::vector<double>& hpcp);
+void addContribution(double freq,
+                     double mag_lin,
+                     double reference_frequency,
+                     double window_size,
+                     WeightType weight_type,
+                     std::vector<HarmonicPeak> harmonic_peaks,
+                     std::vector<double>& hpcp);
+std::vector<HarmonicPeak> initHarmonicContributionTable(int harmonics);
 
-void HPCP(const std::vector<std::tuple<double, double>>& peaks,
-          int size=12,
-          double reference_frequency=440.0,
-          int harmonics=0,
-          bool band_preset=true,
-          double band_split_frequency=500.0,
-          double min_frequency=40.0,
-          double max_frequency=5000.0,
-          std::string weigh_type="squared cosine",
-          bool non_linear=false,
-          double window_size=1.0,
-          double sample_rate=44100.,
-          bool max_shifted=false,
-          std::string normalized="unit max");
+// normalize a vector so its largest value gets mapped to 1
+// if zero, the vector isn't touched
+template <typename T>
+void normalize(std::vector<T>& array)
+{
+  if (array.empty()) return;
+
+  T maxElement = *std::max_element(array.begin(), array.end());
+
+  if (maxElement != (T) 0.0) {
+    for (uint i=0; i<array.size(); i++) {
+      array[i] /= maxElement;
+    }
+  }
+}
+
+// normalize a vector so it's sum is equal to 1. the vector is not touched if
+// it contains negative elements or the sum is zero
+template <typename T>
+void normalizeSum(std::vector<T>& array)
+{
+  if (array.empty()) return;
+
+  //T sumElements = std::accumulate(array.begin(), array.end(), (T) 0.0);
+  T sumElements = (T) 0.;
+  for (size_t i=0; i<array.size(); ++i) {
+    if (array[i] < 0) return;
+    sumElements += array[i];
+  }
+
+  if (sumElements != (T) 0.0) {
+    for (size_t i=0; i<array.size(); ++i) {
+      array[i] /= sumElements;
+    }
+  }
+}
+
+int max_vector_element(const std::vector<double>& input);
+
+std::vector<double> HPCP(const std::vector<double>& frequencies,
+                         const std::vector<double>& magnitudes,
+                         int size=12,
+                         double reference_frequency=440.0,
+                         int harmonics=0,
+                         bool band_preset=true,
+                         double band_split_frequency=500.0,
+                         double min_frequency=40.0,
+                         double max_frequency=5000.0,
+                         std::string _weight_type="squared cosine",
+                         double window_size=1.0,
+                         double sample_rate=44100.,
+                         bool max_shifted=false,
+                         bool non_linear=false,
+                         std::string _normalized="unit max");
+
+std::vector<double> HPCP(const std::vector<std::tuple<double, double>>& peaks,
+                         int size=12,
+                         double reference_frequency=440.0,
+                         int harmonics=0,
+                         bool band_preset=true,
+                         double band_split_frequency=500.0,
+                         double min_frequency=40.0,
+                         double max_frequency=5000.0,
+                         std::string _weight_type="squared cosine",
+                         double window_size=1.0,
+                         double sample_rate=44100.,
+                         bool max_shifted=false,
+                         bool non_linear=false,
+                         std::string _normalized="unit max");
 
 }  // namespace musher

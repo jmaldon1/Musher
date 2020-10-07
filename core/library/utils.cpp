@@ -198,10 +198,10 @@ double normFct(int inorm, size_t N)
 }
 
 double normFct(int inorm,
-                const pocketfft::shape_t &shape,
-                const pocketfft::shape_t &axes,
-                size_t fct,
-                int delta)
+               const pocketfft::shape_t &shape,
+               const pocketfft::shape_t &axes,
+               size_t fct,
+               int delta)
 {
     if (inorm==0) return double(1);
     size_t N(1);
@@ -629,19 +629,13 @@ std::vector<std::tuple<double, double>> spectralPeaks(const std::vector<double> 
     return peaks;
 }
 
-std::vector<double> addContributionWithWeight(double freq,
-                                              double reference_frequency,
-                                              double window_size,
-                                              WeightType weight_type,
-                                              double mag_lin,
-                                              double harmonic_weight,
-                                              bool band_preset,
-                                              int size) {
-    std::vector<double> hpcp;
-    if (band_preset) {
-        hpcp.resize(size);
-        std::fill(hpcp.begin(), hpcp.end(), (double)0.0);
-    }
+void addContributionWithWeight(double freq,
+                               double mag_lin,
+                               double reference_frequency,
+                               double window_size,
+                               WeightType weight_type,
+                               double harmonic_weight,
+                               std::vector<double>& hpcp) {
     int pcp_size = hpcp.size();
     int semitone = 12;
     double resolution = pcp_size / semitone; // # of bins / semitone
@@ -676,88 +670,290 @@ std::vector<double> addContributionWithWeight(double freq,
 
         hpcp[iwrapped] += weight * (mag_lin*mag_lin) * harmonic_weight * harmonic_weight;
     }
-    return hpcp;
 }
 
-void HPCP(const std::vector<double>& frequencies,
-          const std::vector<double>& magnitudes,
-          int size,
-          double reference_frequency,
-          int harmonics,
-          bool band_preset,
-          double band_split_frequency,
-          double min_frequency,
-          double max_frequency,
-          std::string _weigh_type,
-          bool non_linear,
-          double window_size,
-          double sample_rate,
-          bool max_shifted,
-          std::string normalized)
+void addContributionWithoutWeight(double freq,
+                                  double mag_lin,
+                                  double reference_frequency,
+                                  double harmonic_weight,
+                                  std::vector<double>& hpcp)
 {
-    // Check inputs
+  if (freq <= 0)
+    return;
+
+  /* Original Fujishima algorithm, basically places the contribution in the
+  bin nearest to the given frequency */
+  int pcpsize = hpcp.size();
+
+  double octave = log2(freq/reference_frequency);
+  int pcpbin = (int)round(pcpsize * octave);  // bin distance from ref frequency
+
+  pcpbin %= pcpsize;
+  if (pcpbin < 0)
+    pcpbin += pcpsize;
+
+  hpcp[pcpbin] += mag_lin * mag_lin * harmonic_weight * harmonic_weight;
+}
+
+// Adds the magnitude contribution of the given frequency as the tonic
+// semitone, as well as its possible contribution as a harmonic of another
+// pitch.
+void addContribution(double freq,
+                     double mag_lin,
+                     double reference_frequency,
+                     double window_size,
+                     WeightType weight_type,
+                     std::vector<HarmonicPeak> harmonic_peaks,
+                     std::vector<double>& hpcp)
+{
+    std::vector<HarmonicPeak>::const_iterator it;
+
+    for (it=harmonic_peaks.begin(); it!= harmonic_peaks.end(); it++) {
+        /* Calculate the frequency of the hypothesized fundmental frequency. The
+        harmonic_peaks data structure always includes at least one element,
+        whose semitone value is 0, thus making this first iteration be freq == f */
+        double f = freq * pow(2., -(*it).semitone / 12.0);
+        double harmonic_weight = (*it).harmonic_strength;
+
+        if (weight_type != NONE) {
+            addContributionWithWeight(f,
+                                      mag_lin,
+                                      reference_frequency,
+                                      window_size,
+                                      weight_type,
+                                      harmonic_weight,
+                                      hpcp);
+        }
+        else {
+            addContributionWithoutWeight(f,
+                                         mag_lin,
+                                         reference_frequency,
+                                         harmonic_weight,
+                                         hpcp);
+        }
+    }
+}
+
+// Builds a weighting table of harmonic contribution. Higher harmonics
+// contribute less and the fundamental frequency has a full harmonic
+// strength of 1.0.
+std::vector<HarmonicPeak> initHarmonicContributionTable(int harmonics)
+{
+    std::vector<HarmonicPeak> harmonic_peaks;
+    const double precision = 0.00001;
+
+    /* Populate harmonic_peaks with the semitonal positions of each of the
+     harmonics. */
+    for (int i = 0; i <= harmonics; i++) {
+        double semitone = 12.0 * log2(i+1.0);
+        double octweight = std::max(1.0 , ( semitone /12.0)*0.5);
+
+        /* Get the semitone within the range (0-precision, 12.0-precision] */
+        while (semitone >= 12.0-precision) {
+            semitone -= 12.0;
+        }
+
+        /* Check to see if the semitone has already been added to harmonic_peaks */
+        std::vector<HarmonicPeak>::iterator it;
+        for (it = harmonic_peaks.begin(); it != harmonic_peaks.end(); it++) {
+            if ((*it).semitone > semitone-precision && (*it).semitone < semitone+precision) break;
+        }
+
+        if (it == harmonic_peaks.end()) {
+            /* No harmonic peak found for this frequency; add it */
+            harmonic_peaks.push_back(HarmonicPeak(semitone, (1.0 / octweight)));
+        }
+        else {
+            /* Else, add the weight */
+            (*it).harmonic_strength += (1.0 / octweight);
+        }
+    }
+    return harmonic_peaks;
+}
+
+int max_vector_element(const std::vector<double>& input) {
+    if (input.empty())
+        throw std::runtime_error("Trying to get max vector element of empty vector");
+    return std::max_element(input.begin(), input.end()) - input.begin();
+}
+
+std::vector<double> HPCP(const std::vector<double>& frequencies,
+                         const std::vector<double>& magnitudes,
+                         int size,
+                         double reference_frequency,
+                         int harmonics,
+                         bool band_preset,
+                         double band_split_frequency,
+                         double min_frequency,
+                         double max_frequency,
+                         std::string _weight_type,
+                         double window_size,
+                         double sample_rate,
+                         bool max_shifted,
+                         bool non_linear,
+                         std::string _normalized)
+{
+    /* Input Validation */
+    if (size % 12 != 0) {
+        throw std::runtime_error("HPCP: The size parameter is not a multiple of 12.");
+    }
+
+    if ((max_frequency - min_frequency) < 200.0) {
+        throw std::runtime_error("HPCP: Minimum and maximum frequencies are too close");
+    }
+
+    if (band_preset) {
+        if ((band_split_frequency - min_frequency) < 200.0) {
+            throw std::runtime_error("HPCP: Low band frequency range too small");
+        }
+        if ((max_frequency - band_split_frequency) < 200.0) {
+            throw std::runtime_error("HPCP: High band frequency range too small");
+        }
+    }
+
     if (magnitudes.size() != frequencies.size()) {
         throw std::runtime_error("HPCP: Frequency and magnitude input vectors are not of equal size");
     }
 
-    if      (_weigh_type == "none") weight_type = NONE;
-    else if (_weigh_type == "cosine") weight_type = COSINE;
-    else if (_weigh_type == "squared cosine") weight_type = SQUARED_COSINE;
+    if (window_size * size/12 < 1.0) {
+        throw std::runtime_error("HPCP: Your window_size needs to span at least one hpcp bin (window_size >= 12/size)");
+    }
+
+    WeightType weight_type;
+    if      (_weight_type == "none") weight_type = NONE;
+    else if (_weight_type == "cosine") weight_type = COSINE;
+    else if (_weight_type == "squared cosine") weight_type = SQUARED_COSINE;
     else {
         std::string err_message = "HPCP: Invalid weight type of: ";
-        err_message += _weigh_type;
+        err_message += _weight_type;
+        throw std::runtime_error(err_message);
+    }
+    
+    NormalizeType normalized;
+    if      (_normalized == "none") normalized = N_NONE;
+    else if (_normalized == "unit sum") normalized = N_UNIT_SUM;
+    else if (_normalized == "unit max") normalized = N_UNIT_MAX;
+    else {
+        std::string err_message = "HPCP: Invalid normalize type of: ";
+        err_message += _normalized;
         throw std::runtime_error(err_message);
     }
 
-    std::vector<double> hpcp;
+    if (non_linear && normalized != N_UNIT_MAX) {
+        throw std::runtime_error("HPCP: Cannot apply non-linear filter when HPCP vector is not normalized to unit max.");
+    }
+    /* ======== */
 
-    hpcp.resize(size);
+    std::vector<HarmonicPeak> harmonic_peaks = initHarmonicContributionTable(harmonics);
+    std::vector<double> hpcp(size);
     std::fill(hpcp.begin(), hpcp.end(), (double)0.0);
 
     std::vector<double> hpcp_LO;
     std::vector<double> hpcp_HI;
 
-    // if (band_preset) {
-    //     hpcp_LO.resize(size);
-    //     std::fill(hpcp_LO.begin(), hpcp_LO.end(), (double)0.0);
+    if (band_preset) {
+        hpcp_LO.resize(size);
+        std::fill(hpcp_LO.begin(), hpcp_LO.end(), (double)0.0);
 
-    //     hpcp_HI.resize(size);
-    //     std::fill(hpcp_HI.begin(), hpcp_HI.end(), (double)0.0);
-    // }
+        hpcp_HI.resize(size);
+        std::fill(hpcp_HI.begin(), hpcp_HI.end(), (double)0.0);
+    }
 
-    // Add each contribution of the spectral frequencies to the HPCP
+    /* Add each contribution of the spectral frequencies to the HPCP */
     for (int i=0; i<(int)frequencies.size(); i++) {
         double freq = frequencies[i];
         double mag_lin = magnitudes[i];
 
-        // Filter out frequencies not between min and max
+        /* Filter out frequencies not between min and max */
         if (freq >= min_frequency && freq <= max_frequency) {
             if (band_preset) {
-                // addContribution(freq, mag_lin, (freq < band_split_frequency) ? hpcp_LO : hpcp_HI);
+                addContribution(freq,
+                                mag_lin,
+                                reference_frequency,
+                                window_size,
+                                weight_type,
+                                harmonic_peaks,
+                                (freq < band_split_frequency) ? hpcp_LO : hpcp_HI);
             }
             else {
-                // addContribution(freq, mag_lin, hpcp);
+                addContribution(freq,
+                                mag_lin,
+                                reference_frequency,
+                                window_size,
+                                weight_type,
+                                harmonic_peaks,
+                                hpcp);
             }
         }
     }
 
-    std::cout << "hi" << std::endl;
+    if (band_preset) {
+        if (normalized == N_UNIT_MAX) {
+            normalize(hpcp_LO);
+            normalize(hpcp_HI);
+        }
+        else if (normalized == N_UNIT_SUM) {
+            // TODO does it makes sense to apply band preset together with unit sum normalization?
+            normalizeSum(hpcp_LO);
+            normalizeSum(hpcp_HI);
+        }
+
+        for (int i=0; i<(int)hpcp.size(); i++) {
+            hpcp[i] = hpcp_LO[i] + hpcp_HI[i];
+        }
+        
+    }
+
+    if (normalized == N_UNIT_MAX) {
+        normalize(hpcp);
+    }
+    else if (normalized == N_UNIT_SUM) {
+        normalizeSum(hpcp);
+    }
+
+    /* Perform the Jordi non-linear post-processing step
+     This makes small values (below 0.6) even smaller
+     while boosting further values close to 1. */
+    if (non_linear) {
+        for (int i=0; i<(int)hpcp.size(); i++) {
+            hpcp[i] = sin(hpcp[i] * M_PI * 0.5);
+            hpcp[i] *= hpcp[i];
+            if (hpcp[i] < 0.6) {
+                hpcp[i] *= hpcp[i]/0.6 * hpcp[i]/0.6;
+            }
+        }
+    }
+
+    /* Shift all of the elements so that the largest HPCP value is at index 0,
+     only if this option is enabled. */
+    if (max_shifted) {
+        int idx_max = max_vector_element(hpcp);
+        std::vector<double> hpcp_bak = hpcp;
+        for (int i=idx_max; i<(int)hpcp.size(); i++) {
+            hpcp[i-idx_max] = hpcp_bak[i];
+        }
+        int offset = hpcp.size() - idx_max;
+        for (int i=0; i<idx_max; i++) {
+            hpcp[i+offset] = hpcp_bak[i];
+        }
+    }
+    return hpcp;
 }
 
-void HPCP(const std::vector<std::tuple<double, double>>& peaks,
-          int size,
-          double reference_frequency,
-          int harmonics,
-          bool band_preset,
-          double band_split_frequency,
-          double min_frequency,
-          double max_frequency,
-          std::string weigh_type,
-          bool non_linear,
-          double window_size,
-          double sample_rate,
-          bool max_shifted,
-          std::string normalized)
+std::vector<double> HPCP(const std::vector<std::tuple<double, double>>& peaks,
+                         int size,
+                         double reference_frequency,
+                         int harmonics,
+                         bool band_preset,
+                         double band_split_frequency,
+                         double min_frequency,
+                         double max_frequency,
+                         std::string _weight_type,
+                         double window_size,
+                         double sample_rate,
+                         bool max_shifted,
+                         bool non_linear,
+                         std::string _normalized)
 {
     std::vector<double> frequencies(peaks.size());
     std::vector<double> magnitudes(peaks.size());
@@ -783,12 +979,12 @@ void HPCP(const std::vector<std::tuple<double, double>>& peaks,
                 band_split_frequency,
                 min_frequency,
                 max_frequency,
-                weigh_type,
+                _weight_type,
                 non_linear,
                 window_size,
                 sample_rate,
                 max_shifted,
-                normalized);
+                _normalized);
 }
 
 }  // namespace musher

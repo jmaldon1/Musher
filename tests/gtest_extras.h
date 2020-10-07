@@ -1,5 +1,4 @@
-#ifndef GTEST_EXTRAS_H
-#define GTEST_EXTRAS_H
+#pragma once
 
 #include "gtest/gtest.h"
 
@@ -10,5 +9,3 @@
     EXPECT_EQ(x[i], y[i]) << "Vectors " #x " and " #y " differ at index " << i;       \
   }                                                                                   \
 }
-
-#endif // GTEST_EXTRAS_H

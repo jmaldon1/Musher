@@ -1,5 +1,4 @@
-#ifndef __PYTHON_UTILS_H__
-#define __PYTHON_UTILS_H__
+#pragma once
 
 #define PY_SSIZE_T_CLEAN // It is recommended to always define this before Python.h
 #include <Python.h>
@@ -201,6 +200,3 @@ namespace musher
         return data;
     }
 }
-
-
-#endif

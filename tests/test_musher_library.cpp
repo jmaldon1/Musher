@@ -71,7 +71,7 @@ TEST(AudioFileDecoding, LoadsAudioFileTest) {
 TEST(AudioFileDecoding, DecodeWav) {
     const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
 
-    WavDecoded wav_decoded = CDecodeWav<double>(filePath);
+    WavDecoded wav_decoded = CDecodeWav(filePath);
 
     uint32_t expected_sample_rate = 22050;
     uint32_t actual_sample_rate = wav_decoded.sample_rate;
@@ -123,7 +123,7 @@ TEST(AudioFileDecoding, BeatDetection) {
     const std::string filePath = "./tests/audio_files/CantinaBand3sec.wav";
     // std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
 
-    WavDecoded wav_decoded = CDecodeWav<double>(filePath);
+    WavDecoded wav_decoded = CDecodeWav(filePath);
     // uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
     uint32_t sampleRate = wav_decoded.sample_rate;
     std::vector<double> normalized_samples = wav_decoded.normalized_samples;
@@ -143,7 +143,7 @@ TEST(AudioFileDecoding, DecodeMp3) {
     Mp3Decoded mp3_decoded;
     // std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
 
-    normalizedSamples = CDecodeMp3<double>(mp3_decoded, filePathMp3);
+    normalizedSamples = CDecodeMp3(mp3_decoded, filePathMp3);
     uint32_t sampleRate = mp3_decoded.sample_rate;
 
     // uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);

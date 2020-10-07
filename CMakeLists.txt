@@ -4,14 +4,16 @@ if (POLICY CMP0048)
 	cmake_policy(SET CMP0048 NEW)
 endif (POLICY CMP0048)
 
-set(CMAKE_VERSION 3.10)
-
 # use g++-8 for gnu 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 	set(CMAKE_CXX_COMPILER "/usr/bin/g++-8")
 endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# equivalent to setting -fPIC -> does this even work on windows?
+# Required for wavelib to compile.
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 project(musher LANGUAGES CXX)
 

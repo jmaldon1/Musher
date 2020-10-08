@@ -1,20 +1,20 @@
 <!-- MarkdownTOC -->
 
 - [Musher](#musher)
-    - [Steps](#steps)
-    - [Installation](#installation)
-        - [Required General Dependencies](#required-general-dependencies)
-        - [Build & install python module](#build--install-python-module)
-            - [Install normally](#install-normally)
-            - [Install in development mode](#install-in-development-mode)
-    - [Tests](#tests)
-        - [Required modules](#required-modules)
-        - [How to run Python tests](#how-to-run-python-tests)
-        - [How to run C++ tests](#how-to-run-c-tests)
-    - [Cleanup](#cleanup)
-    - [Accomplishments](#accomplishments)
-    - [Next Steps](#next-steps)
-    - [Useful links](#useful-links)
+  - [Steps](#steps)
+  - [Installation](#installation)
+    - [Required General Dependencies](#required-general-dependencies)
+    - [Build & install python module](#build--install-python-module)
+      - [Install normally](#install-normally)
+      - [Install in development mode](#install-in-development-mode)
+  - [Tests](#tests)
+    - [Required modules](#required-modules)
+    - [How to run Python tests](#how-to-run-python-tests)
+    - [How to run C++ tests](#how-to-run-c-tests)
+  - [Cleanup](#cleanup)
+  - [Accomplishments](#accomplishments)
+  - [Next Steps](#next-steps)
+  - [Useful links](#useful-links)
 
 <!-- /MarkdownTOC -->
 
@@ -103,7 +103,7 @@ find . \( -iname \*.h -o -iname \*.cpp \) | entr python setup.py build_cpp_tests
 
 ### How to run C++ tests
 
-This will create an executable of the c++ tests and save it to the root directory
+This will create an executables of the C++ tests and save them to the `test_bin` folder.
 
 ```sh
 # This will simply build the tests
@@ -119,13 +119,14 @@ python setup.py build_cpp_tests --r
 The alternative Cmake way:
 
 ```sh
+# Build Tests
 mkdir build
 cd build
 cmake .. -DBUILD_PYTHON_MODULE=OFF
 cmake --build .
 
-# Run Tests
-../test_musher_cpp
+# Run Test
+../test_bin/test_musher_library
 # OR
 ctest
 # OR

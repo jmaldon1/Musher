@@ -7,6 +7,7 @@ import glob
 import distutils.cmd
 import codecs
 import re
+import ntpath
 
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
@@ -26,14 +27,6 @@ readme_note = """\
 with codecs.open('README.md', encoding='utf-8') as fobj:
     long_description = readme_note + fobj.read()
 
-# List of all C++ test names
-cpp_tests_list = [
-    'test_musher_library',
-    'test_musher_utils',
-    'test_peak_detection',
-    'test_hpcp',
-]
-
 
 class BuildCppTests(distutils.cmd.Command):
     description = 'Build c++ tests for musher library'
@@ -41,13 +34,15 @@ class BuildCppTests(distutils.cmd.Command):
         ('debug', None, 'sets config to Debug, config set to Release by default'),
         ('run-tests', 'r', 'set to run tests after building'),
         # https://github.com/google/googletest/blob/master/googletest/docs/advanced.md#running-a-subset-of-the-tests
-        ('filter=', 'f', 'Choose which tests to run, this will be passed to --gtest_filter'),
+        # Example: (NOTE: escape the * in ZSH to prevent globbing error.)
+        #   python setup.py build_cpp_tests --r --g=--gtest_filter=HPCP.\*
+        ('gtest-options=', 'g', 'Any google test args that need to be passed through when building tests.'),
     ]
 
     def initialize_options(self):
         self.debug = False
         self.run_tests = False
-        self.filter = ""
+        self.gtest_options = ""
 
     def finalize_options(self):
         pass
@@ -55,14 +50,14 @@ class BuildCppTests(distutils.cmd.Command):
     def run(self):
         # extdir = os.path.abspath(
         #     os.path.dirname(self.get_ext_fullpath(ext.name)))
-        cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + ROOT_DIR]
+        cmake_args = [f'-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={ROOT_DIR}']
 
         if sysconfig.get_config_var('CXX') == "g++":  # Check if using g++ to compile
             # Check if user has g++ 8, if they do, use it to compile
             if os.path.exists("/usr/bin/g++-8"):
                 cmake_args += ["-DCMAKE_CXX_COMPILER=/usr/bin/g++-8"]
 
-        # Do not compile python module when building c++ code.
+        # Do not compile python module when building C++ code.
         cmake_args += ['-DBUILD_PYTHON_MODULE=OFF']
 
         if self.debug:
@@ -72,9 +67,7 @@ class BuildCppTests(distutils.cmd.Command):
         build_args = ['--config', cfg]
 
         if platform.system() == "Windows":
-            cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(
-                cfg.upper(),
-                ROOT_DIR)]
+            cmake_args += [f'-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={ROOT_DIR}']
             if sys.maxsize > 2**32:
                 cmake_args += ['-A', 'x64']
             build_args += ['--', '/m']
@@ -83,9 +76,8 @@ class BuildCppTests(distutils.cmd.Command):
             build_args += ['--', '-j2']
 
         env = os.environ.copy()
-        env['CXXFLAGS'] = '{} -DVERSION_INFO=\\"{}\\"'.format(
-            env.get('CXXFLAGS', ''),
-            self.distribution.get_version())
+        env['CXXFLAGS'] = " ".join([env.get("CXXFLAGS", ""),
+                                    f'-DVERSION_INFO=\\"{self.distribution.get_version()}\\"'])
         build_dir = 'build/'
         if not os.path.exists(build_dir):
             os.makedirs(build_dir)
@@ -98,22 +90,17 @@ class BuildCppTests(distutils.cmd.Command):
         if self.run_tests:
             print("running tests...")
             test_bin_dir = os.path.abspath("./test_bin")
-            for test in cpp_tests_list:
-                if platform.system() == "Windows":
-                    test_file_path = os.path.join(cfg, f"{test}.exe")
-                    test_path = os.path.abspath(os.path.join(test_bin_dir, test_file_path))
-                else:
-                    test_file_path = test
-                    test_path = os.path.abspath(os.path.join(test_bin_dir, test_file_path))
+            test_bins_glob = os.path.join(test_bin_dir, "*")
+            test_bin_paths = [os.path.abspath(os.path.join(test_bin_dir, f)) for f in glob.glob(test_bins_glob)]
+            for test_bin_path in test_bin_paths:
+                test_name = ntpath.basename(test_bin_path)
                 print("=" * 35)
-                print(f"Running Test '{test}'")
+                print(f"Running Test '{test_name}'")
                 print("=" * 35)
-                test_args = [test_path]
-                if self.filter:
-                    test_args += [f"--gtest_filter={self.filter}"]
-                    subprocess.check_call(test_args, cwd=ROOT_DIR)
-                else:
-                    subprocess.check_call(test_args, cwd=ROOT_DIR)
+                test_args = [test_bin_path]
+                if self.gtest_options:
+                    test_args += [self.gtest_options]
+                subprocess.check_call(test_args, cwd=ROOT_DIR)
 
 
 class CMakeExtension(Extension):
@@ -143,15 +130,15 @@ class CMakeBuild(build_ext):
         extdir = os.path.abspath(
             os.path.dirname(self.get_ext_fullpath(ext.name)))
         # Output library to root directory
-        cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
-                      '-DPYTHON_EXECUTABLE=' + sys.executable]
+        cmake_args = [f'-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}',
+                      f'-DPYTHON_EXECUTABLE={sys.executable}']
 
         if sysconfig.get_config_var('CXX') == "g++":  # Check if using g++ to compile
             # Check if user has g++ 8, if they do, use it to compile
             if os.path.exists("/usr/bin/g++-8"):
                 cmake_args += ["-DCMAKE_CXX_COMPILER=/usr/bin/g++-8"]
 
-        # Do not build c++ tests when packaging code.
+        # Do not build C++ tests when packaging code.
         cmake_args += ['-DBUILD_TESTING=OFF']
 
         cfg = 'Debug' if self.debug else 'Release'
@@ -159,9 +146,7 @@ class CMakeBuild(build_ext):
 
         if platform.system() == "Windows":
             # Output windows library to root directory
-            cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(
-                cfg.upper(),
-                extdir)]
+            cmake_args += [f'-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}']
             if sys.maxsize > 2**32:
                 cmake_args += ['-A', 'x64']
             build_args += ['--', '/m']
@@ -170,9 +155,8 @@ class CMakeBuild(build_ext):
             build_args += ['--', '-j2']
 
         env = os.environ.copy()
-        env['CXXFLAGS'] = '{} -DVERSION_INFO=\\"{}\\"'.format(
-            env.get('CXXFLAGS', ''),
-            self.distribution.get_version())
+        env['CXXFLAGS'] = " ".join([env.get("CXXFLAGS", ""),
+                                    f'-DVERSION_INFO=\\"{self.distribution.get_version()}\\"'])
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args,

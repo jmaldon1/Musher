@@ -773,7 +773,7 @@ std::vector<HarmonicPeak> initHarmonicContributionTable(int harmonics)
 
 int max_vector_element(const std::vector<double>& input) {
     if (input.empty())
-        throw std::runtime_error("Trying to get max vector element of empty vector");
+        throw std::runtime_error("Trying to get max vector element of empty vector.");
     return std::max_element(input.begin(), input.end()) - input.begin();
 }
 
@@ -900,7 +900,7 @@ std::vector<double> HPCP(const std::vector<double>& frequencies,
         for (int i=0; i<(int)hpcp.size(); i++) {
             hpcp[i] = hpcp_LO[i] + hpcp_HI[i];
         }
-        
+
     }
 
     if (normalized == N_UNIT_MAX) {
@@ -984,6 +984,66 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>>& peaks,
                 sample_rate,
                 max_shifted,
                 _normalized);
+}
+
+std::vector<double> framecutter(const std::vector<double> buffer,
+                                int start_index=0,
+                                int frame_size=1024,
+                                int hop_size=512,
+                                bool start_from_zero=false,
+                                bool last_frame_to_end_of_file=false,
+                                double valid_frame_threshold_ratio=0.)
+{
+    int buffer_size = buffer.size();
+
+    if (buffer.empty()) return std::vector<double>();
+    if (start_index >= buffer_size) return std::vector<double>();
+
+    std::vector<double> frame(frame_size);
+    int idx_in_frame = 0;
+
+    /* If we're before the beginning of the buffer, fill the frame with 0 */
+    if (start_index < 0) {
+        int how_much = std::min(-start_index, frame_size);
+        for (; idx_in_frame<how_much; idx_in_frame++) {
+            frame[idx_in_frame] = (double)0.0;
+        }
+    }
+
+    /* Now, just copy from the buffer to the frame */
+    int how_much = std::min(frame_size, buffer_size - start_index) - idx_in_frame;
+    memcpy(&frame[0]+idx_in_frame, &buffer[0]+start_index+idx_in_frame, how_much*sizeof(double));
+    idx_in_frame += how_much;
+
+    /* Check if the idx_in_frame is below the threshold (this would only happen
+     for the last frame in the stream) */
+    if (idx_in_frame < valid_frame_threshold_ratio) return std::vector<double>();
+
+    if (_startIndex + idxInFrame >= (int)buffer.size() &&
+        _startFromZero && !_lastFrameToEndOfFile) _lastFrame = true;
+
+    if (idx_in_frame < frame_size) {
+        if (_startFromZero) {
+            if (_lastFrameToEndOfFile) {
+                if (_startIndex >= (int)buffer.size()) _lastFrame = true;
+            }
+            // if we're zero-padding with startFromZero=true, it means we're filling
+            // in the last frame, so we'll have to stop after this one
+            else _lastFrame = true;
+        }
+        else {
+            // if we're zero-padding and the center of the frame is past the end of the
+            // stream, then this is the last frame and we need to stop after this one
+            if (_startIndex + _frameSize/2 >= (int)buffer.size()) {
+                _lastFrame = true;
+            }
+        }
+        /* fill in the frame with 0 until the end of the buffer */
+        for (; idx_in_frame < frame_size; idx_in_frame++) {
+            frame[idx_in_frame] = (double)0.0;
+        }
+    }
+
 }
 
 }  // namespace musher

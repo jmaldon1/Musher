@@ -315,3 +315,27 @@ TEST(HPCP, SizeNotMultipleOf12) {
     }, std::runtime_error );
 }
 
+// TEST(HPCP, Bullshit)
+// {
+//     std::vector<std::size_t> my_vec({0, 1, 2});
+//     std::vector<std::size_t> my_vec2({3, 4, 5});
+    
+//     for(const auto& element : my_vec )
+//     {
+//         my_vec2[element]++;
+//     }
+
+//     std::reduce()
+
+//     auto print_vec = ([](const char* name, const std::vector<std::size_t>& vec){
+//         std::cout << name << std::endl;
+//         for (const auto& element : vec)
+//         {
+//             std::cout << "  " << element << std::endl;
+//         }
+//     });
+
+//     print_vec("my_vec", my_vec);
+//     std::cout << std::endl;
+//     print_vec("my_vec2", my_vec2);
+// }

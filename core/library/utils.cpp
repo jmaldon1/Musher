@@ -846,7 +846,6 @@ std::vector<double> HPCP(const std::vector<double>& frequencies,
 
     std::vector<HarmonicPeak> harmonic_peaks = initHarmonicContributionTable(harmonics);
     std::vector<double> hpcp(size);
-    std::fill(hpcp.begin(), hpcp.end(), (double)0.0);
 
     std::vector<double> hpcp_LO;
     std::vector<double> hpcp_HI;

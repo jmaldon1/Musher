@@ -177,15 +177,15 @@ std::vector<HarmonicPeak> initHarmonicContributionTable(int harmonics);
 template <typename T>
 void normalize(std::vector<T>& array)
 {
-  if (array.empty()) return;
+    if (array.empty()) return;
 
-  T maxElement = *std::max_element(array.begin(), array.end());
+    T maxElement = *std::max_element(array.begin(), array.end());
 
-  if (maxElement != (T) 0.0) {
-    for (uint i=0; i<array.size(); i++) {
-      array[i] /= maxElement;
+    if (maxElement != (T) 0.0) {
+        for (uint i=0; i<array.size(); i++) {
+            array[i] /= maxElement;
+        }
     }
-  }
 }
 
 // normalize a vector so it's sum is equal to 1. the vector is not touched if

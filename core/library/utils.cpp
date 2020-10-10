@@ -987,14 +987,19 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>>& peaks,
 }
 
 std::vector<double> framecutter(const std::vector<double> buffer,
-                                int start_index=0,
-                                int frame_size=1024,
-                                int hop_size=512,
-                                bool start_from_zero=false,
-                                bool last_frame_to_end_of_file=false,
-                                double valid_frame_threshold_ratio=0.)
+                                int _start_index,
+                                int frame_size,
+                                int hop_size,
+                                bool start_from_center,
+                                bool last_frame_to_end_of_file,
+                                double valid_frame_threshold_ratio)
 {
     int buffer_size = buffer.size();
+
+    int start_index;
+
+    if (start_from_center && _start_index == 0) start_index = -(frame_size+1)/2;
+    else start_index = _start_index;
 
     if (buffer.empty()) return std::vector<double>();
     if (start_index >= buffer_size) return std::vector<double>();
@@ -1019,30 +1024,32 @@ std::vector<double> framecutter(const std::vector<double> buffer,
      for the last frame in the stream) */
     if (idx_in_frame < valid_frame_threshold_ratio) return std::vector<double>();
 
-    if (_startIndex + idxInFrame >= (int)buffer.size() &&
-        _startFromZero && !_lastFrameToEndOfFile) _lastFrame = true;
+    // if (_startIndex + idxInFrame >= (int)buffer.size() &&
+    //     _startFromZero && !_lastFrameToEndOfFile) _lastFrame = true;
 
     if (idx_in_frame < frame_size) {
-        if (_startFromZero) {
-            if (_lastFrameToEndOfFile) {
-                if (_startIndex >= (int)buffer.size()) _lastFrame = true;
-            }
-            // if we're zero-padding with startFromZero=true, it means we're filling
-            // in the last frame, so we'll have to stop after this one
-            else _lastFrame = true;
-        }
-        else {
-            // if we're zero-padding and the center of the frame is past the end of the
-            // stream, then this is the last frame and we need to stop after this one
-            if (_startIndex + _frameSize/2 >= (int)buffer.size()) {
-                _lastFrame = true;
-            }
-        }
+        // if (_startFromZero) {
+        //     if (_lastFrameToEndOfFile) {
+        //         if (_startIndex >= (int)buffer.size()) _lastFrame = true;
+        //     }
+        //     // if we're zero-padding with startFromZero=true, it means we're filling
+        //     // in the last frame, so we'll have to stop after this one
+        //     else _lastFrame = true;
+        // }
+        // else {
+        //     // if we're zero-padding and the center of the frame is past the end of the
+        //     // stream, then this is the last frame and we need to stop after this one
+        //     if (_startIndex + _frameSize/2 >= (int)buffer.size()) {
+        //         _lastFrame = true;
+        //     }
+        // }
         /* fill in the frame with 0 until the end of the buffer */
         for (; idx_in_frame < frame_size; idx_in_frame++) {
             frame[idx_in_frame] = (double)0.0;
         }
     }
+
+    return frame;
 
 }
 

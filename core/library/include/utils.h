@@ -242,4 +242,12 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>>& peaks,
                          bool non_linear=false,
                          std::string _normalized="unit max");
 
+std::vector<double> framecutter(const std::vector<double> buffer,
+                                int start_index=0,
+                                int frame_size=1024,
+                                int hop_size=512,
+                                bool start_from_center=false,
+                                bool last_frame_to_end_of_file=false,
+                                double valid_frame_threshold_ratio=0.);
+
 }  // namespace musher

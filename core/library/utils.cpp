@@ -989,7 +989,6 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>>& peaks,
 std::vector<double> framecutter(const std::vector<double> buffer,
                                 int _start_index,
                                 int frame_size,
-                                // int hop_size,
                                 bool start_from_center,
                                 bool last_frame_to_end_of_file,
                                 double valid_frame_threshold_ratio)

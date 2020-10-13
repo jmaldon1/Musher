@@ -989,7 +989,7 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>>& peaks,
 std::vector<double> framecutter(const std::vector<double> buffer,
                                 int _start_index,
                                 int frame_size,
-                                int hop_size,
+                                // int hop_size,
                                 bool start_from_center,
                                 bool last_frame_to_end_of_file,
                                 double valid_frame_threshold_ratio)
@@ -998,13 +998,13 @@ std::vector<double> framecutter(const std::vector<double> buffer,
 
     int start_index;
 
-    if (start_from_center && _start_index == 0) start_index = -(frame_size+1)/2;
+    if (start_from_center) start_index = -(frame_size+1)/2 + _start_index;
     else start_index = _start_index;
 
     if (buffer.empty()) return std::vector<double>();
     if (start_index >= buffer_size) return std::vector<double>();
 
-    std::vector<double> frame(frame_size);
+    std::vector<double> frame(static_cast<size_t>(frame_size));
     int idx_in_frame = 0;
 
     /* If we're before the beginning of the buffer, fill the frame with 0 */
@@ -1048,7 +1048,6 @@ std::vector<double> framecutter(const std::vector<double> buffer,
             frame[idx_in_frame] = (double)0.0;
         }
     }
-
     return frame;
 
 }

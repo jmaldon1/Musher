@@ -1010,6 +1010,11 @@ std::vector<double> framecutter(const std::vector<double> buffer,
     if (start_from_center) start_index = -(frame_size+1)/2 + _start_index;
     else start_index = _start_index;
 
+    // if (!start_from_center && (int)buffer_size % 2 != 0 && start_index != 0 && start_index == buffer_size-1)
+    // {
+    //     return std::vector<double>();
+    // }
+
     if (buffer.empty()) return std::vector<double>();
     if (start_index >= (int)buffer_size) return std::vector<double>();
 
@@ -1040,29 +1045,31 @@ std::vector<double> framecutter(const std::vector<double> buffer,
     std::cout << "idx_in_frame: " << idx_in_frame << std::endl;
     std::cout << "buffer_size: " << buffer_size << std::endl;
     std::cout << "valid_frame_threshold: " << valid_frame_threshold << std::endl;
+    std::cout << "==================" << std::endl;
 
     if (start_index + idx_in_frame >= (int)buffer_size &&
-        !start_from_center && !last_frame_to_end_of_file) std::cout << "1" << std::endl;
+        !start_from_center && !last_frame_to_end_of_file) std::cout << "LAST FRAME1" << std::endl;
     
-    if (!start_from_center && (int)buffer_size % 2 != 0 && start_index != 0 && start_index == buffer_size-1)
+    if (!start_from_center && !last_frame_to_end_of_file && (int)buffer_size % 2 != 0 && start_index != 0 && start_index == buffer_size-1)
     {
         std::cout << "KILL" << std::endl;
+        return std::vector<double>();
     }
 
     if (idx_in_frame < frame_size) {
         if (!start_from_center) {
             if (last_frame_to_end_of_file) {
-                if (start_index >= (int)buffer_size) std::cout << "2" << std::endl;
+                if (start_index >= (int)buffer_size) std::cout << "LAST FRAME2" << std::endl;
             }
             // if we're zero-padding with startFromZero=true, it means we're filling
             // in the last frame, so we'll have to stop after this one
-            else std::cout << "3" << std::endl;
+            else std::cout << "LAST FRAME3" << std::endl;
         }
         else {
             // if we're zero-padding and the center of the frame is past the end of the
             // stream, then this is the last frame and we need to stop after this one
             if (start_index + frame_size/2 >= (int)buffer.size()) {
-                std::cout << "4" << std::endl;
+                std::cout << "LAST FRAME4" << std::endl;
             }
         }
         /* Fill in the frame with 0 until the end of the buffer */

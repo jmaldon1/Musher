@@ -5,14 +5,14 @@
 using namespace musher;
 
 template<typename T>
-void printVector(const char* name, const std::vector<T>& vec)
+void printVector(const std::vector<T>& vec)
 {
     if (vec.empty()) {
-        std::cout << name << " is empty." << std::endl;
+        std::cout << "Vector is empty." << std::endl;
         return;
     }
 
-    std::cout << name << std::endl;
+    std::cout << "Printing vector:" << std::endl;
     for (const auto& element : vec)
     {
         std::cout << "  " << element << std::endl;
@@ -20,10 +20,16 @@ void printVector(const char* name, const std::vector<T>& vec)
 }
 
 template<typename T>
-void printMatrix(T mat) {
-    for ( const auto &row : mat )
+void printMatrix(T matrix, const char spacing=' ') {
+    std::cout << "Printing matrix:" << std::endl;
+    if (matrix.empty()) {
+        std::cout << "Matrix is empty." << std::endl;
+        return;
+    }
+
+    for ( const auto &row : matrix )
     {
-        for ( const auto &s : row ) std::cout << s << ' ';
+        for ( const auto &item : row ) std::cout << item << spacing;
         std::cout << std::endl;
     }
 }
@@ -55,8 +61,8 @@ std::vector<std::vector<double>> allCutFrames(const std::vector<double> buffer,
                                    hop_size,
                                    frame_size,
                                    start_from_center,
-                                   false,
-                                   0.);
+                                   last_frame_to_end_of_file,
+                                   valid_frame_threshold_ratio);
     }
     return actual_frames;
 }

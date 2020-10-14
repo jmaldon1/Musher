@@ -126,10 +126,10 @@ using ldbl_t = typename std::conditional<
 
 double normFct(int inorm, size_t N);
 double normFct(int inorm,
-                const pocketfft::shape_t &shape,
-                const pocketfft::shape_t &axes,
-                size_t fct=1,
-                int delta=0);
+               const pocketfft::shape_t &shape,
+               const pocketfft::shape_t &axes,
+               size_t fct=1,
+               int delta=0);
 
 std::vector<double> centerVector(std::vector<double> arr, size_t newShape);
 std::vector<double> fftConvolve(const std::vector<double> &vec1, const std::vector<double> &vec2);

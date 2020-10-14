@@ -270,9 +270,294 @@ TEST(Framecutter, TestBigHopSize) {
                                  false,
                                  0.);
 
-    // printVector("actual_frame", actual_frame);
+    std::vector<double> expected_frame1(frame_size);
+    std::iota(std::begin(expected_frame1), std::end(expected_frame1), (double)0.);
+
+    std::vector<double> expected_frame2(frame_size);
+    std::iota(std::begin(expected_frame2), std::end(expected_frame2), (double)40.);
+
+    std::vector<double> expected_frame3(frame_size);
+    std::iota(std::begin(expected_frame3), std::end(expected_frame3), (double)80.);
+
+    std::vector<std::vector<double>> expected_frames({
+        expected_frame1,
+        expected_frame2,
+        expected_frame3
+    });
+
+    EXPECT_MATRIX_EQ(actual_frames, expected_frames);
+}
+
+/**
+ * @brief Test big hop size centered.
+ * 
+ */
+TEST(Framecutter, TestBigHopSizeCentered) {
+    std::vector<double> buffer(100);
+    /* Fill buffer with increasing numbers of 0 to 100 */
+    std::iota(std::begin(buffer), std::end(buffer), (double)0.);
+    std::vector<double> actual_frame;
+    int frame_size = 20;
+    int hop_size = 100;
+    bool start_from_center = true;
+    std::vector<std::vector<double>> actual_frames;
+    actual_frames = allCutFrames(buffer,
+                                 hop_size,
+                                 frame_size,
+                                 start_from_center,
+                                 false,
+                                 0.);
+
+    std::vector<double> expected_frame1(frame_size);
+    std::iota(std::begin(expected_frame1)+10, std::end(expected_frame1), (double)0.);
+
+    std::vector<double> expected_frame2(frame_size);
+    std::iota(std::begin(expected_frame2), std::end(expected_frame2)-10, (double)90.);
+
+    std::vector<std::vector<double>> expected_frames({
+        expected_frame1,
+        expected_frame2
+    });
+
+    EXPECT_MATRIX_EQ(actual_frames, expected_frames);
+}
+
+/**
+ * @brief Test big hop size centered2.
+ * 
+ */
+TEST(Framecutter, TestBigHopSizeCentered2) {
+    std::vector<double> buffer(100);
+    /* Fill buffer with increasing numbers of 0 to 100 */
+    std::iota(std::begin(buffer), std::end(buffer), (double)0.);
+    std::vector<double> actual_frame;
+    int frame_size = 20;
+    int hop_size = 40;
+    bool start_from_center = true;
+    std::vector<std::vector<double>> actual_frames;
+    actual_frames = allCutFrames(buffer,
+                                 hop_size,
+                                 frame_size,
+                                 start_from_center,
+                                 false,
+                                 0.);
+
+    std::vector<double> expected_frame1(frame_size);
+    std::iota(std::begin(expected_frame1)+10, std::end(expected_frame1), (double)0.);
+
+    std::vector<double> expected_frame2(frame_size);
+    std::iota(std::begin(expected_frame2), std::end(expected_frame2), (double)30.);
+
+    std::vector<double> expected_frame3(frame_size);
+    std::iota(std::begin(expected_frame3), std::end(expected_frame3), (double)70.);
+
+    std::vector<std::vector<double>> expected_frames({
+        expected_frame1,
+        expected_frame2,
+        expected_frame3
+    });
+
+    EXPECT_MATRIX_EQ(actual_frames, expected_frames);
+}
+
+/**
+ * @brief Test complex.
+ * 
+ */
+TEST(Framecutter, TestComplex) {
+    std::vector<double> buffer(5);
+    /* Fill buffer with increasing numbers of 0 to 100 */
+    std::iota(std::begin(buffer), std::end(buffer), (double)1.);
+    std::vector<double> actual_frame;
+    int frame_size = 3;
+    int hop_size = 2;
+    bool start_from_center = false;
+    std::vector<std::vector<double>> actual_frames;
+    actual_frames = allCutFrames(buffer,
+                                 hop_size,
+                                 frame_size,
+                                 start_from_center,
+                                 false,
+                                 0.);
+
+    printVector(buffer);
+    // printMatrix(actual_frames);
+    // std::vector<double> expected_frame1(frame_size);
+    // std::iota(std::begin(expected_frame1)+10, std::end(expected_frame1), (double)0.);
+
+    // std::vector<double> expected_frame2(frame_size);
+    // std::iota(std::begin(expected_frame2), std::end(expected_frame2), (double)30.);
+
+    // std::vector<double> expected_frame3(frame_size);
+    // std::iota(std::begin(expected_frame3), std::end(expected_frame3), (double)70.);
+
+    // std::vector<std::vector<double>> expected_frames({
+    //     expected_frame1,
+    //     expected_frame2,
+    //     expected_frame3
+    // });
+
+    // EXPECT_MATRIX_EQ(actual_frames, expected_frames);
+}
+
+/**
+ * @brief Test complex2.
+ * 
+ */
+TEST(Framecutter, TestComplex2) {
+    std::vector<double> buffer(3);
+    /* Fill buffer with increasing numbers of 0 to 100 */
+    std::iota(std::begin(buffer), std::end(buffer), (double)1.);
+    std::vector<double> actual_frame;
+    int frame_size = 2;
+    int hop_size = 1;
+    bool start_from_center = false;
+    std::vector<std::vector<double>> actual_frames;
+    actual_frames = allCutFrames(buffer,
+                                 hop_size,
+                                 frame_size,
+                                 start_from_center,
+                                 false,
+                                 0.);
+
+    // printVector(actual_frame);
     printMatrix(actual_frames);
-    // std::vector<double> expected_frame(101);
-    // std::iota(std::begin(expected_frame), std::end(expected_frame)-1, (double)0.);
-    // EXPECT_VEC_EQ(actual_frame, expected_frame);
+    // std::vector<double> expected_frame1(frame_size);
+    // std::iota(std::begin(expected_frame1)+10, std::end(expected_frame1), (double)0.);
+
+    // std::vector<double> expected_frame2(frame_size);
+    // std::iota(std::begin(expected_frame2), std::end(expected_frame2), (double)30.);
+
+    // std::vector<double> expected_frame3(frame_size);
+    // std::iota(std::begin(expected_frame3), std::end(expected_frame3), (double)70.);
+
+    // std::vector<std::vector<double>> expected_frames({
+    //     expected_frame1,
+    //     expected_frame2,
+    //     expected_frame3
+    // });
+
+    // EXPECT_MATRIX_EQ(actual_frames, expected_frames);
+}
+
+/**
+ * @brief Test complex centered.
+ * 
+ */
+TEST(Framecutter, TestComplexCentered) {
+    std::vector<double> buffer(5);
+    /* Fill buffer with increasing numbers of 0 to 100 */
+    std::iota(std::begin(buffer), std::end(buffer), (double)1.);
+    std::vector<double> actual_frame;
+    int frame_size = 3;
+    int hop_size = 2;
+    bool start_from_center = true;
+    std::vector<std::vector<double>> actual_frames;
+    actual_frames = allCutFrames(buffer,
+                                 hop_size,
+                                 frame_size,
+                                 start_from_center,
+                                 false,
+                                 0.);
+
+    // printVector(actual_frame);
+    printMatrix(actual_frames);
+    // std::vector<double> expected_frame1(frame_size);
+    // std::iota(std::begin(expected_frame1)+10, std::end(expected_frame1), (double)0.);
+
+    // std::vector<double> expected_frame2(frame_size);
+    // std::iota(std::begin(expected_frame2), std::end(expected_frame2), (double)30.);
+
+    // std::vector<double> expected_frame3(frame_size);
+    // std::iota(std::begin(expected_frame3), std::end(expected_frame3), (double)70.);
+
+    // std::vector<std::vector<double>> expected_frames({
+    //     expected_frame1,
+    //     expected_frame2,
+    //     expected_frame3
+    // });
+
+    // EXPECT_MATRIX_EQ(actual_frames, expected_frames);
+}
+
+/**
+ * @brief Test EOF.
+ * 
+ */
+TEST(Framecutter, TestEOF) {
+    std::vector<double> buffer(5);
+    /* Fill buffer with increasing numbers of 0 to 100 */
+    std::iota(std::begin(buffer), std::end(buffer), (double)1.);
+    std::vector<double> actual_frame;
+    int frame_size = 3;
+    int hop_size = 2;
+    bool start_from_center = false;
+    bool last_frame_to_end_of_file = true;
+    std::vector<std::vector<double>> actual_frames;
+    actual_frames = allCutFrames(buffer,
+                                 hop_size,
+                                 frame_size,
+                                 start_from_center,
+                                 last_frame_to_end_of_file,
+                                 0.);
+
+    // printVector(actual_frame);
+    printMatrix(actual_frames);
+    // std::vector<double> expected_frame1(frame_size);
+    // std::iota(std::begin(expected_frame1)+10, std::end(expected_frame1), (double)0.);
+
+    // std::vector<double> expected_frame2(frame_size);
+    // std::iota(std::begin(expected_frame2), std::end(expected_frame2), (double)30.);
+
+    // std::vector<double> expected_frame3(frame_size);
+    // std::iota(std::begin(expected_frame3), std::end(expected_frame3), (double)70.);
+
+    // std::vector<std::vector<double>> expected_frames({
+    //     expected_frame1,
+    //     expected_frame2,
+    //     expected_frame3
+    // });
+
+    // EXPECT_MATRIX_EQ(actual_frames, expected_frames);
+}
+
+/**
+ * @brief Test EOF2.
+ * 
+ */
+TEST(Framecutter, TestEOF2) {
+    std::vector<double> buffer(60);
+    /* Fill buffer with increasing numbers of 0 to 100 */
+    std::iota(std::begin(buffer), std::end(buffer), (double)1.);
+    std::vector<double> actual_frame;
+    int frame_size = 10;
+    int hop_size = 10;
+    bool start_from_center = false;
+    bool last_frame_to_end_of_file = false;
+    std::vector<std::vector<double>> actual_frames;
+    actual_frames = allCutFrames(buffer,
+                                 hop_size,
+                                 frame_size,
+                                 start_from_center,
+                                 last_frame_to_end_of_file,
+                                 1.);
+
+    // printVector(actual_frame);
+    printMatrix(actual_frames);
+    // std::vector<double> expected_frame1(frame_size);
+    // std::iota(std::begin(expected_frame1)+10, std::end(expected_frame1), (double)0.);
+
+    // std::vector<double> expected_frame2(frame_size);
+    // std::iota(std::begin(expected_frame2), std::end(expected_frame2), (double)30.);
+
+    // std::vector<double> expected_frame3(frame_size);
+    // std::iota(std::begin(expected_frame3), std::end(expected_frame3), (double)70.);
+
+    // std::vector<std::vector<double>> expected_frames({
+    //     expected_frame1,
+    //     expected_frame2,
+    //     expected_frame3
+    // });
+
+    // EXPECT_MATRIX_EQ(actual_frames, expected_frames);
 }

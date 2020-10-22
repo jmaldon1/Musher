@@ -137,20 +137,20 @@ PyObject* DecodeWav(PyObject* self, PyObject* args)
 
         WavDecoded wav_decoded = CDecodeWav<double>(file_data);
 
-        std::vector<std::pair<PyObject*, PyObject*>> kvPair;
-        kvPair.push_back(createKVPair("sample_rate", wav_decoded.sample_rate));
-        kvPair.push_back(createKVPair("bit_depth", wav_decoded.bit_depth));
-        kvPair.push_back(createKVPair("channels", wav_decoded.channels));
-        kvPair.push_back(createKVPair("mono", wav_decoded.mono));
-        kvPair.push_back(createKVPair("stereo", wav_decoded.stereo));
-        kvPair.push_back(createKVPair("length_in_seconds", wav_decoded.length_in_seconds));
-        kvPair.push_back(createKVPair("file_type", wav_decoded.file_type));
-        kvPair.push_back(createKVPair("avg_bitrate_kbps", wav_decoded.avg_bitrate_kbps));
+        std::vector<std::pair<PyObject*, PyObject*>> kv_pair;
+        kv_pair.push_back(createKVPair("sample_rate", wav_decoded.sample_rate));
+        kv_pair.push_back(createKVPair("bit_depth", wav_decoded.bit_depth));
+        kv_pair.push_back(createKVPair("channels", wav_decoded.channels));
+        kv_pair.push_back(createKVPair("mono", wav_decoded.mono));
+        kv_pair.push_back(createKVPair("stereo", wav_decoded.stereo));
+        kv_pair.push_back(createKVPair("length_in_seconds", wav_decoded.length_in_seconds));
+        kv_pair.push_back(createKVPair("file_type", wav_decoded.file_type));
+        kv_pair.push_back(createKVPair("avg_bitrate_kbps", wav_decoded.avg_bitrate_kbps));
 
         PyObject* py_normalized_samples = vectorToList(wav_decoded.normalized_samples);
-        kvPair.push_back(createKVPairFromPyObject("normalized_samples", py_normalized_samples));
+        kv_pair.push_back(createKVPairFromPyObject("normalized_samples", py_normalized_samples));
 
-        for (const auto& [k, v] : kvPair)
+        for (const auto& [k, v] : kv_pair)
         {
             PyDict_SetItem(wav_decoded_data_dict, k, v);
         }

@@ -7,6 +7,7 @@
 #include <complex>
 #include <valarray>
 #include <assert.h>
+#include <functional>
 
 #include "utils.h"
 
@@ -986,99 +987,167 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>>& peaks,
                 _normalized);
 }
 
-std::vector<double> framecutter(const std::vector<double> buffer,
-                                int _start_index,
-                                int frame_size,
-                                bool start_from_center,
-                                bool last_frame_to_end_of_file,
-                                double valid_frame_threshold_ratio)
+std::vector<double> Framecutter::compute()
 {
-    size_t buffer_size = buffer.size();
-
-    if (valid_frame_threshold_ratio > 0.5 && start_from_center) {
-        throw std::runtime_error("ERROR");
-        // throw EssentiaException("FrameCutter: validFrameThresholdRatio cannot be "
-        //                         "larger than 0.5 if startFromZero is false (this "
-        //                         "is to prevent loss of the first frame which would "
-        //                         "be only half a valid frame since the first frame "
-        //                         "is centered on the beginning of the audio)");
+    if (valid_frame_threshold_ratio_ > 0.5 && start_from_center_) {
+        throw std::runtime_error("FrameCutter: valid_frame_threshold_ratio cannot be "
+                                    "larger than 0.5 if start_from_center is true (this "
+                                    "is to prevent loss of the first frame which would "
+                                    "be only half a valid frame since the first frame "
+                                    "is centered on the beginning of the audio)");
     }
 
-    int valid_frame_threshold = (int)round(valid_frame_threshold_ratio*frame_size);
+    int valid_frame_threshold = (int)round(valid_frame_threshold_ratio_*frame_size_);
     int start_index;
+    size_t buffer_size = buffer_.size();
 
-    if (start_from_center) start_index = -(frame_size+1)/2 + _start_index;
-    else start_index = _start_index;
+    if (start_from_center_) start_index = -(frame_size_+1)/2 + start_index_;
+    else start_index = start_index_;
 
-    // if (!start_from_center && (int)buffer_size % 2 != 0 && start_index != 0 && start_index == buffer_size-1)
-    // {
-    //     return std::vector<double>();
-    // }
-
-    if (buffer.empty()) return std::vector<double>();
+    if (last_frame_ || buffer_.empty()) return std::vector<double>();
     if (start_index >= (int)buffer_size) return std::vector<double>();
 
-    std::vector<double> frame(static_cast<size_t>(frame_size));
+    std::vector<double> frame(static_cast<size_t>(frame_size_));
     int idx_in_frame = 0;
 
     /* If we're before the beginning of the buffer, fill the frame with 0 */
     if (start_index < 0) {
-        int how_much = std::min(-start_index, frame_size);
+        int how_much = std::min(-start_index, frame_size_);
         for (; idx_in_frame<how_much; idx_in_frame++) {
             frame[idx_in_frame] = (double)0.0;
         }
     }
 
     /* Now, just copy from the buffer to the frame */
-    int how_much = std::min(frame_size, (int)buffer_size - start_index) - idx_in_frame;
-    memcpy(&frame[0]+idx_in_frame, &buffer[0]+start_index+idx_in_frame, how_much*sizeof(double));
+    int how_much = std::min(frame_size_, (int)buffer_size - start_index) - idx_in_frame;
+    memcpy(&frame[0]+idx_in_frame, &buffer_[0]+start_index+idx_in_frame, how_much*sizeof(double));
     idx_in_frame += how_much;
 
-    // if (start_index + idx_in_frame >= (int)buffer_size &&
-    //     !start_from_center && !last_frame_to_end_of_file) return std::vector<double>();
-
     /* Check if the idx_in_frame is below the threshold (this would only happen
-     for the last frame in the stream) */
+        for the last frame in the stream) */
     if (idx_in_frame < valid_frame_threshold) return std::vector<double>();
 
-    std::cout << "start_index: " << start_index << std::endl;
-    std::cout << "idx_in_frame: " << idx_in_frame << std::endl;
-    std::cout << "buffer_size: " << buffer_size << std::endl;
-    std::cout << "valid_frame_threshold: " << valid_frame_threshold << std::endl;
-    std::cout << "==================" << std::endl;
-
     if (start_index + idx_in_frame >= (int)buffer_size &&
-        !start_from_center && !last_frame_to_end_of_file) std::cout << "LAST FRAME1" << std::endl;
-    
-    if (!start_from_center && !last_frame_to_end_of_file && (int)buffer_size % 2 != 0 && start_index != 0 && start_index == buffer_size-1)
-    {
-        std::cout << "KILL" << std::endl;
-        return std::vector<double>();
-    }
+        !start_from_center_ && !last_frame_to_end_of_file_) last_frame_ = true;
 
-    if (idx_in_frame < frame_size) {
-        if (!start_from_center) {
-            if (last_frame_to_end_of_file) {
-                if (start_index >= (int)buffer_size) std::cout << "LAST FRAME2" << std::endl;
+    if (idx_in_frame < frame_size_) {
+        if (!start_from_center_) {
+            if (last_frame_to_end_of_file_) {
+                if (start_index >= (int)buffer_size) last_frame_ = true;
             }
-            // if we're zero-padding with startFromZero=true, it means we're filling
+            // if we're zero-padding with start_from_center=false, it means we're filling
             // in the last frame, so we'll have to stop after this one
-            else std::cout << "LAST FRAME3" << std::endl;
+            else last_frame_ = true;
         }
         else {
             // if we're zero-padding and the center of the frame is past the end of the
             // stream, then this is the last frame and we need to stop after this one
-            if (start_index + frame_size/2 >= (int)buffer.size()) {
-                std::cout << "LAST FRAME4" << std::endl;
+            if (start_index + frame_size_/2 >= (int)buffer_.size()) {
+                last_frame_ = true;
             }
         }
         /* Fill in the frame with 0 until the end of the buffer */
-        for (; idx_in_frame < frame_size; idx_in_frame++) {
+        for (; idx_in_frame < frame_size_; idx_in_frame++) {
             frame[idx_in_frame] = (double)0.0;
         }
     }
+    start_index_ += hop_size_;
     return frame;
-
 }
+
+// std::vector<double> framecutter(const std::vector<double> buffer,
+//                                 int _start_index,
+//                                 int frame_size,
+//                                 bool start_from_center,
+//                                 bool last_frame_to_end_of_file,
+//                                 double valid_frame_threshold_ratio)
+// {
+//     size_t buffer_size = buffer.size();
+
+//     if (valid_frame_threshold_ratio > 0.5 && start_from_center) {
+//         throw std::runtime_error("ERROR");
+//         // throw EssentiaException("FrameCutter: validFrameThresholdRatio cannot be "
+//         //                         "larger than 0.5 if startFromZero is false (this "
+//         //                         "is to prevent loss of the first frame which would "
+//         //                         "be only half a valid frame since the first frame "
+//         //                         "is centered on the beginning of the audio)");
+//     }
+
+//     int valid_frame_threshold = (int)round(valid_frame_threshold_ratio*frame_size);
+//     int start_index;
+
+//     if (start_from_center) start_index = -(frame_size+1)/2 + _start_index;
+//     else start_index = _start_index;
+
+//     // if (!start_from_center && (int)buffer_size % 2 != 0 && start_index != 0 && start_index == buffer_size-1)
+//     // {
+//     //     return std::vector<double>();
+//     // }
+
+//     if (buffer.empty()) return std::vector<double>();
+//     if (start_index >= (int)buffer_size) return std::vector<double>();
+
+//     std::vector<double> frame(static_cast<size_t>(frame_size));
+//     int idx_in_frame = 0;
+
+//     /* If we're before the beginning of the buffer, fill the frame with 0 */
+//     if (start_index < 0) {
+//         int how_much = std::min(-start_index, frame_size);
+//         for (; idx_in_frame<how_much; idx_in_frame++) {
+//             frame[idx_in_frame] = (double)0.0;
+//         }
+//     }
+
+//     /* Now, just copy from the buffer to the frame */
+//     int how_much = std::min(frame_size, (int)buffer_size - start_index) - idx_in_frame;
+//     memcpy(&frame[0]+idx_in_frame, &buffer[0]+start_index+idx_in_frame, how_much*sizeof(double));
+//     idx_in_frame += how_much;
+
+//     // if (start_index + idx_in_frame >= (int)buffer_size &&
+//     //     !start_from_center && !last_frame_to_end_of_file) return std::vector<double>();
+
+//     /* Check if the idx_in_frame is below the threshold (this would only happen
+//      for the last frame in the stream) */
+//     if (idx_in_frame < valid_frame_threshold) return std::vector<double>();
+
+//     std::cout << "start_index: " << start_index << std::endl;
+//     std::cout << "idx_in_frame: " << idx_in_frame << std::endl;
+//     std::cout << "buffer_size: " << buffer_size << std::endl;
+//     std::cout << "valid_frame_threshold: " << valid_frame_threshold << std::endl;
+//     std::cout << "==================" << std::endl;
+
+//     if (start_index + idx_in_frame >= (int)buffer_size &&
+//         !start_from_center && !last_frame_to_end_of_file) std::cout << "LAST FRAME1" << std::endl;
+    
+//     if (!start_from_center && !last_frame_to_end_of_file && (int)buffer_size % 2 != 0 && start_index != 0 && start_index == buffer_size-1)
+//     {
+//         std::cout << "KILL" << std::endl;
+//         return std::vector<double>();
+//     }
+
+//     if (idx_in_frame < frame_size) {
+//         if (!start_from_center) {
+//             if (last_frame_to_end_of_file) {
+//                 if (start_index >= (int)buffer_size) std::cout << "LAST FRAME2" << std::endl;
+//             }
+//             // if we're zero-padding with start_from_center=false, it means we're filling
+//             // in the last frame, so we'll have to stop after this one
+//             else std::cout << "LAST FRAME3" << std::endl;
+//         }
+//         else {
+//             // if we're zero-padding and the center of the frame is past the end of the
+//             // stream, then this is the last frame and we need to stop after this one
+//             if (start_index + frame_size/2 >= (int)buffer.size()) {
+//                 std::cout << "LAST FRAME4" << std::endl;
+//             }
+//         }
+//         /* Fill in the frame with 0 until the end of the buffer */
+//         for (; idx_in_frame < frame_size; idx_in_frame++) {
+//             frame[idx_in_frame] = (double)0.0;
+//         }
+//     }
+//     return frame;
+
+// }
 
 }  // namespace musher

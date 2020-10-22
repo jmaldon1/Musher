@@ -242,12 +242,57 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>>& peaks,
                          bool non_linear=false,
                          std::string _normalized="unit max");
 
-std::vector<double> framecutter(const std::vector<double> buffer,
-                                int start_index=0,
-                                int frame_size=1024,
-                                // int hop_size=512,
-                                bool start_from_center=false,
-                                bool last_frame_to_end_of_file=false,
-                                double valid_frame_threshold_ratio=0.);
+
+class Framecutter
+{
+private:
+    const std::vector<double> buffer_;
+    const int frame_size_;
+    const int hop_size_;
+    const bool start_from_center_;
+    const bool last_frame_to_end_of_file_;
+    const double valid_frame_threshold_ratio_;
+    int start_index_;
+    bool last_frame_;
+    std::vector<double> frame_;
+
+public:
+    Framecutter(const std::vector<double> buffer,
+                int frame_size,
+                int hop_size,
+                bool start_from_center,
+                bool last_frame_to_end_of_file,
+                double valid_frame_threshold_ratio):
+        buffer_(buffer),
+        frame_size_(frame_size),
+        hop_size_(hop_size),
+        start_from_center_(start_from_center),
+        last_frame_to_end_of_file_(last_frame_to_end_of_file),
+        valid_frame_threshold_ratio_(valid_frame_threshold_ratio),
+        start_index_(0),
+        last_frame_(false),
+        frame_(compute())
+    {}
+
+    ~Framecutter()
+    {
+        frame_.clear();
+    }
+
+    // Iterable functions
+    const Framecutter& begin() const { return *this; }
+    const Framecutter& end() const { return *this; }
+
+    // Iterator functions
+    // Keep iterating while frame is not empty.
+    bool operator!=(const Framecutter&) const { return  !frame_.empty(); }
+    void operator++() { frame_ = compute(); }
+    std::vector<double> operator*() const { return frame_; }
+
+    // Compute
+    std::vector<double> compute();
+};
+
+
 
 }  // namespace musher

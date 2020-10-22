@@ -285,7 +285,7 @@ public:
 
     // Iterator functions
     // Keep iterating while frame is not empty.
-    bool operator!=(const Framecutter&) const { return  !frame_.empty(); }
+    bool operator!=(const Framecutter&) const { return !frame_.empty(); }
     void operator++() { frame_ = compute(); }
     std::vector<double> operator*() const { return frame_; }
 

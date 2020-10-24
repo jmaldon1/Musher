@@ -102,31 +102,19 @@ bool isBigEndian(void)
     return bint.c[0] == 1; 
 }
 
-std::vector<double> interleave2DVector(const std::vector<std::vector<double>> &orig)
-{   
-    /* Interleave 2 vectors */
-    if (orig.size() > 2){
-        std::string err_message = "This is not a 2D vector";
-        throw std::runtime_error(err_message);
-    } else if (orig.size() == 1) {
-        return orig[0];
-    } else if (orig.empty()) {
-        std::string err_message = "2D Vector is empty";
-        throw std::runtime_error(err_message);
-    }
-    std::vector<double> a(orig[0]);
-    std::vector<double> b(orig[1]);
+std::vector<double> interleave2Vectors(const std::vector<double> &vec1, const std::vector<double> &vec2)
+{
     std::vector<double> result;
 
-    auto m = std::min( a.size(), b.size() );
+    auto m = std::min( vec1.size(), vec2.size() );
 
     for( size_t i = 0 ; i < m ; ++i )
     {
-        result.push_back(a[i]);
-        result.push_back(b[i]);
-    }
-    if( m < a.size() ) result.insert( result.end(), a.begin()+m, a.end() );
-    if( m < b.size() ) result.insert( result.end(), b.begin()+m, b.end() );
+        result.push_back(vec1[i]);
+        result.push_back(vec2[i]);
+    };
+    if( m < vec1.size() ) result.insert( result.end(), vec1.begin()+m, vec1.end() );
+    if( m < vec2.size() ) result.insert( result.end(), vec2.begin()+m, vec2.end() );
 
     return result;
 }
@@ -334,11 +322,34 @@ std::vector<double> fftConvolve(const std::vector<double> &vec1, const std::vect
     return centered_conv_out;
 }
 
-std::vector<double> blackmanHarris92dB(const std::vector<double> &window)
+std::vector<double> normalize(const std::vector<double>& input)
+{
+    int size = input.size();
+    double sum = 0.0;
+    std::vector<double> normalized_output(input);
+
+    for (int i=0; i<size; i++) {
+        sum += abs(input[i]);
+    }
+    if (sum == 0.0) {
+        return std::vector<double>();
+    }
+
+    // As we have half of the energy in negative frequencies, we need to scale, but
+    // multiply by two. Otherwise a sinusoid at 0db will result in 0.5 in the spectrum.
+    double scale = 2.0 / sum;
+
+    for (int i=0; i<size; i++) {
+        normalized_output[i] *= scale;
+    }
+
+    return normalized_output;
+}
+
+std::vector<double> blackmanHarris(const std::vector<double> &window, double a0, double a1, double a2, double a3)
 {   
     /* Window functions help control spectral leakage when doing Fourier Analysis */
     std::vector<double> ret(window);
-    double a0 = .35875, a1 = .48829, a2 = .14128, a3 = .01168;
     int window_size = window.size();
     double f = 2.0 * M_PI / (window_size - 1);
 
@@ -355,13 +366,82 @@ std::vector<double> blackmanHarris92dB(const std::vector<double> &window)
     return ret;
 }
 
-double magnitude(const std::complex< double > complex_pair)
+std::vector<double> blackmanHarris62dB(const std::vector<double>& window)
+{
+    double a0 = .44959, a1 = .49364, a2 = .05677, a3 = 0.;
+    return blackmanHarris(window, a0, a1, a2, a3);
+}
+
+std::vector<double> blackmanHarris92dB(const std::vector<double>& window)
+{
+    double a0 = .35875, a1 = .48829, a2 = .14128, a3 = .01168;
+    return blackmanHarris(window, a0, a1, a2, a3);
+}
+
+std::vector<double> windowing(const std::vector<double>& signal,
+                              const std::function<std::vector<double> (const std::vector<double>&)>& window_type_func,
+                              int size,
+                              int zero_padding,
+                              bool zero_phase,
+                              bool _normalize)
+{
+    int signal_size = (int)signal.size();
+    int total_size = signal_size + zero_padding;
+
+    if (signal_size <= 1) {
+        throw std::runtime_error("windowing: frame (signal) size should be larger than 1");
+    }
+
+    std::vector<double> windowed_signal(static_cast<size_t>(total_size));
+    std::vector<double> window(static_cast<size_t>(signal_size));
+    if (_normalize)
+    {
+        window = normalize(window_type_func(window));
+    } else {
+        window = window_type_func(window);
+    }
+
+    int i = 0;
+
+    if (zero_phase) {
+        // first half of the windowed signal is the
+        // second half of the signal with windowing!
+        for (int j=signal_size/2; j<signal_size; j++) {
+            windowed_signal[i++] = signal[j] * window[j];
+        }
+
+        // zero padding
+        for (int j=0; j<zero_padding; j++) {
+            windowed_signal[i++] = 0.0;
+        }
+
+        // second half of the signal
+        for (int j=0; j<signal_size/2; j++) {
+            windowed_signal[i++] = signal[j] * window[j];
+        }
+        }
+        else {
+        // windowed signal
+        for (int j=0; j<signal_size; j++) {
+            windowed_signal[i++] = signal[j] * window[j];
+        }
+
+        // zero padding
+        for (int j=0; j<zero_padding; j++) {
+            windowed_signal[i++] = 0.0;
+        }
+    }
+
+    return windowed_signal;
+}
+
+double magnitude(const std::complex<double> complex_pair)
 {   
     /* Calculate absolute value (magnitude or modulus) of a complex number */
     return sqrt(pow(complex_pair.real(), 2) + pow(complex_pair.imag(), 2));
 }
 
-std::vector<double> convertToFrequencySpectrum(const std::vector<double> &flattened_normalized_samples)
+std::vector<double> convertToFrequencySpectrum(const std::vector<double>& flattened_normalized_samples)
 {
     std::vector<double> v1(flattened_normalized_samples);
     std::vector<double> ret;
@@ -389,12 +469,12 @@ std::vector<double> convertToFrequencySpectrum(const std::vector<double> &flatte
     pocketfft::shape_t v1_dims_out(v1_dims_in);
     v1_dims_out[axes.back()] = (v1_dims_out[axes.back()]>>1) + 1; // Get length of output vector
     size_t v1OutSize = v1_dims_out[axes.back()];
-    std::vector< std::complex< double> > v1_out(v1OutSize);
+    std::vector<std::complex<double>> v1_out(v1OutSize);
     long int s1_in_shape = v1.size() * sizeof(double);
     pocketfft::stride_t s1_in {s1_in_shape, sizeof(double)}; // {height * sizeof(type), sizeof(type)}
     /* NOTE: Putting the size of the wrong type will produce wrong results */
-    long int s1_out_shape = v1.size() * sizeof(std::complex< double >);
-    pocketfft::stride_t s1_out {s1_out_shape, sizeof(std::complex< double >)};
+    long int s1_out_shape = v1.size() * sizeof(std::complex<double>);
+    pocketfft::stride_t s1_out {s1_out_shape, sizeof(std::complex<double>)};
     auto d1_in = reinterpret_cast<const double *>(v1.data());
     auto d1_out = reinterpret_cast<std::complex<double> *>(v1_out.data());
     double v1_fct = normFct(inorm, v1_dims_in, axes);
@@ -403,7 +483,7 @@ std::vector<double> convertToFrequencySpectrum(const std::vector<double> &flatte
     
     /* Get element-wise absolute value of complex vector */
     ret.resize(v1_out.size());
-    auto calculate_magnitude = []( const std::complex< double > x ) { return magnitude(x); };
+    auto calculate_magnitude = [](const std::complex<double> x) { return magnitude(x); };
     std::transform(v1_out.begin(),
                     v1_out.end(),
                     ret.begin(),
@@ -583,9 +663,10 @@ std::vector<std::tuple<double, double>> peakDetect(const std::vector<double> &in
     
     std::vector< std::tuple< double, double > > sorted_estimated_peaks = estimated_peaks;
     if (sort_by == "position") {
-        /* Already sorted by position */
+        /* Already sorted by position (Frequency) */
     }
     else if(sort_by == "height"){
+        /* height (Magnitude) */ 
         std::sort(sorted_estimated_peaks.begin(),
                     sorted_estimated_peaks.end(),
                     [](auto const &t1, auto const &t2) {
@@ -611,13 +692,13 @@ std::vector<std::tuple<double, double>> peakDetect(const std::vector<double> &in
 }
 
 std::vector<std::tuple<double, double>> spectralPeaks(const std::vector<double> &inp,
-                                                            double threshold,
-                                                            bool interpolate,
-                                                            std::string sort_by,
-                                                            int max_num_peaks,
-                                                            double sample_rate,
-                                                            int min_pos,
-                                                            int max_pos)
+                                                      double threshold,
+                                                      bool interpolate,
+                                                      std::string sort_by,
+                                                      int max_num_peaks,
+                                                      double sample_rate,
+                                                      int min_pos,
+                                                      int max_pos)
 {
     std::vector<std::tuple<double, double>> peaks = peakDetect(inp,
                                                                threshold,
@@ -889,8 +970,8 @@ std::vector<double> HPCP(const std::vector<double>& frequencies,
 
     if (band_preset) {
         if (normalized == N_UNIT_MAX) {
-            normalize(hpcp_LO);
-            normalize(hpcp_HI);
+            normalizeInPlace(hpcp_LO);
+            normalizeInPlace(hpcp_HI);
         }
         else if (normalized == N_UNIT_SUM) {
             // TODO does it makes sense to apply band preset together with unit sum normalization?
@@ -905,7 +986,7 @@ std::vector<double> HPCP(const std::vector<double>& frequencies,
     }
 
     if (normalized == N_UNIT_MAX) {
-        normalize(hpcp);
+        normalizeInPlace(hpcp);
     }
     else if (normalized == N_UNIT_SUM) {
         normalizeSum(hpcp);
@@ -980,10 +1061,10 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>>& peaks,
                 min_frequency,
                 max_frequency,
                 _weight_type,
-                non_linear,
                 window_size,
                 sample_rate,
                 max_shifted,
+                non_linear,
                 _normalized);
 }
 
@@ -991,10 +1072,10 @@ std::vector<double> Framecutter::compute()
 {
     if (valid_frame_threshold_ratio_ > 0.5 && start_from_center_) {
         throw std::runtime_error("FrameCutter: valid_frame_threshold_ratio cannot be "
-                                    "larger than 0.5 if start_from_center is true (this "
-                                    "is to prevent loss of the first frame which would "
-                                    "be only half a valid frame since the first frame "
-                                    "is centered on the beginning of the audio)");
+                                 "larger than 0.5 if start_from_center is true (this "
+                                 "is to prevent loss of the first frame which would "
+                                 "be only half a valid frame since the first frame "
+                                 "is centered on the beginning of the audio)");
     }
 
     int valid_frame_threshold = (int)round(valid_frame_threshold_ratio_*frame_size_);
@@ -1054,6 +1135,33 @@ std::vector<double> Framecutter::compute()
     start_index_ += hop_size_;
     return frame;
 }
+
+std::vector<double> monoMixer(const std::vector<std::vector<double>>& input)
+{
+    int num_channels = input.size();
+    if (num_channels > 2 || input.empty())
+    {
+        std::runtime_error("Audio samples must be either mono or stereo.");
+    }
+
+    if (num_channels == 1)
+    {
+        return input[0];
+    }
+
+    const std::vector<double> channel_one = input[0];
+    const std::vector<double> channel_two = input[1];
+
+    if (channel_one.size() != channel_two.size()) std::runtime_error("Audio channels must be the same length.");
+    int size = channel_one.size();
+    std::vector<double> result(size);
+
+    for (int i=0; i<size; ++i) {
+        result[i] = 0.5*(channel_one[i] + channel_two[i]);
+    }
+    return result;
+}
+
 
 // std::vector<double> framecutter(const std::vector<double> buffer,
 //                                 int _start_index,

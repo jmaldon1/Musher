@@ -1,5 +1,6 @@
 set(MUSHER_LIBRARY_SOURCES
     "${MUSHER_LIBRARY_SOURCE_DIR}/utils.cpp"
+    "${MUSHER_LIBRARY_SOURCE_DIR}/key.cpp"
     "${MUSHER_LIBRARY_SOURCE_DIR}/musher_library.cpp"
 )
 

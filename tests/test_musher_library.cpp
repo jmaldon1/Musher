@@ -126,7 +126,7 @@ TEST(AudioFileDecoding, BeatDetection) {
     WavDecoded wav_decoded = CDecodeWav(filePath);
     // uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
     uint32_t sampleRate = wav_decoded.sample_rate;
-    std::vector<double> normalized_samples = wav_decoded.normalized_samples;
+    std::vector<double> normalized_samples = wav_decoded.interleaved_normalized_samples;
 
     double bpm = bpmsOverWindow(normalized_samples, normalized_samples.size(), sampleRate, 3);
 

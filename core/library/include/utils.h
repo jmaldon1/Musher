@@ -10,6 +10,7 @@
 #include <fstream>
 #include <tuple>
 #include <iostream>
+#include <functional>
 
 #include "pocketfft.h"
 
@@ -34,6 +35,9 @@ auto int_to_unint8_t = [](int num) { return static_cast<uint8_t>(num); };
 bool isBigEndian(void);
 int16_t twoBytesToInt (const std::vector<uint8_t>& source, const int startIndex);
 int32_t fourBytesToInt (const std::vector<uint8_t>& source, const int startIndex);
+double normalizeInt8_t(const uint8_t sample);
+double normalizeInt16_t(const int16_t sample);
+double normalizeInt32_t(const int32_t sample);
 
 // template <typename T>
 // void outputVectorToFile(const std::vector<T>& vec, std::string& filename)
@@ -51,74 +55,37 @@ int32_t fourBytesToInt (const std::vector<uint8_t>& source, const int startIndex
 //     os << "};";
 // }
 
-double normalizeInt8_t(const uint8_t sample);
-double normalizeInt16_t(const int16_t sample);
-double normalizeInt32_t(const int32_t sample);
 
+// /* Allow std::visit to be overloaded with as many lambda funcs as we want */
+// template <class ...Fs>
+// struct overload : Fs... {
+//     overload(Fs const&... fs) : Fs{fs}...
+//     {}
 
-/* Allow std::visit to be overloaded with as many lambda funcs as we want */
-template <class ...Fs>
-struct overload : Fs... {
-    overload(Fs const&... fs) : Fs{fs}...
-    {}
+//     using Fs::operator()...;
+// };
 
-    using Fs::operator()...;
-};
-
-template< typename basicType, typename ...types >
-basicType variantToType(const std::variant<types...> &var)
-{
-    basicType t;
-    std::visit(
-        overload(
-        [&t](const basicType arg) { t = arg; },
-        [](auto&&) { 
-            std::string err_message = "The template type was not found within the variant.";
-            throw std::runtime_error(err_message); 
-        }
-        ),
-        var
-    );
-    
-    return t;
-}
-
-std::vector<double> interleave2DVector(const std::vector<std::vector<double>> &orig);
-double median(std::vector<double> &inVec);
-std::vector<double> onePoleFilter(const std::vector< double > &vec);
-
-// template< typename double,
-//         typename = std::enable_if_t< std::is_floating_point<double>::value> >
-// double peakDetect(std::vector< double > &correlVec)
+// template< typename basicType, typename ...types >
+// basicType variantToType(const std::variant<types...> &var)
 // {
-//     std::vector<double> vecAbs(correlVec.size());
-//     /* Find the max of the input */
-//     auto absoluteVal = []( const double x ) { return std::abs(x); };
-//     std::transform(
-//             correlVec.begin(),
-//             correlVec.end(),
-//             vecAbs.begin(),
-//             absoluteVal );
-
-//     double max = *max_element(vecAbs.begin(), vecAbs.end());
-
-//     /* Check if the max is positive */
-//     auto itPositive = std::find(correlVec.begin(), correlVec.end(), max);
-//     if (itPositive != correlVec.end()){
-//         double peakIndex = itPositive - correlVec.begin();
-//         return peakIndex;
-//     }
+//     basicType t;
+//     std::visit(
+//         overload(
+//         [&t](const basicType arg) { t = arg; },
+//         [](auto&&) { 
+//             std::string err_message = "The template type was not found within the variant.";
+//             throw std::runtime_error(err_message); 
+//         }
+//         ),
+//         var
+//     );
     
-//     /* Check if the max is negative */
-//     auto itNegative = std::find(correlVec.begin(), correlVec.end(), -max);
-//     if (itNegative != correlVec.end()){
-//         double peakIndex = itNegative - correlVec.begin();
-//         return peakIndex;
-//     }
-//     // throw std::runtime_error("No Peak Detected...");
-//     return 0.0;
+//     return t;
 // }
 
+std::vector<double> interleave2Vectors(const std::vector<double> &vec1, const std::vector<double> &vec2);
+double median(std::vector<double> &inVec);
+std::vector<double> onePoleFilter(const std::vector< double > &vec);
 size_t next_fast_len(size_t n);
 
 using ldbl_t = typename std::conditional<
@@ -133,9 +100,20 @@ double normFct(int inorm,
 
 std::vector<double> centerVector(std::vector<double> arr, size_t newShape);
 std::vector<double> fftConvolve(const std::vector<double> &vec1, const std::vector<double> &vec2);
-std::vector<double> blackmanHarris92dB(const std::vector<double> &window);
+std::vector<double> normalize(const std::vector<double>& input);
+std::vector<double> blackmanHarris(const std::vector<double> &window, double a0, double a1, double a2, double a3);
+std::vector<double> blackmanHarris62dB(const std::vector<double>& window);
+std::vector<double> blackmanHarris92dB(const std::vector<double>& window);
+// typedef std::vector<double> (*WindowType)(const std::vector<double>);
+std::vector<double> windowing(const std::vector<double>& signal,
+                              const std::function<std::vector<double> (const std::vector<double>&)>& window_type_func=blackmanHarris62dB,
+                              int size=1024,
+                              int zero_padding=0,
+                              bool zero_phase=true,
+                              bool _normalize=true);
+
 double magnitude(const std::complex< double > complex_pair);
-std::vector<double> convertToFrequencySpectrum(const std::vector<double> &flattened_normalized_samples);
+std::vector<double> convertToFrequencySpectrum(const std::vector<double>& flattened_normalized_samples);
 std::tuple<double, double> quadraticInterpolation(double a, double b, double y, int middle_point_index);
 
 std::vector<std::tuple<double, double>> peakDetect(const std::vector<double> &inp,
@@ -151,7 +129,7 @@ std::vector<std::tuple<double, double>> spectralPeaks(const std::vector<double> 
                                                       double threshold=-1000.0,
                                                       bool interpolate=true,
                                                       std::string sort_by="position",
-                                                      int max_num_peaks=0,
+                                                      int max_num_peaks=100,
                                                       double sample_rate=44100.,
                                                       int min_pos=0,
                                                       int max_pos=0);
@@ -172,10 +150,11 @@ void addContribution(double freq,
                      std::vector<double>& hpcp);
 std::vector<HarmonicPeak> initHarmonicContributionTable(int harmonics);
 
+
 // normalize a vector so its largest value gets mapped to 1
 // if zero, the vector isn't touched
 template <typename T>
-void normalize(std::vector<T>& array)
+void normalizeInPlace(std::vector<T>& array)
 {
     if (array.empty()) return;
 
@@ -258,11 +237,11 @@ private:
 
 public:
     Framecutter(const std::vector<double> buffer,
-                int frame_size,
-                int hop_size,
-                bool start_from_center,
-                bool last_frame_to_end_of_file,
-                double valid_frame_threshold_ratio):
+                int frame_size=1024,
+                int hop_size=512,
+                bool start_from_center=true,
+                bool last_frame_to_end_of_file=false,
+                double valid_frame_threshold_ratio=0.):
         buffer_(buffer),
         frame_size_(frame_size),
         hop_size_(hop_size),
@@ -293,6 +272,6 @@ public:
     std::vector<double> compute();
 };
 
-
+std::vector<double> monoMixer(const std::vector<std::vector<double>>& input);
 
 }  // namespace musher

@@ -93,3 +93,4 @@ package_add_test(test_musher_utils "${MUSHER_TEST_SOURCE_DIR}/test_musher_utils.
 package_add_test(test_peak_detection "${MUSHER_TEST_SOURCE_DIR}/test_peak_detection.cpp" ${MUSHER_LIBRARY_SOURCES})
 package_add_test(test_hpcp "${MUSHER_TEST_SOURCE_DIR}/test_hpcp.cpp" ${MUSHER_LIBRARY_SOURCES})
 package_add_test(test_framecutter "${MUSHER_TEST_SOURCE_DIR}/test_framecutter.cpp" ${MUSHER_LIBRARY_SOURCES})
+package_add_test(test_key "${MUSHER_TEST_SOURCE_DIR}/test_key.cpp" ${MUSHER_LIBRARY_SOURCES})

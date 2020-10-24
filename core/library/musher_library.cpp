@@ -78,7 +78,7 @@ std::vector<uint8_t> CLoadAudioFile(const std::string& filePath)
  * @param file_path path to wav file
  * @return std::vector< std::vector< double > > CDecodeWav 2D vector of samples,
  * samples[0] holds channel 1
- * samples[1] holds channel 2 (Empty if mono file)
+ * samples[1] holds channel 2 (Will not exist if mono file)
  */
 WavDecoded CDecodeWavDualChannel(const std::vector<uint8_t>& file_data)
 {   
@@ -191,8 +191,7 @@ WavDecoded CDecodeWavDualChannel(const std::vector<uint8_t>& file_data)
                 int16_t sample_as_int = twoBytesToInt(file_data, sample_index);
                 /* normalize samples to between -1 and 1 */
                 double sample = normalizeInt16_t(sample_as_int);
-                // samples[channel].push_back (sample);
-                samples[channel].push_back (sample_as_int);
+                samples[channel].push_back (sample);
             }
             else if (bit_depth == 24)
             {
@@ -204,9 +203,7 @@ WavDecoded CDecodeWavDualChannel(const std::vector<uint8_t>& file_data)
 
                 /* normalize samples to between -1 and 1 */
                 double sample = normalizeInt32_t(sample_as_int);
-                // double sample = (double)sample_as_int / (double)8388608.;
-                // samples[channel].push_back (sample);
-                samples[channel].push_back (sample_as_int);
+                samples[channel].push_back (sample);
             }
             else
             {
@@ -236,7 +233,16 @@ WavDecoded CDecodeWavDualChannel(const std::vector<uint8_t>& file_data)
     wav_decoded.length_in_seconds = length_in_seconds;
     wav_decoded.file_type = file_type;
     wav_decoded.avg_bitrate_kbps = avg_bitrate_kbps;
-    wav_decoded.samples = samples;
+    wav_decoded.normalized_samples = samples;
+
+    if (stereo)
+    {
+        const std::vector<double> channel_one = samples[0];
+        const std::vector<double> channel_two = samples[1];
+        wav_decoded.interleaved_normalized_samples = interleave2Vectors(channel_one, channel_two);
+    } else {
+        wav_decoded.interleaved_normalized_samples = samples[0];
+    }
 
     return wav_decoded;
 }
@@ -254,11 +260,7 @@ WavDecoded CDecodeWavDualChannel(const std::vector<uint8_t>& file_data)
  */
 WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data)
 {
-    WavDecoded wav_decoded = CDecodeWavDualChannel(file_data);
-
-    /* Return interleaved samples */
-    wav_decoded.normalized_samples = interleave2DVector(wav_decoded.samples);
-    return wav_decoded;
+    return CDecodeWavDualChannel(file_data);
 }
 
 /**

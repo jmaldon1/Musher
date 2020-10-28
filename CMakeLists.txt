@@ -8,7 +8,7 @@ endif (POLICY CMP0048)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 	set(CMAKE_CXX_COMPILER "/usr/bin/g++-8")
 endif()
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # equivalent to setting -fPIC -> does this even work on windows?

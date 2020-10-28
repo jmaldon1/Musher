@@ -1,0 +1,14 @@
+project_runner(musher-core-test
+    SOURCES
+        gtest_extras.h
+        test_utils.h
+        test_musher_utils.cpp
+        test_musher_library.cpp
+        test_hpcp.cpp
+        test_key.cpp 
+    DEPENDENCIES
+        INTERNAL
+            musher-core
+        CONAN
+            gtest
+)

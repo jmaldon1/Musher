@@ -19,7 +19,9 @@ TEST(PeakDetection, LastPositionPeak) {
   std::vector<std::tuple<double, double>> peaks;
   peaks = peakDetect(inp, -1000.0, true);
 
-  auto [actual_position, actual_value] = peaks[0];
+  double actual_position;
+  double actual_value;
+  std::tie(actual_position, actual_value) = peaks[0];
   EXPECT_EQ(actual_position, 4.0);
   EXPECT_EQ(actual_value, 2.0);
 }
@@ -34,7 +36,9 @@ TEST(PeakDetection, FlatPeakMiddle1) {
   std::vector<std::tuple<double, double>> peaks;
   peaks = peakDetect(inp, -1000.0, true);
 
-  auto [actual_position, actual_value] = peaks[0];
+  double actual_position;
+  double actual_value;
+  std::tie(actual_position, actual_value) = peaks[0];
   EXPECT_EQ(actual_position, 2.0);
   EXPECT_EQ(actual_value, 2.0);
 }
@@ -48,7 +52,9 @@ TEST(PeakDetection, FlatPeakMiddle2) {
   std::vector<std::tuple<double, double>> peaks;
   peaks = peakDetect(inp, -1000.0, true);
 
-  auto [actual_position, actual_value] = peaks[0];
+  double actual_position;
+  double actual_value;
+  std::tie(actual_position, actual_value) = peaks[0];
   EXPECT_EQ(actual_position, 2.0);
   EXPECT_EQ(actual_value, 2.0);
   // std::cout << "POSITIONS: " << std::endl;
@@ -71,7 +77,9 @@ TEST(PeakDetection, FlatToPeakInterpolation) {
   std::vector<std::tuple<double, double>> peaks;
   peaks = peakDetect(inp, -1000.0, true);
 
-  auto [actual_position, actual_value] = peaks[0];
+  double actual_position;
+  double actual_value;
+  std::tie(actual_position, actual_value) = peaks[0];
   EXPECT_NEAR(actual_position, 3.75, .01);
   EXPECT_NEAR(actual_value, 3.125, .001);
 }
@@ -109,15 +117,21 @@ TEST(PeakDetection, ManyPeaksWithInterpolation) {
   std::vector<std::tuple<double, double>> peaks;
   peaks = peakDetect(inp, -1000.0, true);
 
-  auto [actual_position_0, actual_height_0] = peaks[0];
+  double actual_position_0;
+  double actual_height_0;
+  std::tie(actual_position_0, actual_height_0) = peaks[0];
   EXPECT_NEAR(actual_position_0, 1.16667, 0.00001);
   EXPECT_NEAR(actual_height_0, 2.04167, 0.00001);
 
-  auto [actual_position_1, actual_height_1] = peaks[1];
+  double actual_position_1;
+  double actual_height_1;
+  std::tie(actual_position_1, actual_height_1) = peaks[1];
   EXPECT_DOUBLE_EQ(actual_position_1, 3);
   EXPECT_DOUBLE_EQ(actual_height_1, 2);
 
-  auto [actual_position_2, actual_height_2] = peaks[2];
+  double actual_position_2;
+  double actual_height_2;
+  std::tie(actual_position_2, actual_height_2) = peaks[2];
   EXPECT_NEAR(actual_position_2, 4.83333, 0.00001);
   EXPECT_NEAR(actual_height_2, 2.04167, 0.00001);
 }
@@ -190,7 +204,9 @@ TEST(PeakDetection, MinPosition) {
   std::vector<std::tuple<double, double>> peaks;
   peaks = peakDetect(inp, -1000.0, false, "position", 0, 0.0, 2);
 
-  auto [actual_position, actual_height] = peaks[0];
+  double actual_position;
+  double actual_height;
+  std::tie(actual_position, actual_height) = peaks[0];
   EXPECT_EQ(actual_position, 2);
   EXPECT_EQ(actual_height, 1);
 }
@@ -204,7 +220,9 @@ TEST(PeakDetection, MaxPosition) {
   std::vector<std::tuple<double, double>> peaks;
   peaks = peakDetect(inp, -1000.0, false, "position", 0, 0.0, 0, 4);
 
-  auto [actual_position, actual_height] = peaks[0];
+  double actual_position;
+  double actual_height;
+  std::tie(actual_position, actual_height) = peaks[0];
   EXPECT_EQ(actual_position, 4);
   EXPECT_EQ(actual_height, 1);
 }

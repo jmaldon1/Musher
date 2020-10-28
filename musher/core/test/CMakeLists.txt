@@ -4,6 +4,7 @@ project_runner(musher-core-test
         test_utils.h
         test_musher_utils.cpp
         test_musher_library.cpp
+        test_peak_detection.cpp
         test_hpcp.cpp
         test_key.cpp 
     DEPENDENCIES

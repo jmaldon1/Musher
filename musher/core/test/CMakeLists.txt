@@ -1,11 +1,12 @@
-project_runner(musher-core-test
+project_test(musher-core-test
     SOURCES
         gtest_extras.h
         test_utils.h
         test_musher_utils.cpp
         test_musher_library.cpp
         test_hpcp.cpp
-        test_key.cpp 
+        test_key.cpp
+        main.cpp
     DEPENDENCIES
         INTERNAL
             musher-core

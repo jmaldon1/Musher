@@ -40,10 +40,10 @@ TEST(AudioFileDecoding, AudioFileNotFoundTest) {
 
 TEST(AudioFileDecoding, LoadsAudioFileTest) {
   std::vector<uint8_t> fileData;
-  std::string filePath = "./data/audio_files/CantinaBand3sec.wav";
+  std::string filePath = TEST_DATA_DIR + std::string("audio_files/CantinaBand3sec.wav");
   fileData = CLoadAudioFile(filePath);
 
-  std::string outputFile = "./data/test_include/filedata.txt";
+  std::string outputFile = "test_include/filedata.txt";
   // outputVectorToFile<uint8_t>(fileData, outputFile);
 
   std::string fileDataHex = uint8_vector_to_hex_string(fileData);
@@ -51,7 +51,7 @@ TEST(AudioFileDecoding, LoadsAudioFileTest) {
 }
 
 TEST(AudioFileDecoding, DecodeWav) {
-  const std::string filePath = "./data/audio_files/CantinaBand3sec.wav";
+  const std::string filePath = TEST_DATA_DIR + std::string("audio_files/CantinaBand3sec.wav");
 
   WavDecoded wav_decoded = CDecodeWav(filePath);
 
@@ -102,7 +102,7 @@ TEST(AudioFileDecoding, DecodeWav) {
 }
 
 TEST(AudioFileDecoding, BeatDetection) {
-  const std::string filePath = "./data/audio_files/CantinaBand3sec.wav";
+  const std::string filePath = TEST_DATA_DIR + std::string("audio_files/CantinaBand3sec.wav");
   // std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
 
   WavDecoded wav_decoded = CDecodeWav(filePath);
@@ -121,7 +121,7 @@ TEST(AudioFileDecoding, BeatDetection) {
 
 TEST(AudioFileDecoding, DecodeMp3) {
   std::vector<double> normalizedSamples;
-  const std::string filePathMp3 = "./data/audio_files/126bpm.mp3";
+  const std::string filePathMp3 = TEST_DATA_DIR + std::string("audio_files/126bpm.mp3");
   Mp3Decoded mp3_decoded;
   // std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
 

@@ -8,6 +8,11 @@ endif()
 
 macro(discover_tests target)
     string(REGEX MATCH "(.*)-test" _match ${target})
-    gtest_discover_tests(${target}
-        TEST_PREFIX ${CMAKE_MATCH_1}:)
+    gtest_discover_tests(${target} TEST_PREFIX ${CMAKE_MATCH_1}:)
+    target_compile_definitions(${target} PUBLIC TEST_DATA_DIR="${CMAKE_SOURCE_DIR}/data/")
 endmacro()
+
+# macro(add_project_test target)
+#     gtest_add_tests(${target})
+#     target_compile_definitions(${target} PUBLIC TEST_RESOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR/data")
+# endmacro()

@@ -17,7 +17,7 @@ TEST(Key, StaticTestThing) {
  *
  */
 TEST(Key, Test) {
-  const std::string filePath = "./data/audio_files/mozart_c_major_30sec.wav";
+  const std::string filePath = TEST_DATA_DIR + std::string("audio_files/mozart_c_major_30sec.wav");
 
   int pcp_size = 36;
   double sample_rate = 44100.;

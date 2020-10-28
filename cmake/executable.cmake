@@ -28,11 +28,12 @@ endmacro()
 
 
 # USAGE:
-#   project_runner(NAME
+#   project_test(NAME
 #       SOURCES ...
 #       DEPENDENCIES ...
 #   )
-macro(project_runner NAME)
-    project_exe(${NAME}-runner ${ARGN})
-    discover_tests(${NAME}-runner)
+macro(project_test NAME)
+    project_exe(${NAME} ${ARGN})
+    # add_project_test(${NAME})
+    discover_tests(${NAME})
 endmacro()

@@ -187,7 +187,7 @@ void normalizeInPlace(std::vector<T> &array) {
     T maxElement = *std::max_element(array.begin(), array.end());
 
     if (maxElement != (T)0.0) {
-        for (uint i = 0; i < array.size(); i++) {
+        for (size_t i = 0; i < array.size(); i++) {
             array[i] /= maxElement;
         }
     }

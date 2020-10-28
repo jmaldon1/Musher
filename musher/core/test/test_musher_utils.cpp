@@ -93,7 +93,10 @@ TEST(TestUtils, QuadraticInterpolationTest) {
 
   double expected_peak_location = 0.166667;        // Just over 0
   double expected_peak_height_estimate = 4.04167;  // Just over 4
-  auto [actual_peak_location, actual_peak_height_estimate] =
+
+  double actual_peak_location;
+  double actual_peak_height_estimate;
+  std::tie(actual_peak_location, actual_peak_height_estimate) = 
       quadraticInterpolation(left_point_val, middle_point_val, right_point_val, middle_point_index);
 
   EXPECT_NEAR(expected_peak_location, actual_peak_location, 0.00001);

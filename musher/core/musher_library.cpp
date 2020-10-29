@@ -369,7 +369,7 @@ double bpmDetection(std::vector<double>& flattened_normalized_samples, uint32_t 
     cD_filtered.clear();
     cD_decimated_signal.clear();
     cD_mean_removed_signal.clear();
-    cD_mean_removed_signal_partial.clear();
+    //cD_mean_removed_signal_partial.clear();
   }
   wave_free(obj);
 

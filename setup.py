@@ -141,7 +141,7 @@ class CTest(test):
         cwd = os.path.join('build', self.distutils_dir_name('temp'))
         if platform.system().lower() == "windows":
             cwd = os.path.join(cwd, "Debug")
-        subprocess.call(['ctest'], cwd=cwd, shell=True)
+        subprocess.call(['ctest', "--output-on-failure"], cwd=cwd, shell=True)
 
 
 setup(

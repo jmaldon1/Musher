@@ -9,6 +9,8 @@ endif()
 macro(discover_tests target)
     string(REGEX MATCH "(.*)-test" _match ${target})
     gtest_discover_tests(${target} TEST_PREFIX ${CMAKE_MATCH_1}:)
+    # This will create a preprocessor macro named `TEST_DATA_DIR` that can be used within tests.
+    # Useful for finding the absolute path of a file.
     target_compile_definitions(${target} PUBLIC TEST_DATA_DIR="${CMAKE_SOURCE_DIR}/data/")
 endmacro()
 

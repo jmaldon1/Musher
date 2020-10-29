@@ -15,7 +15,7 @@ if(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     set(CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
 endif()
 
-if (UNIX OR MINGW)
+if (NOT APPLE AND (UNIX OR MINGW))
     option(FORCE_ABI "Force RHEL-style ABI" OFF)
     set(RELEASE_OPTIMIZATION_OPTION "-O2" CACHE STRING "Compiler optimization option for release builds")
     set(DEBUG_OPTIMIZATION_OPTION "-Og" CACHE STRING "Compiler optimization option for debug builds")
@@ -57,7 +57,7 @@ if (UNIX OR MINGW)
         "$<$<CONFIG:DEBUG>:${_debug_definitions}>"
         "$<$<CONFIG:RELEASE>:${_release_definitions}>")
 
-else()
+elseif(WIN32)
     add_compile_options(/wd4267 /MP8 /Zc:__cplusplus /permissive- /Z7)
     add_compile_definitions(_WIN32_WINNT=0x0600 NOMINMAX)
 endif()

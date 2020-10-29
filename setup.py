@@ -38,6 +38,11 @@ def distutils_dir_name(dname: str) -> str:
     if os == "windows":
         os = "win"
 
+    if os == "darwin":
+        mac_ver, _, _ = platform.mac_ver()
+        major_ver, minor_ver = tuple(mac_ver.split('.')[:2])
+        os = f"macosx-{major_ver}.{minor_ver}"
+
     return dir_name.format(dirname=dname,
                            platform=os,
                            machine=platform.machine().lower(),
@@ -129,9 +134,8 @@ class CTest(test):
         if platform.system().lower() == "windows":
             cwd = os.path.join(cwd, "Debug")
         result = subprocess.run(['ctest', "--output-on-failure"], cwd=cwd)
-        if result.stderr:
-            print("The following error has occured:")
-            print(result.stderr.decode("utf-8"))
+        if result.returncode == 8:
+            print("C++ Seg fault.")
 
 
 class GTest(distutils.cmd.Command):
@@ -161,10 +165,9 @@ class GTest(distutils.cmd.Command):
         if platform.system().lower() == "windows":
             bin_dir = os.path.join(bin_dir, "Debug")
         result = subprocess.run(
-            ['./musher-core-test', self.gtest_options], cwd=bin_dir, stderr=subprocess.PIPE)
-        if result.stderr:
-            print("The following error has occured:")
-            print(result.stderr.decode("utf-8"))
+            ['./musher-core-test', self.gtest_options], cwd=bin_dir)
+        if result.returncode == -11:
+            print("C++ Seg fault.")
 
 
 setup(

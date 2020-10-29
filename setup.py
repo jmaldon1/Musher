@@ -122,7 +122,7 @@ class CTest(test):
     """
     Run tests if compiled (only through DEBUG)
     
-    python setup.py cmake_debug
+    python setup.py cmake --debug
     python setup.py ctest
     """
     def distutils_dir_name(self, dname):

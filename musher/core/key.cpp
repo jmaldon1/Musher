@@ -1,7 +1,9 @@
+#include "musher/core/key.h"
+
 #include <cmath>
+#include <fplus/fplus.hpp>
 
 #include "musher/core/utils.h"
-#include "musher/core/key.h"
 
 namespace musher {
 namespace core {
@@ -235,7 +237,7 @@ std::tuple<std::vector<double>, double, double> resize_profile_to_pcp_size(int p
 
     double mean_profile = mean(profile_do);
 
-    // Computer standard devation
+    // Compute standard devation
     double accum = 0.0;
     std::for_each(std::begin(profile_do), std::end(profile_do),
                   [&](const double d) { accum += (d - mean_profile) * (d - mean_profile); });
@@ -264,93 +266,127 @@ void detectKey(const std::vector<double>& pcp,
         O = key_profile[2];
     }
 
-    std::vector<double> M_chords(12, (double)0.0);
-    std::vector<double> m_chords(12, (double)0.0);
+    std::vector<double> M_chords_empty(12, (double)0.0);
+    std::vector<double> m_chords_empty(12, (double)0.0);
 
-    std::vector<double> major_tonic;
-    std::vector<double> major_I = addMajorTriad(M_chords, 0, M[0], num_harmonics, slope);
+    /** MAJOR KEY */
+    std::vector<double> M_chords = fplus::fwd::apply(
+        M_chords_empty,
+        // Tonic (I)
+        [&M, &num_harmonics, &slope](auto chords) { return addMajorTriad(chords, 0, M[0], num_harmonics, slope); },
+        // II
+        [&M, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addMinorTriad(chords, 2, M[2], num_harmonics, slope);
+            return chords;
+        },
+        // III
+        [&M, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addMinorTriad(chords, 4, M[4], num_harmonics, slope);
+            return chords;
+        },
+        // Subdominant (IV)
+        [&M, &num_harmonics, &slope](auto chords) { return addMajorTriad(chords, 5, M[5], num_harmonics, slope); },
+        // Dominant (V)
+        [&M, &num_harmonics, &slope](auto chords) { return addMajorTriad(chords, 7, M[7], num_harmonics, slope); },
+        // VI
+        [&M, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addMinorTriad(chords, 9, M[9], num_harmonics, slope);
+            return chords;
+        },
+        // VII (5th diminished)
+        [&M, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addContributionHarmonics(chords, 11, M[11], num_harmonics, slope);
+            return chords;
+        },
+        [&M, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addContributionHarmonics(chords, 2, M[11], num_harmonics, slope);
+            return chords;
+        },
+        [&M, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addContributionHarmonics(chords, 5, M[11], num_harmonics, slope);
+            return chords;
+        });
 
-    if (use_three_chords) {
-        major_tonic = major_I;
+    /** MINOR KEY */
+    std::vector<double> m_chords = fplus::fwd::apply(
+        m_chords_empty,
+        // Tonica (I)
+        [&m, &num_harmonics, &slope](auto chords) { return addMajorTriad(chords, 0, m[0], num_harmonics, slope); },
+        // II (5th diminished)
+        [&m, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addContributionHarmonics(chords, 2, m[2], num_harmonics, slope);
+            return chords;
+        },
+        [&m, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addContributionHarmonics(chords, 5, m[2], num_harmonics, slope);
+            return chords;
+        },
+        [&m, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addContributionHarmonics(chords, 8, m[2], num_harmonics, slope);
+            return chords;
+        },
+        // III (5th augmented)
+        [&m, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addContributionHarmonics(chords, 3, m[3], num_harmonics, slope);
+            return chords;
+        },
+        [&m, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addContributionHarmonics(chords, 7, m[3], num_harmonics, slope);
+            return chords;
+        },
+        [&m, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addContributionHarmonics(chords, 11, m[3], num_harmonics, slope);
+            return chords;
+        },
+        // Subdominant (IV)
+        [&m, &num_harmonics, &slope](auto chords) { return addMinorTriad(chords, 5, m[5], num_harmonics, slope); },
+        // Dominant (V) (harmonic minor scale)
+        [&m, &num_harmonics, &slope](auto chords) { return addMajorTriad(chords, 7, m[7], num_harmonics, slope); },
+        // VI
+        [&m, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addMajorTriad(chords, 8, m[8], num_harmonics, slope);
+            return chords;
+        },
+        // VII (diminished 5th)
+        [&m, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addContributionHarmonics(chords, 11, m[8], num_harmonics, slope);
+            return chords;
+        },
+        [&m, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addContributionHarmonics(chords, 2, m[8], num_harmonics, slope);
+            return chords;
+        },
+        [&m, &num_harmonics, &slope, &use_three_chords](auto chords) {
+            if (!use_three_chords) return addContributionHarmonics(chords, 5, m[8], num_harmonics, slope);
+            return chords;
+        });
+
+    std::vector<double> M_final;
+    std::vector<double> m_final;
+
+    if (use_polphony) {
+        M_final = M_chords;
+        m_final = m_chords;
     } else {
-        std::vector<double> major_II = addMinorTriad(major_I, 2, M[2], num_harmonics, slope);
-        std::vector<double> major_III = addMinorTriad(major_II, 4, M[4], num_harmonics, slope);
-        major_tonic = major_III;
+        M_final = M;
+        m_final = m;
     }
 
-    std::vector<double> major_subdominant_IV = addMajorTriad(major_tonic, 5, M[5], num_harmonics, slope);
-    std::vector<double> major_dominant_V = addMajorTriad(major_subdominant_IV, 7, M[7], num_harmonics, slope);
-    std::vector<double> major_VI;
-    std::vector<double> major_VII;
+    // RESIZE
+    std::vector<double> profile_doM;
+    double mean_profile_M;
+    double std_profile_M = 0.;
+    std::tie(profile_doM, mean_profile_M, std_profile_M) = resize_profile_to_pcp_size(pcp_size, M_final);
 
-    if (use_three_chords) {
-        major_VI = addMinorTriad(major_dominant_V, 9, M[9], num_harmonics, slope);
+    std::vector<double> profile_dom;
+    double mean_profile_m;
+    double std_profile_m = 0.;
+    std::tie(profile_dom, mean_profile_m, std_profile_m) = resize_profile_to_pcp_size(pcp_size, m_final);
 
-        major_VII = major_VI;
-        std::vector<int> major_VII_pitch_classes({ 11, 2, 5 });
-
-        for (const int& pitch_class : major_VII_pitch_classes) {
-            major_VII = addContributionHarmonics(major_VII, pitch_class, M[11], num_harmonics, slope);
-        }
-    }
-
-    /* Minor Key */
-    std::vector<double> minor_tonic_I = addMinorTriad(m_chords, 0, m[0], num_harmonics, slope);
-    std::vector<double> minor_II;
-    std::vector<double> minor_III;
-
-    if (!use_three_chords) {
-        minor_II = minor_tonic_I;
-        std::vector<int> minor_II_pitch_classes({ 2, 5, 8 });
-
-        for (const int& pitch_class : minor_II_pitch_classes) {
-            minor_II = addContributionHarmonics(minor_II, pitch_class, m[2], num_harmonics, slope);
-        }
-
-        minor_III = minor_II;
-        std::vector<int> minor_III_pitch_classes({ 3, 7, 11 });
-
-        for (const int& pitch_class : minor_III_pitch_classes) {
-            minor_III = addContributionHarmonics(minor_III, pitch_class, m[3], num_harmonics, slope);
-        }
-    }
-
-    // std::vector<double> minor_subdominant_IV = addMinorTriad(minor_III, 5, m[5], num_harmonics, slope);
-    // std::vector<double> minor_dominant_V = addMajorTriad(minor_subdominant_IV, 7, M[7], num_harmonics, slope);
-    // std::vector<double> minor_VI;
-    // std::vector<double> minor_VII;
-
-    // if (!use_three_chords) {
-    //     minor_VI = addMajorTriad(minor_dominant_V, 8, M[8], num_harmonics, slope);
-
-    //     minor_VII = minor_VI;
-    //     std::vector<int> minor_VII_pitch_classes({ 11, 2, 5 });
-
-    //     for (const int& pitch_class : minor_VII_pitch_classes) {
-    //         minor_VII = addContributionHarmonics(minor_VII, pitch_class, M[8], num_harmonics, slope);
-    //     }
-    // }
-
-    // if (use_polphony) {
-    //     M = major_VII;
-    //     m = minor_VII;
-    // }
-
-    // // RESIZE
-    // std::vector<double> profile_doM;
-    // double mean_profile_M;
-    // double std_profile_M;
-    // std::tie(profile_doM, mean_profile_M, std_profile_M) = resize_profile_to_pcp_size(pcp_size, M);
-
-    // std::vector<double> profile_dom;
-    // double mean_profile_m;
-    // double std_profile_m;
-    // std::tie(profile_dom, mean_profile_m, std_profile_m) = resize_profile_to_pcp_size(pcp_size, m);
-
-    // std::vector<double> profile_doO;
-    // double mean_profile_O;
-    // double std_profile_O;
-    // std::tie(profile_doO, mean_profile_O, std_profile_O) = resize_profile_to_pcp_size(pcp_size, O);
+    std::vector<double> profile_doO;
+    double mean_profile_O;
+    double std_profile_O = 0.;
+    std::tie(profile_doO, mean_profile_O, std_profile_O) = resize_profile_to_pcp_size(pcp_size, O);
 }
 
 }  // namespace core

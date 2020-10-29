@@ -16,7 +16,7 @@ TEST(Key, StaticTestThing) {
  * @brief Test
  *
  */
-TEST(Key, Test) {
+TEST(Key, Test1) {
   const std::string filePath = TEST_DATA_DIR + std::string("audio_files/mozart_c_major_30sec.wav");
 
   int pcp_size = 36;

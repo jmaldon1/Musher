@@ -40,7 +40,7 @@ def distutils_dir_name(dname: str) -> str:
 
     if os == "darwin":
         mac_ver, _, _ = platform.mac_ver()
-        major_ver, minor_ver = tuple(mac_ver.split('.')[:2])
+        major_ver, minor_ver, _ = tuple(mac_ver.split('.'))
         os = f"macosx-{major_ver}.{minor_ver}"
 
     return dir_name.format(dirname=dname,

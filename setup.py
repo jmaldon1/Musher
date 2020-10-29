@@ -31,6 +31,19 @@ with codecs.open('README.md', encoding='utf-8') as fobj:
     long_description = readme_note + fobj.read()
 
 
+def distutils_dir_name(dname: str) -> str:
+    dir_name = "{dirname}.{platform}-{machine}-{version[0]}.{version[1]}"
+    os = platform.system().lower()
+    # fix windows path
+    if os == "windows":
+        os = "win"
+
+    return dir_name.format(dirname=dname,
+                           platform=os,
+                           machine=platform.machine().lower(),
+                           version=sys.version_info)
+
+
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=""):
         Extension.__init__(self, name, sources=[])
@@ -48,36 +61,24 @@ class CleanBuildCommand(distutils.cmd.Command):
 
     def run(self):
         cleanup_list = [
-            # Folders
+            # Cmake
             os.path.join(ROOT_DIR, "build"),
+            # Python
             os.path.join(ROOT_DIR, "dist"),
             os.path.join(ROOT_DIR, "musher.egg-info"),
             os.path.join(ROOT_DIR, ".eggs"),
             os.path.join(ROOT_DIR, ".pytest_cache"),
-            os.path.join(ROOT_DIR, ".tox"),
-            os.path.join(ROOT_DIR, "Release"),
-            os.path.join(ROOT_DIR, "Debug"),
-            os.path.join(ROOT_DIR, "test_bin"),
-            # Files
-            # clean up linux outputs
-            *glob.glob(os.path.join(ROOT_DIR, "*.so")),
-            *glob.glob(os.path.join(ROOT_DIR, "*.dylib")),
-            # clean up windows outputs
-            *glob.glob(os.path.join(ROOT_DIR, "*.pyd")),
-            *glob.glob(os.path.join(ROOT_DIR, "*.dll")),
-            *glob.glob(os.path.join(ROOT_DIR, "*.exe")),
-            *glob.glob(os.path.join(ROOT_DIR, "*.exp")),
-            *glob.glob(os.path.join(ROOT_DIR, "*.lib")),
+            os.path.join(ROOT_DIR, ".tox")
         ]
 
         for item in cleanup_list:
             try:  # If item is a dir then remove it
                 shutil.rmtree(item)
-                print(f"cleaned {item}")
+                print(f"deleted {item}")
             except OSError:
                 try:  # If item is a file then remove it
                     os.remove(item)
-                    print(f"cleaned {item}")
+                    print(f"deleted {item}")
                 except OSError:
                     pass
 
@@ -89,9 +90,10 @@ class CMakeBuild(build_ext):
     Debug (with tests): python setup.py cmake --debug
     Release (no tests): python setup.py cmake
     """
+
     def run(self):
         try:
-            out = subprocess.check_output(["cmake", "--version"])
+            subprocess.check_output(["cmake", "--version"])
         except OSError:
             raise RuntimeError(
                 "CMake must be installed to build the following extensions: " +
@@ -101,9 +103,6 @@ class CMakeBuild(build_ext):
             self.build_extension(ext)
 
     def build_extension(self, ext):
-        extdir = os.path.abspath(
-            os.path.dirname(self.get_ext_fullpath(ext.name)))
-
         if self.debug:
             cmake_args = ["-DCMAKE_BUILD_TYPE=Debug", "-DENABLE_TESTS=On"]
         else:
@@ -112,36 +111,60 @@ class CMakeBuild(build_ext):
         env = os.environ.copy()
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
-        subprocess.check_call(['cmake', ext.sourcedir] + cmake_args,
+        subprocess.run(['cmake', ext.sourcedir] + cmake_args,
                               cwd=self.build_temp, env=env)
-        subprocess.check_call(['cmake', '--build', '.'],
+        subprocess.run(['cmake', '--build', '.'],
                               cwd=self.build_temp)
 
 
 class CTest(test):
     """
     Run tests if compiled (only through DEBUG)
-    
+
     python setup.py cmake --debug
     python setup.py ctest
     """
-    def distutils_dir_name(self, dname):
-        dir_name = "{dirname}.{platform}-{machine}-{version[0]}.{version[1]}"
-        os = platform.system().lower()
-        # fix windows path
-        if os == "windows":
-            os = "win"
-
-        return dir_name.format(dirname=dname,
-                               platform=os,
-                               machine=platform.machine().lower(),
-                               version=sys.version_info)      
-
     def run(self):
-        cwd = os.path.join('build', self.distutils_dir_name('temp'))
+        cwd = os.path.join('build', distutils_dir_name('temp'))
         if platform.system().lower() == "windows":
             cwd = os.path.join(cwd, "Debug")
-        subprocess.call(['ctest', "--output-on-failure"], cwd=cwd, shell=True)
+        result = subprocess.run(['ctest', "--output-on-failure"], cwd=cwd)
+        if result.stderr:
+            print("The following error has occured:")
+            print(result.stderr.decode("utf-8"))
+
+
+class GTest(distutils.cmd.Command):
+    """
+    Run tests if compiled (only through DEBUG)
+
+    python setup.py cmake --debug
+    python setup.py gtest
+
+    example using filters:
+        python setup.py gtest --g=--gtest_filter=HPCP.\*
+    """
+    description = 'Run google tests for c++ library'
+    user_options = [
+        ('gtest-options=', 'g',
+         'Any google test args that need to be passed through when building tests.'),
+    ]
+
+    def initialize_options(self):
+        self.gtest_options = ""
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        bin_dir = os.path.join('build', distutils_dir_name('temp'), "bin")
+        if platform.system().lower() == "windows":
+            bin_dir = os.path.join(bin_dir, "Debug")
+        result = subprocess.run(
+            ['./musher-core-test', self.gtest_options], cwd=bin_dir, stderr=subprocess.PIPE)
+        if result.stderr:
+            print("The following error has occured:")
+            print(result.stderr.decode("utf-8"))
 
 
 setup(
@@ -151,11 +174,10 @@ setup(
     packages=find_packages(),
     ext_modules=[CMakeExtension("musher")],
     cmdclass={
-        "clean": CleanBuildCommand,
         "cmake": CMakeBuild,
         "ctest": CTest,
-        # "conan_debug":
-        # conan_debug":
+        "gtest": GTest,
+        "clean": CleanBuildCommand,
     },
     zip_safe=False,
     long_description=long_description,

@@ -7,17 +7,19 @@
 using namespace musher::core;
 using namespace musher::core::test;
 
-TEST(Key, StaticTestThing) {
-  std::vector<double> dummy;
-  detectKey(dummy, true, true, 4, 0.6, PolyphicProfile::Diatonic);
-}
 
+class Key_using_test_data_dir : public ::testing::Test
+{
+  protected:
+    std::string test_data_dir = TEST_DATA_DIR;
+};
 /**
  * @brief Test
  *
  */
-TEST(Key, Test1) {
-  const std::string filePath = TEST_DATA_DIR + std::string("audio_files/mozart_c_major_30sec.wav");
+TEST_F(Key_using_test_data_dir, Test1) {
+  const std::string filePath = test_data_dir + std::string("audio_files/mozart_c_major_30sec.wav");
+  // const std::string filePath = TEST_DATA_DIR + std::string("audio_files/1356281_Eb_major.wav");
 
   int pcp_size = 36;
   double sample_rate = 44100.;
@@ -47,5 +49,10 @@ TEST(Key, Test1) {
   }
   std::vector<double> avgs(sums.size());
   std::transform(sums.begin(), sums.end(), avgs.begin(), [&count](auto const &sum) { return sum / count; });
-  // printVector(avgs);
+  KeyOutput key_output = detectKey(avgs, true, true, 4, 0.6, PolyphicProfile::Temperley);
+
+  EXPECT_EQ(key_output.key, "C");
+  EXPECT_EQ(key_output.scale, "major");
+  EXPECT_NEAR(key_output.strength, 0.760322, 0.000001);
+  EXPECT_NEAR(key_output.first_to_second_relative_strength, 0.607807, 0.000001);
 }

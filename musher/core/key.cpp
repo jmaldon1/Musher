@@ -210,7 +210,7 @@ double mean(const std::vector<double>& vec) {
     return sum / vec.size();
 }
 
-std::tuple<std::vector<double>, double, double> resize_profile_to_pcp_size(int pcp_size,
+std::tuple<std::vector<double>, double, double> resize_profile_to_pcp_size(unsigned int pcp_size,
                                                                            const std::vector<double>& profile_scale) {
     int n = pcp_size / 12;
 
@@ -220,7 +220,7 @@ std::tuple<std::vector<double>, double, double> resize_profile_to_pcp_size(int p
         profile_do[i * n] = profile_scale[i];
 
         // Two interpolated values
-        // Real incr_M, incr_m, incr_O;
+        // double incr_M, incr_m, incr_O;
         double incr;
         if (i == 11) {
             incr = (profile_scale[11] - profile_scale[0]) / n;
@@ -235,25 +235,61 @@ std::tuple<std::vector<double>, double, double> resize_profile_to_pcp_size(int p
         }
     }
 
-    double mean_profile = mean(profile_do);
+    double mean_profile = fplus::mean<double, std::vector<double>>(profile_do);
 
     // Compute standard devation
-    double accum = 0.0;
-    std::for_each(std::begin(profile_do), std::end(profile_do),
-                  [&](const double d) { accum += (d - mean_profile) * (d - mean_profile); });
-    double std_profile = sqrt(accum / (profile_do.size() - 1));
+    auto std_profile = fplus::fwd::apply(fplus::reduce(
+                                             [&mean_profile](auto total, auto next_val) {
+                                                 return total + ((next_val - mean_profile) * (next_val - mean_profile));
+                                             },
+                                             0, profile_do),
+                                         [](auto std_profile) { return std::sqrt(std_profile); });
 
     return std::tuple<std::vector<double>, double, double>{ profile_do, mean_profile, std_profile };
 }
 
-void detectKey(const std::vector<double>& pcp,
-               bool use_polphony,
-               bool use_three_chords,
-               unsigned int num_harmonics,
-               double slope,
-               PolyphicProfile profile_type,
-               unsigned int pcp_size,
-               bool use_maj_min) {
+// correlation coefficient with 'shift'
+// on of the vectors is shifted in time, and then the correlation is calculated,
+// just like a cross-correlation
+double correlation(const std::vector<double>& v1,
+                   const double mean1,
+                   const double std1,
+                   const std::vector<double>& v2,
+                   const double mean2,
+                   const double std2,
+                   const int shift) {
+    double r = 0.0;
+    int size = (int)v1.size();
+
+    for (int i = 0; i < size; i++) {
+        int index = (i - shift) % size;
+
+        if (index < 0) {
+            index += size;
+        }
+
+        r += (v1[i] - mean1) * (v2[index] - mean2);
+    }
+
+    r /= std1 * std2;
+
+    return r;
+}
+
+KeyOutput detectKey(const std::vector<double>& pcp,
+                    bool use_polphony,
+                    bool use_three_chords,
+                    unsigned int num_harmonics,
+                    double slope,
+                    PolyphicProfile profile_type,
+                    unsigned int _pcp_size,
+                    bool use_maj_min) {
+    unsigned int pcp_size = static_cast<unsigned int>(pcp.size());
+    unsigned int n = pcp_size / 12;
+
+    if (pcp_size < 12 || pcp_size % 12 != 0)
+        throw std::runtime_error("Key: input PCP size is not a positive multiple of 12");
+
     std::vector<double> M;
     std::vector<double> m;
     std::vector<double> O(12, (double)0.0);
@@ -311,7 +347,7 @@ void detectKey(const std::vector<double>& pcp,
     std::vector<double> m_chords = fplus::fwd::apply(
         m_chords_empty,
         // Tonica (I)
-        [&m, &num_harmonics, &slope](auto chords) { return addMajorTriad(chords, 0, m[0], num_harmonics, slope); },
+        [&m, &num_harmonics, &slope](auto chords) { return addMinorTriad(chords, 0, m[0], num_harmonics, slope); },
         // II (5th diminished)
         [&m, &num_harmonics, &slope, &use_three_chords](auto chords) {
             if (!use_three_chords) return addContributionHarmonics(chords, 2, m[2], num_harmonics, slope);
@@ -387,6 +423,137 @@ void detectKey(const std::vector<double>& pcp,
     double mean_profile_O;
     double std_profile_O = 0.;
     std::tie(profile_doO, mean_profile_O, std_profile_O) = resize_profile_to_pcp_size(pcp_size, O);
+
+    /* Compute Correlation */
+    // compute mean
+    double mean_pcp = fplus::mean<double, std::vector<double>>(pcp);
+
+    // compute standard devation
+    auto std_pcp = fplus::fwd::apply(
+        fplus::reduce(
+            [&mean_pcp](auto total, auto pcp_val) { return total + ((pcp_val - mean_pcp) * (pcp_val - mean_pcp)); }, 0,
+            pcp),
+        [](auto std_pcp) { return std::sqrt(std_pcp); });
+
+    // Compute correlation matrix
+    int key_index = -1;            // index of the first maximum
+    double max = -1;               // first maximum
+    double max2 = -1;              // second maximum
+    Scales scale = Scales::MAJOR;  // scale
+
+    // Compute maximum for major, minor and other.
+    double max_major = -1;
+    double max_2_major = -1;
+    int key_index_major = -1;
+
+    double max_minor = -1;
+    double max_2_minor = -1;
+    int key_index_minor = -1;
+
+    double max_other = -1;
+    double max_2_other = -1;
+    int key_index_other = -1;
+
+    // calculate the correlation between the profiles and the PCP...
+    // we shift the profile around to find the best match
+    for (int shift = 0; shift < pcp_size; shift++) {
+        double corrMajor = correlation(pcp, mean_pcp, std_pcp, profile_doM, mean_profile_M, std_profile_M, shift);
+        // Compute maximum value for major keys
+        if (corrMajor > max_major) {
+            max_2_major = max_major;
+            max_major = corrMajor;
+            key_index_major = shift;
+        }
+
+        double corrMinor = correlation(pcp, mean_pcp, std_pcp, profile_dom, mean_profile_m, std_profile_m, shift);
+        // Compute maximum value for minor keys
+        if (corrMinor > max_minor) {
+            max_2_minor = max_minor;
+            max_minor = corrMinor;
+            key_index_minor = shift;
+        }
+
+        double corrOther = 0;
+        if (use_maj_min) {
+            corrOther = correlation(pcp, mean_pcp, std_pcp, profile_doO, mean_profile_O, std_profile_O, shift);
+            // Compute maximum value for other keys
+            if (corrOther > max_other) {
+                max_2_other = max_other;
+                max_other = corrOther;
+                key_index_other = shift;
+            }
+        }
+    }
+
+    if (max_major > max_minor && max_major > max_other) {
+        key_index = (int)(key_index_major * 12 / pcp_size + 0.5);
+        scale = Scales::MAJOR;
+        max = max_major;
+        max2 = max_2_major;
+    }
+
+    else if (max_minor >= max_major && max_minor >= max_other) {
+        key_index = (int)(key_index_minor * 12 / pcp_size + 0.5);
+        scale = Scales::MINOR;
+        max = max_minor;
+        max2 = max_2_minor;
+    }
+
+    else if (max_other > max_major && max_other > max_minor) {
+        key_index = (int)(key_index_other * 12 / pcp_size + 0.5);
+        scale = Scales::MAJMIN;
+        max = max_other;
+        max2 = max_2_other;
+    }
+
+    // In the case of Wei Chai algorithm, the scale is detected in a second step
+    // In this point, always the major relative is detected, as it is the first
+    // maximum
+    if (profile_type == PolyphicProfile::Weichai) {
+        if (scale == Scales::MINOR)
+            throw std::runtime_error(
+                "Key: error in Wei Chai algorithm. Wei Chai algorithm does not support minor scales.");
+
+        int fifth = key_index + 7 * n;
+        if (fifth > pcp_size) fifth -= pcp_size;
+        int sixth = key_index + 9 * n;
+        if (sixth > pcp_size) sixth -= pcp_size;
+
+        if (pcp[sixth] > pcp[fifth]) {
+            key_index = sixth;
+            key_index = (int)(key_index * 12 / pcp_size + .5);
+            scale = Scales::MINOR;
+        }
+    }
+    if (key_index < 0) {
+        throw std::runtime_error("Key: key_index smaller than zero. Could not find key.");
+    }
+
+    const char* key_names[] = { "A", "Bb", "B", "C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab" };
+    const char* key = key_names[key_index];
+
+    std::string final_scale;
+    if (scale == Scales::MAJOR) {
+        final_scale = "major";
+    }
+
+    else if (scale == Scales::MINOR) {
+        final_scale = "minor";
+    }
+
+    else if (scale == Scales::MAJMIN) {
+        final_scale = "majmin";
+    }
+
+    double strength = max;
+    double first_to_second_relative_strength = (max - max2) / max;
+
+    KeyOutput key_output;
+    key_output.key = key;
+    key_output.scale = final_scale;
+    key_output.strength = strength;
+    key_output.first_to_second_relative_strength = first_to_second_relative_strength;
+    return key_output;
 }
 
 }  // namespace core

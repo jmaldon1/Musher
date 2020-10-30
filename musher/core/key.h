@@ -56,16 +56,23 @@ std::vector<double> addContributionHarmonics(const std::vector<double>& M_chords
                                              const double slope);
 
 std::vector<std::vector<double>> selectKeyProfile(PolyphicProfile profile_type);
-std::tuple<std::vector<double>, double, double> resize_profile_to_pcp_size(int pcp_size,
+std::tuple<std::vector<double>, double, double> resize_profile_to_pcp_size(unsigned int pcp_size,
                                                                            const std::vector<double>& profile_scale);
-void detectKey(const std::vector<double>& pcp,
-               bool use_polphony = true,
-               bool use_three_chords = true,
-               unsigned int num_harmonics = 4,
-               double slope = 0.6,
-               PolyphicProfile profile_type = PolyphicProfile::Bgate,
-               unsigned int pcp_size = 36,
-               bool use_maj_min = false);
+double correlation(const std::vector<double>& v1,
+                   const double mean1,
+                   const double std1,
+                   const std::vector<double>& v2,
+                   const double mean2,
+                   const double std2,
+                   const int shift);
+KeyOutput detectKey(const std::vector<double>& pcp,
+                    bool use_polphony = true,
+                    bool use_three_chords = true,
+                    unsigned int num_harmonics = 4,
+                    double slope = 0.6,
+                    PolyphicProfile profile_type = PolyphicProfile::Bgate,
+                    unsigned int pcp_size = 36,
+                    bool use_maj_min = false);
 
 }  // namespace core
 }  // namespace musher

@@ -8,17 +8,12 @@ using namespace musher::core;
 using namespace musher::core::test;
 
 
-class Key_using_test_data_dir : public ::testing::Test
-{
-  protected:
-    std::string test_data_dir = TEST_DATA_DIR;
-};
 /**
  * @brief Test
  *
  */
-TEST_F(Key_using_test_data_dir, Test1) {
-  const std::string filePath = test_data_dir + std::string("audio_files/mozart_c_major_30sec.wav");
+TEST(Key, Test1) {
+  const std::string filePath = TEST_DATA_DIR + std::string("audio_files/mozart_c_major_30sec.wav");
   // const std::string filePath = TEST_DATA_DIR + std::string("audio_files/1356281_Eb_major.wav");
 
   int pcp_size = 36;

@@ -277,13 +277,13 @@ double correlation(const std::vector<double>& v1,
 }
 
 KeyOutput detectKey(const std::vector<double>& pcp,
-                    bool use_polphony,
-                    bool use_three_chords,
-                    unsigned int num_harmonics,
-                    double slope,
-                    PolyphicProfile profile_type,
-                    unsigned int _pcp_size,
-                    bool use_maj_min) {
+                    const bool use_polphony,
+                    const bool use_three_chords,
+                    const unsigned int num_harmonics,
+                    const double slope,
+                    const PolyphicProfile profile_type,
+                    const unsigned int _pcp_size,
+                    const bool use_maj_min) {
     unsigned int pcp_size = static_cast<unsigned int>(pcp.size());
     unsigned int n = pcp_size / 12;
 

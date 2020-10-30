@@ -66,13 +66,13 @@ double correlation(const std::vector<double>& v1,
                    const double std2,
                    const int shift);
 KeyOutput detectKey(const std::vector<double>& pcp,
-                    bool use_polphony = true,
-                    bool use_three_chords = true,
-                    unsigned int num_harmonics = 4,
-                    double slope = 0.6,
-                    PolyphicProfile profile_type = PolyphicProfile::Bgate,
-                    unsigned int pcp_size = 36,
-                    bool use_maj_min = false);
+                    const bool use_polphony = true,
+                    const bool use_three_chords = true,
+                    const unsigned int num_harmonics = 4,
+                    const double slope = 0.6,
+                    const PolyphicProfile profile_type = PolyphicProfile::Bgate,
+                    const unsigned int pcp_size = 36,
+                    const bool use_maj_min = false);
 
 }  // namespace core
 }  // namespace musher

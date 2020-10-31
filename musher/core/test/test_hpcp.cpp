@@ -21,8 +21,7 @@ TEST(HPCP, TestZeros) {
 /**
  * @brief Test submediant position
  * @details Make sure that the submediant of a key based on 440 is in the
- * correct location (submediant was randomly selected from all the
- * tones)
+ * correct location (submediant was randomly selected from all the tones)
  *
  */
 TEST(HPCP, SubmediantPosition) {
@@ -45,7 +44,6 @@ TEST(HPCP, Harmonics) {
   std::vector<double> actual_hpcp;
   double tone = 100.;
   std::vector<double> frequencies = {tone, tone * 2, tone * 3, tone * 4};
-  /* Vector of size 4 filled with 1s */
   std::vector<double> magnitudes(4, 1.);
   int harmonics = 3;
   bool band_preset = false;
@@ -57,18 +55,12 @@ TEST(HPCP, Harmonics) {
 
   std::vector<double> expected_hpcp = {0., 0., 0., 0.1340538263, 0., 0.2476127148, 0., 0., 0., 0., 1., 0.};
   EXPECT_VEC_NEAR(actual_hpcp, expected_hpcp, 1e-4);
-
-  // std::cout << "HPCP: " << std::endl;
-  // for (auto & element : actual_hpcp) {
-  //     std::cout << element << std::endl;
-  // }
 }
 
 /**
  * @brief Test max shifted
  * @details Tests whether a HPCP reading with only the dominant semitone
- * activated is correctly shifted so that the dominant is at the
- * position 0
+ * activated is correctly shifted so that the dominant is at the position 0
  *
  */
 TEST(HPCP, MaxShifted) {

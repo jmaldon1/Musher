@@ -69,9 +69,10 @@ TEST(Key, TestEbMajorEDM) {
     Framecutter framecutter(mixed_audio, 4096, 512);
 
     int count = 0;
-    std::vector<double> sums((size_t)pcp_size, 0.);
+    std::vector<double> sums(static_cast<size_t>(pcp_size), 0.);
 
     for (const std::vector<double> &frame : framecutter) {
+        // NOTE: windowing and convertToFrequencySpectrum are slowest functions here.
         std::vector<double> windowed_frame = windowing(frame, blackmanHarris62dB);
         std::vector<double> spectrum = convertToFrequencySpectrum(windowed_frame);
         std::vector<std::tuple<double, double>> spectral_peaks =

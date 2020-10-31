@@ -140,7 +140,7 @@ std::vector<double> windowing(
     bool zero_phase = true,
     bool _normalize = true);
 
-double magnitude(const std::complex<double> complex_pair);
+double Magnitude(const std::complex<double> complex_pair);
 std::vector<double> convertToFrequencySpectrum(const std::vector<double> &flattened_normalized_samples);
 std::tuple<double, double> quadraticInterpolation(double a, double b, double y, int middle_point_index);
 
@@ -292,6 +292,8 @@ class Framecutter {
 };
 
 std::vector<double> monoMixer(const std::vector<std::vector<double>> &input);
+
+double standard_deviation(double mean, const std::vector<double> &vec);
 
 }  // namespace core
 }  // namespace musher

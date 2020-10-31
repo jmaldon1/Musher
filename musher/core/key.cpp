@@ -236,14 +236,7 @@ std::tuple<std::vector<double>, double, double> resize_profile_to_pcp_size(unsig
     }
 
     double mean_profile = fplus::mean<double, std::vector<double>>(profile_do);
-
-    // Compute standard devation
-    auto std_profile = fplus::fwd::apply(fplus::reduce(
-                                             [&mean_profile](auto total, auto next_val) {
-                                                 return total + ((next_val - mean_profile) * (next_val - mean_profile));
-                                             },
-                                             0, profile_do),
-                                         [](auto std_profile) { return std::sqrt(std_profile); });
+    double std_profile = standard_deviation(mean_profile, profile_do);
 
     return std::tuple<std::vector<double>, double, double>{ profile_do, mean_profile, std_profile };
 }
@@ -425,15 +418,8 @@ KeyOutput detectKey(const std::vector<double>& pcp,
     std::tie(profile_doO, mean_profile_O, std_profile_O) = resize_profile_to_pcp_size(pcp_size, O);
 
     /* Compute Correlation */
-    // compute mean
     double mean_pcp = fplus::mean<double, std::vector<double>>(pcp);
-
-    // compute standard devation
-    auto std_pcp = fplus::fwd::apply(
-        fplus::reduce(
-            [&mean_pcp](auto total, auto pcp_val) { return total + ((pcp_val - mean_pcp) * (pcp_val - mean_pcp)); }, 0,
-            pcp),
-        [](auto std_pcp) { return std::sqrt(std_pcp); });
+    double std_pcp = standard_deviation(mean_pcp, pcp);
 
     // Compute correlation matrix
     int key_index = -1;            // index of the first maximum

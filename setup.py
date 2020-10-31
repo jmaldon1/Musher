@@ -1,25 +1,16 @@
+"""Setup that is responsible for building the C/C++ python extensions.
+"""
 import os
-import sys
 import platform
 import subprocess
 import shutil
-import glob
 import codecs
-import re
-import ntpath
-
-from setuptools import setup, Extension, find_packages
+from setuptools import setup, find_packages, Extension, Command
 from setuptools.command.build_ext import build_ext
 from setuptools.command.test import test
 
-# Fix error for importing distutils before setuptools
-import distutils.cmd
-from distutils.version import LooseVersion
-from distutils import sysconfig
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-
-readme_note = """\
+README_NOTE = """\
 .. note::
 
    For the latest source, discussion, etc, please visit the
@@ -28,52 +19,61 @@ readme_note = """\
 """
 
 with codecs.open('README.md', encoding='utf-8') as fobj:
-    long_description = readme_note + fobj.read()
+    long_description = README_NOTE + fobj.read()
 
 
-def distutils_dir_name(dname: str) -> str:
-    dir_name = "{dirname}.{platform}-{machine}-{version[0]}.{version[1]}"
-    os = platform.system().lower()
-    # fix windows path
-    if os == "windows":
-        os = "win"
+def get_build_dir() -> str:
+    """Get the build directory that will store all C/C++ extension by-products.
 
-    if os == "darwin":
-        mac_ver, _, _ = platform.mac_ver()
-        major_ver, minor_ver, _ = tuple(mac_ver.split('.'))
-        os = f"macosx-{major_ver}.{minor_ver}"
-
-    return dir_name.format(dirname=dname,
-                           platform=os,
-                           machine=platform.machine().lower(),
-                           version=sys.version_info)
+    Returns:
+        str: build directory path.
+    """
+    root_dir_path = os.path.dirname(os.path.realpath(__file__))
+    return os.path.join(root_dir_path, "build")
 
 
+# pylint: disable=too-few-public-methods
 class CMakeExtension(Extension):
+    """Project extension.
+    """
     def __init__(self, name, sourcedir=""):
         Extension.__init__(self, name, sources=[])
         self.sourcedir = os.path.abspath(sourcedir)
 
 
-class CleanBuildCommand(distutils.cmd.Command):
+# pylint: disable=no-self-use
+# pylint: disable=unnecessary-pass
+# pylint: disable=attribute-defined-outside-init
+class CleanBuildCommand(Command):
+    """Clean the project directory of temporary files involved with
+    building the C extension and python module.
+    """
     user_options = []
 
     def initialize_options(self):
+        """Initialize user options
+        """
         pass
 
     def finalize_options(self):
+        """Finalize user options
+        """
         pass
 
     def run(self):
+        """Run the clean
+        """
+        root_dir = os.path.dirname(os.path.abspath(__file__))
+
         cleanup_list = [
             # Cmake
-            os.path.join(ROOT_DIR, "build"),
+            os.path.join(root_dir, "build"),
             # Python
-            os.path.join(ROOT_DIR, "dist"),
-            os.path.join(ROOT_DIR, "musher.egg-info"),
-            os.path.join(ROOT_DIR, ".eggs"),
-            os.path.join(ROOT_DIR, ".pytest_cache"),
-            os.path.join(ROOT_DIR, ".tox")
+            os.path.join(root_dir, "dist"),
+            os.path.join(root_dir, "musher.egg-info"),
+            os.path.join(root_dir, ".eggs"),
+            os.path.join(root_dir, ".pytest_cache"),
+            os.path.join(root_dir, ".tox")
         ]
 
         for item in cleanup_list:
@@ -95,58 +95,63 @@ class CMakeBuild(build_ext):
     Debug (with tests): python setup.py cmake --debug
     Release (no tests): python setup.py cmake
     """
-
     def run(self):
         try:
             subprocess.check_output(["cmake", "--version"])
-        except OSError:
+        except OSError as err:
             raise RuntimeError(
                 "CMake must be installed to build the following extensions: " +
-                ", ".join(e.name for e in self.extensions))
+                ", ".join(e.name for e in self.extensions)) from err
 
         for ext in self.extensions:
             self.build_extension(ext)
 
     def build_extension(self, ext):
+        build_dir = get_build_dir()
         if self.debug:
             cmake_args = ["-DCMAKE_BUILD_TYPE=Debug", "-DENABLE_TESTS=On"]
         else:
             cmake_args = ["-DCMAKE_BUILD_TYPE=Release"]
 
-        env = os.environ.copy()
-        if not os.path.exists(self.build_temp):
-            os.makedirs(self.build_temp)
+        if not os.path.exists(build_dir):
+            os.makedirs(build_dir)
+
         subprocess.run(['cmake', ext.sourcedir] + cmake_args,
-                              cwd=self.build_temp, env=env)
+                       cwd=build_dir, check=True)
         subprocess.run(['cmake', '--build', '.'],
-                              cwd=self.build_temp)
+                       cwd=build_dir, check=True)
 
 
 class CTest(test):
-    """
-    Run tests if compiled (only through DEBUG)
+    """Run tests if compiled (only through DEBUG)
 
     python setup.py cmake --debug
     python setup.py ctest
     """
     def run(self):
-        cwd = os.path.join('build', distutils_dir_name('temp'))
+        build_dir = get_build_dir()
+
         if platform.system().lower() == "windows":
-            cwd = os.path.join(cwd, "Debug")
-        result = subprocess.run(['ctest', "--output-on-failure"], cwd=cwd)
+            build_dir = os.path.join(build_dir, "Debug")
+
+        result = subprocess.run(['ctest', "--output-on-failure"], cwd=build_dir, check=True)
+
         if result.returncode == 8:
             print("C++ Seg fault.")
 
 
-class GTest(distutils.cmd.Command):
-    """
-    Run tests if compiled (only through DEBUG)
+class GTest(test):
+    r"""Run tests if compiled (only through DEBUG)
 
     python setup.py cmake --debug
     python setup.py gtest
 
     example using filters:
         python setup.py gtest --g=--gtest_filter=HPCP.\*
+
+    Attributes:
+        gtest_options (str): Any gtest options that should be used when running the tests.
+
     """
     description = 'Run google tests for c++ library'
     user_options = [
@@ -161,11 +166,14 @@ class GTest(distutils.cmd.Command):
         pass
 
     def run(self):
-        bin_dir = os.path.join('build', distutils_dir_name('temp'), "bin")
+        bin_dir = os.path.join(get_build_dir(), "bin")
+
         if platform.system().lower() == "windows":
             bin_dir = os.path.join(bin_dir, "Debug")
+
         result = subprocess.run(
-            ['./musher-core-test', self.gtest_options], cwd=bin_dir)
+            ['./musher-core-test', self.gtest_options], cwd=bin_dir, check=True)
+
         if result.returncode == -11:
             print("C++ Seg fault.")
 

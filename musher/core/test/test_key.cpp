@@ -43,7 +43,7 @@ TEST(Key, TestCMajorClassical) {
     }
     std::vector<double> avgs(sums.size());
     std::transform(sums.begin(), sums.end(), avgs.begin(), [&count](auto const &sum) { return sum / count; });
-    KeyOutput key_output = detectKey(avgs, true, true, 4, 0.6, PolyphicProfile::Temperley);
+    KeyOutput key_output = DetectKey(avgs, true, true, 4, 0.6, PolyphicProfile::Temperley);
 
     EXPECT_EQ(key_output.key, "C");
     EXPECT_EQ(key_output.scale, "major");
@@ -87,7 +87,7 @@ TEST(Key, TestEbMajorEDM) {
     }
     std::vector<double> avgs(sums.size());
     std::transform(sums.begin(), sums.end(), avgs.begin(), [&count](auto const &sum) { return sum / count; });
-    KeyOutput key_output = detectKey(avgs, true, true, 4, 0.6, PolyphicProfile::Edmm);
+    KeyOutput key_output = DetectKey(avgs, true, true, 4, 0.6, PolyphicProfile::Edmm);
 
     EXPECT_EQ(key_output.key, "Eb");
     EXPECT_EQ(key_output.scale, "major");

@@ -41,6 +41,8 @@ namespace core {
  *  [4] Faraldo, Á., Jordà, S., & Herrera, P. (2017, June). A multi-profile method"
  *  for key estimation in edm. In Audio Engineering Society Conference: 2017 AES"
  *  International Conference on Semantic Audio. Audio Engineering Society.
+ * 
+ * --essentia: https://github.com/MTG/essentia/blob/master/src/algorithms/tonal/key.cpp
  *
  * @param profile_type Key profile type.
  * @return std::vector<std::vector<double>> Key profile

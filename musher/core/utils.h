@@ -31,43 +31,14 @@ struct HarmonicPeak {
       : semitone(semitone), harmonic_strength(harmonic_strength){};
 };
 
-template <typename T>
-void printVector(const std::vector<T> &vec) {
-  if (vec.empty()) {
-    std::cout << "Vector is empty." << std::endl;
-    return;
-  }
-
-  std::cout << "Printing vector:" << std::endl;
-  for (const auto &element : vec) {
-    std::cout << "  " << element << std::endl;
-  }
-}
-
-template <typename T>
-void printMatrix(T matrix, const char spacing = ' ') {
-  std::cout << "Printing matrix:" << std::endl;
-  if (matrix.empty()) {
-    std::cout << "Matrix is empty." << std::endl;
-    return;
-  }
-
-  for (const auto &row : matrix) {
-    for (const auto &item : row) std::cout << item << spacing;
-    std::cout << std::endl;
-  }
-}
-
-std::string uint8VectorToHexString(const std::vector<uint8_t> &v);
-std::string strBetweenSQuotes(const std::string &s);
-auto unint8_t_to_int = [](uint8_t num) { return static_cast<int>(num); };
-auto int_to_unint8_t = [](int num) { return static_cast<uint8_t>(num); };
-bool isBigEndian(void);
-int16_t twoBytesToInt(const std::vector<uint8_t> &source, const int startIndex);
-int32_t fourBytesToInt(const std::vector<uint8_t> &source, const int startIndex);
-double normalizeInt8_t(const uint8_t sample);
-double normalizeInt16_t(const int16_t sample);
-double normalizeInt32_t(const int32_t sample);
+std::string Uint8VectorToHexString(const std::vector<uint8_t> &v);
+std::string StrBetweenSQuotes(const std::string &s);
+bool IsBigEndian(void);
+int16_t TwoBytesToInt(const std::vector<uint8_t> &source, const int startIndex);
+int32_t FourBytesToInt(const std::vector<uint8_t> &source, const int startIndex);
+double NormalizeInt8_t(const uint8_t sample);
+double NormalizeInt16_t(const int16_t sample);
+double NormalizeInt32_t(const int32_t sample);
 
 // template <typename T>
 // void outputVectorToFile(const std::vector<T>& vec, std::string& filename)
@@ -94,39 +65,39 @@ double normalizeInt32_t(const int32_t sample);
 //     using Fs::operator()...;
 // };
 
-std::vector<double> interleave2Vectors(const std::vector<double> &vec1, const std::vector<double> &vec2);
-double median(std::vector<double> &inVec);
-std::vector<double> onePoleFilter(const std::vector<double> &vec);
+std::vector<double> Interleave2Vectors(const std::vector<double> &vec1, const std::vector<double> &vec2);
+double Median(std::vector<double> &inVec);
+std::vector<double> OnePoleFilter(const std::vector<double> &vec);
 size_t NextFastLen(size_t n);
 
 using ldbl_t = typename std::conditional<sizeof(long double) == sizeof(double), double, long double>::type;
 
-double normFct(int inorm, size_t N);
-double normFct(int inorm,
+double NormFct(int inorm, size_t N);
+double NormFct(int inorm,
                const pocketfft::shape_t &shape,
                const pocketfft::shape_t &axes,
                size_t fct = 1,
                int delta = 0);
 
-std::vector<double> centerVector(const std::vector<double>& vec, size_t new_shape);
-std::vector<double> fftConvolve(const std::vector<double> &vec1, const std::vector<double> &vec2);
-std::vector<double> normalize(const std::vector<double> &input);
-std::vector<double> blackmanHarris(const std::vector<double> &window, double a0, double a1, double a2, double a3);
-std::vector<double> blackmanHarris62dB(const std::vector<double> &window);
-std::vector<double> blackmanHarris92dB(const std::vector<double> &window);
-std::vector<double> windowing(
+std::vector<double> CenterVector(const std::vector<double> &vec, size_t new_shape);
+std::vector<double> FFTConvolve(const std::vector<double> &vec1, const std::vector<double> &vec2);
+std::vector<double> Normalize(const std::vector<double> &input);
+std::vector<double> BlackmanHarris(const std::vector<double> &window, double a0, double a1, double a2, double a3);
+std::vector<double> BlackmanHarris62dB(const std::vector<double> &window);
+std::vector<double> BlackmanHarris92dB(const std::vector<double> &window);
+std::vector<double> Windowing(
     const std::vector<double> &audio_frame,
-    const std::function<std::vector<double>(const std::vector<double> &)> &window_type_func = blackmanHarris62dB,
+    const std::function<std::vector<double>(const std::vector<double> &)> &window_type_func = BlackmanHarris62dB,
     unsigned size = 1024,
     unsigned zero_padding_size = 0,
     bool zero_phase = true,
-    bool _normalize = true);
+    bool _Normalize = true);
 
 double Magnitude(const std::complex<double> complex_pair);
-std::vector<double> convertToFrequencySpectrum(const std::vector<double> &audio_frame);
-std::tuple<double, double> quadraticInterpolation(double a, double b, double y, int middle_point_index);
+std::vector<double> ConvertToFrequencySpectrum(const std::vector<double> &audio_frame);
+std::tuple<double, double> QuadraticInterpolation(double a, double b, double y, int middle_point_index);
 
-std::vector<std::tuple<double, double>> peakDetect(const std::vector<double> &inp,
+std::vector<std::tuple<double, double>> PeakDetect(const std::vector<double> &inp,
                                                    double threshold = -1000.0,
                                                    bool interpolate = true,
                                                    std::string sort_by = "position",
@@ -159,10 +130,10 @@ void AddContribution(double freq,
                      std::vector<double> &hpcp);
 std::vector<HarmonicPeak> InitHarmonicContributionTable(int harmonics);
 
-// normalize a vector so its largest value gets mapped to 1
+// Normalize a vector so its largest value gets mapped to 1
 // if zero, the vector isn't touched
 template <typename T>
-void normalizeInPlace(std::vector<T> &array) {
+void NormalizeInPlace(std::vector<T> &array) {
   if (array.empty()) return;
 
   T maxElement = *std::max_element(array.begin(), array.end());
@@ -174,10 +145,10 @@ void normalizeInPlace(std::vector<T> &array) {
   }
 }
 
-// normalize a vector so it's sum is equal to 1. the vector is not touched if
+// Normalize a vector so it's sum is equal to 1. the vector is not touched if
 // it contains negative elements or the sum is zero
 template <typename T>
-void normalizeSum(std::vector<T> &array) {
+void NormalizeSum(std::vector<T> &array) {
   if (array.empty()) return;
 
   // T sumElements = std::accumulate(array.begin(), array.end(), (T) 0.0);
@@ -210,7 +181,7 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
                          double sample_rate = 44100.,
                          bool max_shifted = false,
                          bool non_linear = false,
-                         std::string _normalized = "unit max");
+                         std::string _Normalized = "unit max");
 
 std::vector<double> HPCP(const std::vector<std::tuple<double, double>> &peaks,
                          unsigned int size = 12,
@@ -225,18 +196,18 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>> &peaks,
                          double sample_rate = 44100.,
                          bool max_shifted = false,
                          bool non_linear = false,
-                         std::string _normalized = "unit max");
+                         std::string _Normalized = "unit max");
 
 /**
  * @brief This class should be treated like an iterator.
- * 
+ *
  * Usage example:
  *   Framecutter framecutter(audio_signal);
  *
  *   for (const std::vector<double> &frame : framecutter) {
  *       perform_work_on_frame(frame);
  *   }
- * 
+ *
  */
 class Framecutter {
  private:

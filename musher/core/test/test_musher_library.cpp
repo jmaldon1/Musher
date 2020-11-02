@@ -46,7 +46,7 @@ TEST(AudioFileDecoding, LoadsAudioFileTest) {
   std::string outputFile = "test_include/filedata.txt";
   // outputVectorToFile<uint8_t>(fileData, outputFile);
 
-  std::string fileDataHex = uint8VectorToHexString(fileData);
+  std::string fileDataHex = Uint8VectorToHexString(fileData);
   // ASSERT_TRUE(fileData == fileDataExpected);
 }
 
@@ -108,9 +108,9 @@ TEST(AudioFileDecoding, BeatDetection) {
   WavDecoded wav_decoded = CDecodeWav(filePath);
   // uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
   uint32_t sampleRate = wav_decoded.sample_rate;
-  std::vector<double> normalized_samples = wav_decoded.interleaved_normalized_samples;
+  std::vector<double> Normalized_samples = wav_decoded.interleaved_Normalized_samples;
 
-  double bpm = bpmsOverWindow(normalized_samples, sampleRate, 3);
+  double bpm = BPMsOverWindow(Normalized_samples, sampleRate, 3);
 
   // std::cout << bpm << std::endl;
   EXPECT_EQ(bpm, 80.0);
@@ -120,16 +120,16 @@ TEST(AudioFileDecoding, BeatDetection) {
 }
 
 TEST(AudioFileDecoding, DecodeMp3) {
-  std::vector<double> normalizedSamples;
+  std::vector<double> NormalizedSamples;
   const std::string filePathMp3 = TEST_DATA_DIR + std::string("audio_files/126bpm.mp3");
   Mp3Decoded mp3_decoded;
   // std::unordered_map< std::string, std::variant< int, uint32_t, double, bool, std::string > > wavDecodedData;
 
-  normalizedSamples = CDecodeMp3(mp3_decoded, filePathMp3);
+  NormalizedSamples = CDecodeMp3(mp3_decoded, filePathMp3);
   uint32_t sampleRate = mp3_decoded.sample_rate;
 
   // uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
 
-  double bpm = bpmsOverWindow(normalizedSamples, sampleRate, 3);
+  double bpm = BPMsOverWindow(NormalizedSamples, sampleRate, 3);
   std::cout << bpm << std::endl;
 }

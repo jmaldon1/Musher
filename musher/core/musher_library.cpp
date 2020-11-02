@@ -46,9 +46,9 @@ std::vector<uint8_t> CLoadAudioFile(const std::string& file_path) {
 
 /**
  * @brief Decode a wav file.
- * WavDecoded.normalized_samples contains:
+ * WavDecoded.Normalized_samples contains:
  *  samples[0] holds channel 1
- *  samples[1] holds channel 2 (Will not exist if mono file)
+ *  samples[1] holds channel 2 (Will not exist if mono audio)
  * 
  * @param file_data WAV file data.
  * @return WavDecoded Decoded .wav file information.
@@ -63,7 +63,7 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
   // -----------------------------------------------------------
   // HEADER CHUNK
   std::string header_chunk_id(file_data.begin(), file_data.begin() + 4);
-  // int32_t fileSizeInBytes = fourBytesToInt (file_data, 4) + 8;
+  // int32_t fileSizeInBytes = FourBytesToInt (file_data, 4) + 8;
   std::string format(file_data.begin() + 8, file_data.begin() + 12);
   // -----------------------------------------------------------
 
@@ -95,13 +95,13 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
   // FORMAT CHUNK
   int f = format_chunk_index;
   std::string format_chunk_id(file_data.begin() + f, file_data.begin() + f + 4);
-  // int32_t formatChunkSize = fourBytesToInt (file_data, f + 4);
-  int16_t audio_format = twoBytesToInt(file_data, f + 8);
-  int16_t num_channels = twoBytesToInt(file_data, f + 10);
-  uint32_t sample_rate = (uint32_t)fourBytesToInt(file_data, f + 12);
-  int32_t num_bytes_per_second = fourBytesToInt(file_data, f + 16);
-  int16_t num_bytes_per_block = twoBytesToInt(file_data, f + 20);
-  int bit_depth = static_cast<int>(twoBytesToInt(file_data, f + 22));
+  // int32_t formatChunkSize = FourBytesToInt (file_data, f + 4);
+  int16_t audio_format = TwoBytesToInt(file_data, f + 8);
+  int16_t num_channels = TwoBytesToInt(file_data, f + 10);
+  uint32_t sample_rate = (uint32_t)FourBytesToInt(file_data, f + 12);
+  int32_t num_bytes_per_second = FourBytesToInt(file_data, f + 16);
+  int16_t num_bytes_per_block = TwoBytesToInt(file_data, f + 20);
+  int bit_depth = static_cast<int>(TwoBytesToInt(file_data, f + 22));
 
   int num_bytes_per_sample = bit_depth / 8;
 
@@ -135,7 +135,7 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
   // DATA CHUNK
   int d = data_chunk_index;
   std::string data_chunk_id(file_data.begin() + d, file_data.begin() + d + 4);
-  int32_t data_chunk_size = fourBytesToInt(file_data, d + 4);
+  int32_t data_chunk_size = FourBytesToInt(file_data, d + 4);
 
   int num_samples = data_chunk_size / (num_channels * bit_depth / 8);
   int samples_start_index = data_chunk_index + 8;
@@ -147,13 +147,13 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
       int sample_index = samples_start_index + (num_bytes_per_block * i) + channel * num_bytes_per_sample;
 
       if (bit_depth == 8) {
-        /* normalize samples to between -1 and 1 */
-        double sample = normalizeInt8_t(file_data[sample_index]);
+        /* Normalize samples to between -1 and 1 */
+        double sample = NormalizeInt8_t(file_data[sample_index]);
         samples[channel].push_back(sample);
       } else if (bit_depth == 16) {
-        int16_t sample_as_int = twoBytesToInt(file_data, sample_index);
-        /* normalize samples to between -1 and 1 */
-        double sample = normalizeInt16_t(sample_as_int);
+        int16_t sample_as_int = TwoBytesToInt(file_data, sample_index);
+        /* Normalize samples to between -1 and 1 */
+        double sample = NormalizeInt16_t(sample_as_int);
         samples[channel].push_back(sample);
       } else if (bit_depth == 24) {
         int32_t sample_as_int = 0;
@@ -163,8 +163,8 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
         if (sample_as_int & 0x800000)  // if the 24th bit is set, this is a negative number in 24-bit world
           sample_as_int = sample_as_int | ~0xFFFFFF;  // so make sure sign is extended to the 32 bit float
 
-        /* normalize samples to between -1 and 1 */
-        double sample = normalizeInt32_t(sample_as_int);
+        /* Normalize samples to between -1 and 1 */
+        double sample = NormalizeInt32_t(sample_as_int);
         samples[channel].push_back(sample);
       } else {
         std::string err_message =
@@ -193,14 +193,14 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
   wav_decoded.length_in_seconds = length_in_seconds;
   wav_decoded.file_type = file_type;
   wav_decoded.avg_bitrate_kbps = avg_bitrate_kbps;
-  wav_decoded.normalized_samples = samples;
+  wav_decoded.Normalized_samples = samples;
 
   if (stereo) {
     const std::vector<double> channel_one = samples[0];
     const std::vector<double> channel_two = samples[1];
-    wav_decoded.interleaved_normalized_samples = interleave2Vectors(channel_one, channel_two);
+    wav_decoded.interleaved_Normalized_samples = Interleave2Vectors(channel_one, channel_two);
   } else {
-    wav_decoded.interleaved_normalized_samples = samples[0];
+    wav_decoded.interleaved_Normalized_samples = samples[0];
   }
 
   return wav_decoded;
@@ -254,11 +254,11 @@ std::vector<double> CDecodeMp3(Mp3Decoded& mp3_decoded, const std::string file_p
   mp3_decoded.file_type = file_type;
   mp3_decoded.avg_bitrate_kbps = info.avg_bitrate_kbps;
 
-  std::vector<double> normalized_samples(interleaved_samples.size());
-  std::transform(interleaved_samples.begin(), interleaved_samples.end(), normalized_samples.begin(),
-                 [](const int32_t x) { return normalizeInt32_t(x); });
+  std::vector<double> Normalized_samples(interleaved_samples.size());
+  std::transform(interleaved_samples.begin(), interleaved_samples.end(), Normalized_samples.begin(),
+                 [](const int32_t x) { return NormalizeInt32_t(x); });
 
-  return normalized_samples;
+  return Normalized_samples;
 }
 
 /**
@@ -268,7 +268,7 @@ std::vector<double> CDecodeMp3(Mp3Decoded& mp3_decoded, const std::string file_p
  * @param sample_rate Sampling rate of the audio signal [Hz].
  * @return double BPM
  */
-double bpmDetection(std::vector<double>& samples, uint32_t sample_rate) {
+double BPMDetection(std::vector<double>& samples, uint32_t sample_rate) {
   wave_object obj;
   wt_object wt;
   int J = 1;
@@ -323,7 +323,7 @@ double bpmDetection(std::vector<double>& samples, uint32_t sample_rate) {
     }
 
     // Perform One Pole filter on cD
-    cD_filtered = onePoleFilter(cD);
+    cD_filtered = OnePoleFilter(cD);
 
     // Decimate
     int dc = std::pow(2, (total_levels - level - 1));
@@ -360,7 +360,7 @@ double bpmDetection(std::vector<double>& samples, uint32_t sample_rate) {
   if (zeros) return 0.0;
 
   // Filter cA
-  cA_filtered = onePoleFilter(cA);
+  cA_filtered = OnePoleFilter(cA);
 
   // Make cA_filtered absolute
   std::vector<double> cA_absolute(cA_filtered.size());
@@ -396,7 +396,7 @@ double bpmDetection(std::vector<double>& samples, uint32_t sample_rate) {
   std::reverse(reverse_cD.begin(), reverse_cD.end());
 
   // Perform an array flipped convolution, which is the same as a cross-correlation on the samples.
-  std::vector<double> correl = fftConvolve(b, reverse_cD);
+  std::vector<double> correl = FFTConvolve(b, reverse_cD);
   correl.pop_back();  // We don't need the last element
   size_t midpoint = correl.size() / 2;
   std::vector<double> correl_midpoint_tmp(correl.begin() + midpoint, correl.end());
@@ -411,7 +411,7 @@ double bpmDetection(std::vector<double>& samples, uint32_t sample_rate) {
   double threshold = -1000.0;
   bool interpolate = true;
   std::string sort_by = "height";
-  peaks = peakDetect(sliced_correl_midpoint_tmp_abs, threshold, interpolate, sort_by);
+  peaks = PeakDetect(sliced_correl_midpoint_tmp_abs, threshold, interpolate, sort_by);
 
   // Get the first item from peaks because we want the highest peak
   const double peak_index = std::get<0>(peaks[0]);
@@ -424,7 +424,7 @@ double bpmDetection(std::vector<double>& samples, uint32_t sample_rate) {
 }
 
 /**
- * @brief Calculate the average BPM of samples.
+ * @brief Calculate the average BPM (Beats per minute) of samples.
  * This function will slice the samples into windows and calculate the BPM over each
  * window and then average them to achieve a final BPM over all samples.
  *
@@ -434,7 +434,7 @@ double bpmDetection(std::vector<double>& samples, uint32_t sample_rate) {
  * typically less than 10 seconds.
  * @return double Average BPM.
  */
-double bpmsOverWindow(std::vector<double>& samples, uint32_t sample_rate, unsigned int window_seconds) {
+double BPMsOverWindow(std::vector<double>& samples, uint32_t sample_rate, unsigned int window_seconds) {
   int num_samples = samples.size();
   int window_samples = window_seconds * sample_rate;
   int sample_index = 0;
@@ -446,13 +446,13 @@ double bpmsOverWindow(std::vector<double>& samples, uint32_t sample_rate, unsign
     typename std::vector<double>::iterator samp_it = samples.begin() + sample_index;
     std::vector<double> sliced_samples(samp_it, samp_it + window_samples);
 
-    double bpm = bpmDetection(sliced_samples, sample_rate);
+    double bpm = BPMDetection(sliced_samples, sample_rate);
     bpms[window_index] = bpm;
 
     sample_index += window_samples;
   }
 
-  return std::round(median(bpms));
+  return std::round(Median(bpms));
 }
 
 }  // namespace core

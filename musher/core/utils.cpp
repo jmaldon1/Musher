@@ -22,7 +22,7 @@ namespace core {
  * @param uint8_t::vector vector of uint8_t
  * @return std::string string of hex
  */
-std::string uint8VectorToHexString(const std::vector<uint8_t> &v) {
+std::string Uint8VectorToHexString(const std::vector<uint8_t> &v) {
   std::stringstream ss;
   ss << std::hex << std::setfill('0');
   std::vector<uint8_t>::const_iterator it;
@@ -41,7 +41,7 @@ std::string uint8VectorToHexString(const std::vector<uint8_t> &v) {
  * @param s String that contains 2 single quotes
  * @return string between single quotes
  */
-std::string strBetweenSQuotes(const std::string &s) {
+std::string StrBetweenSQuotes(const std::string &s) {
   std::string squote = "'";
   // Find 1st quote starting from beginning of string
   std::size_t pos = s.find(squote) + 1;
@@ -54,10 +54,10 @@ std::string strBetweenSQuotes(const std::string &s) {
   return s.substr(pos, len);
 }
 
-int16_t twoBytesToInt(const std::vector<uint8_t> &source, const int startIndex) {
+int16_t TwoBytesToInt(const std::vector<uint8_t> &source, const int startIndex) {
   int16_t result;
 
-  if (!isBigEndian())
+  if (!IsBigEndian())
     result = (source[startIndex + 1] << 8) | source[startIndex];
   else
     result = (source[startIndex] << 8) | source[startIndex + 1];
@@ -65,10 +65,10 @@ int16_t twoBytesToInt(const std::vector<uint8_t> &source, const int startIndex) 
   return result;
 }
 
-int32_t fourBytesToInt(const std::vector<uint8_t> &source, const int startIndex) {
+int32_t FourBytesToInt(const std::vector<uint8_t> &source, const int startIndex) {
   int32_t result;
 
-  if (!isBigEndian())
+  if (!IsBigEndian())
     result = (source[startIndex + 3] << 24) | (source[startIndex + 2] << 16) | (source[startIndex + 1] << 8) |
              source[startIndex];
   else
@@ -78,11 +78,11 @@ int32_t fourBytesToInt(const std::vector<uint8_t> &source, const int startIndex)
   return result;
 }
 
-double normalizeInt8_t(const uint8_t sample) { return static_cast<double>(sample - 128) / static_cast<double>(128.); }
+double NormalizeInt8_t(const uint8_t sample) { return static_cast<double>(sample - 128) / static_cast<double>(128.); }
 
-double normalizeInt16_t(const int16_t sample) { return static_cast<double>(sample) / static_cast<double>(32768.); }
+double NormalizeInt16_t(const int16_t sample) { return static_cast<double>(sample) / static_cast<double>(32768.); }
 
-double normalizeInt32_t(const int32_t sample) { return static_cast<double>(sample) / static_cast<double>(8388608.); }
+double NormalizeInt32_t(const int32_t sample) { return static_cast<double>(sample) / static_cast<double>(8388608.); }
 
 /**
  * @brief Check if the architecture of the machine running the code is big endian.
@@ -90,7 +90,7 @@ double normalizeInt32_t(const int32_t sample) { return static_cast<double>(sampl
  * @return true If big endian.
  * @return false If not big endian.
  */
-bool isBigEndian(void) {
+bool IsBigEndian(void) {
   union {
     uint32_t i;
     char c[4];
@@ -112,7 +112,7 @@ bool isBigEndian(void) {
  * @param vec2 Vector 2.
  * @return std::vector<double> Interleaved vectors.
  */
-std::vector<double> interleave2Vectors(const std::vector<double> &vec1, const std::vector<double> &vec2) {
+std::vector<double> Interleave2Vectors(const std::vector<double> &vec1, const std::vector<double> &vec2) {
   std::vector<double> result;
 
   auto m = std::min(vec1.size(), vec2.size());
@@ -133,7 +133,7 @@ std::vector<double> interleave2Vectors(const std::vector<double> &vec1, const st
  * @param inVec Input vector.
  * @return double Median.
  */
-double median(std::vector<double> &inVec) {
+double Median(std::vector<double> &inVec) {
   std::vector<double> vec(inVec);
   std::sort(vec.begin(), vec.end());
   double median;
@@ -151,7 +151,7 @@ double median(std::vector<double> &inVec) {
  * @param vec Audio signal.
  * @return std::vector<double> Filtered audio signal.
  */
-std::vector<double> onePoleFilter(const std::vector<double> &vec) {
+std::vector<double> OnePoleFilter(const std::vector<double> &vec) {
   double a = 0.99;
   double y = 0.0;
 
@@ -192,18 +192,18 @@ size_t NextFastLen(size_t n) {
   return bestfac;
 }
 
-double normFct(int inorm, size_t N) {
+double NormFct(int inorm, size_t N) {
   if (inorm == 0) return double(1);
   if (inorm == 2) return double(1 / ldbl_t(N));
   if (inorm == 1) return double(1 / sqrt(ldbl_t(N)));
   throw std::runtime_error("invalid value for inorm (must be 0, 1, or 2)");
 }
 
-double normFct(int inorm, const pocketfft::shape_t &shape, const pocketfft::shape_t &axes, size_t fct, int delta) {
+double NormFct(int inorm, const pocketfft::shape_t &shape, const pocketfft::shape_t &axes, size_t fct, int delta) {
   if (inorm == 0) return double(1);
   size_t N(1);
   for (auto a : axes) N *= fct * size_t(int64_t(shape[a]) + delta);
-  return normFct(inorm, N);
+  return NormFct(inorm, N);
 }
 
 /**
@@ -213,7 +213,7 @@ double normFct(int inorm, const pocketfft::shape_t &shape, const pocketfft::shap
  * @param new_shape New shape of of vector.
  * @return std::vector<double> Centered vector.
  */
-std::vector<double> centerVector(const std::vector<double> &vec, size_t new_shape) {
+std::vector<double> CenterVector(const std::vector<double> &vec, size_t new_shape) {
   size_t curr_shape = vec.size();
   size_t start_index = (curr_shape - new_shape) / 2;
   size_t end_index = start_index + new_shape;
@@ -236,7 +236,7 @@ std::vector<double> centerVector(const std::vector<double> &vec, size_t new_shap
  * @return std::vector<double> A 1-dimensional array containing a subset of the discrete linear
  * convolution of `in1` with `in2`.
  */
-std::vector<double> fftConvolve(const std::vector<double> &vec1, const std::vector<double> &vec2) {
+std::vector<double> FFTConvolve(const std::vector<double> &vec1, const std::vector<double> &vec2) {
   std::vector<double> v1(vec1);
   std::vector<double> v2(vec2);
   std::vector<double> ret;
@@ -273,7 +273,7 @@ std::vector<double> fftConvolve(const std::vector<double> &vec1, const std::vect
   pocketfft::stride_t s1_out{ s1_out_shape, sizeof(std::complex<double>) };
   auto d1_in = reinterpret_cast<const double *>(v1.data());
   auto d1_out = reinterpret_cast<std::complex<double> *>(v1_out.data());
-  double v1_fct = normFct(inorm, v1_dims_in, axes);
+  double v1_fct = NormFct(inorm, v1_dims_in, axes);
   pocketfft::r2c(v1_dims_in, s1_in, s1_out, axes, forward, d1_in, d1_out, v1_fct, nthreads);
 
   // vec2 FFT
@@ -289,7 +289,7 @@ std::vector<double> fftConvolve(const std::vector<double> &vec1, const std::vect
   pocketfft::stride_t s2_out{ s2_out_shape, sizeof(std::complex<double>) };
   auto d2_in = reinterpret_cast<const double *>(v2.data());
   auto d2_out = reinterpret_cast<std::complex<double> *>(v2_out.data());
-  double v2_fct = normFct(inorm, v2_dims_in, axes);
+  double v2_fct = NormFct(inorm, v2_dims_in, axes);
   pocketfft::r2c(v2_dims_in, s2_in, s2_out, axes, forward, d2_in, d2_out, v2_fct, nthreads);
 
   // Element-wise multiplication of 2 complex vectors
@@ -323,13 +323,13 @@ std::vector<double> fftConvolve(const std::vector<double> &vec1, const std::vect
   pocketfft::stride_t s_conv_out{ conv_out_shape, sizeof(double) };
   auto d_conv_in = reinterpret_cast<const std::complex<double> *>(products.data());
   auto d_conv_out = reinterpret_cast<double *>(conv_out.data());
-  double conv_fct = normFct(inorm, conv_dims_out, axes);
+  double conv_fct = NormFct(inorm, conv_dims_out, axes);
   pocketfft::c2r(conv_dims_out, s_conv_in, s_conv_out, axes, forward, d_conv_in, d_conv_out, conv_fct, nthreads);
 
   std::vector<double> sliced_conv_out(conv_out.begin(), conv_out.begin() + shape);
 
   // Perform 'same' part of the convolve
-  std::vector<double> centered_conv_out = centerVector(sliced_conv_out, s1);
+  std::vector<double> centered_conv_out = CenterVector(sliced_conv_out, s1);
   return centered_conv_out;
 }
 
@@ -339,10 +339,10 @@ std::vector<double> fftConvolve(const std::vector<double> &vec1, const std::vect
  * @param input Input vector.
  * @return std::vector<double> Normalized vector.
  */
-std::vector<double> normalize(const std::vector<double> &input) {
+std::vector<double> Normalize(const std::vector<double> &input) {
   int size = input.size();
   double sum = 0.0;
-  std::vector<double> normalized_output(input);
+  std::vector<double> Normalized_output(input);
 
   for (int i = 0; i < size; i++) {
     sum += std::abs(input[i]);
@@ -356,10 +356,10 @@ std::vector<double> normalize(const std::vector<double> &input) {
   double scale = 2.0 / sum;
 
   for (int i = 0; i < size; i++) {
-    normalized_output[i] *= scale;
+    Normalized_output[i] *= scale;
   }
 
-  return normalized_output;
+  return Normalized_output;
 }
 
 /**
@@ -371,9 +371,9 @@ std::vector<double> normalize(const std::vector<double> &input) {
  * @param a1 Constant a1.
  * @param a2 Constant a2.
  * @param a3 Constant a3.
- * @return std::vector<double> blackmanharris window.
+ * @return std::vector<double> BlackmanHarris window.
  */
-std::vector<double> blackmanHarris(const std::vector<double> &window, double a0, double a1, double a2, double a3) {
+std::vector<double> BlackmanHarris(const std::vector<double> &window, double a0, double a1, double a2, double a3) {
   std::vector<double> ret(window);
   int window_size = window.size();
   double f = 2.0 * M_PI / (window_size - 1);
@@ -390,20 +390,20 @@ std::vector<double> blackmanHarris(const std::vector<double> &window, double a0,
   return ret;
 }
 
-std::vector<double> blackmanHarris62dB(const std::vector<double> &window) {
+std::vector<double> BlackmanHarris62dB(const std::vector<double> &window) {
   double a0 = .44959, a1 = .49364, a2 = .05677, a3 = 0.;
-  return blackmanHarris(window, a0, a1, a2, a3);
+  return BlackmanHarris(window, a0, a1, a2, a3);
 }
 
-std::vector<double> blackmanHarris92dB(const std::vector<double> &window) {
+std::vector<double> BlackmanHarris92dB(const std::vector<double> &window) {
   double a0 = .35875, a1 = .48829, a2 = .14128, a3 = .01168;
-  return blackmanHarris(window, a0, a1, a2, a3);
+  return BlackmanHarris(window, a0, a1, a2, a3);
 }
 
 /**
  * @brief Applies windowing to an audio signal.
  * It optionally applies zero-phase windowing and optionally adds zero-padding. The resulting windowed frame size is
- * equal to the incoming frame size plus the number of padded zeros. By default, the available windows are normalized
+ * equal to the incoming frame size plus the number of padded zeros. By default, the available windows are Normalized
  * (to have an area of 1) and then scaled by a factor of 2.
  *
  * References:
@@ -412,19 +412,19 @@ std::vector<double> blackmanHarris92dB(const std::vector<double> &window) {
  *  [2] Window function - Wikipedia, the free encyclopedia, http://en.wikipedia.org/wiki/Window_function
  *
  * @param audio_frame Input audio frame.
- * @param window_type_func The window type function. Examples: blackmanHarris92dB, blackmanHarris62dB...
+ * @param window_type_func The window type function. Examples: BlackmanHarris92dB, BlackmanHarris62dB...
  * @param size Window size.
  * @param zero_padding_size Size of the zero-padding.
  * @param zero_phase Enables zero-phase windowing.
- * @param _normalize Specify whether to normalize windows (to have an area of 1) and then scale by a factor of 2.
+ * @param _Normalize Specify whether to Normalize windows (to have an area of 1) and then scale by a factor of 2.
  * @return std::vector<double> Windowed audio frame.
  */
-std::vector<double> windowing(const std::vector<double> &audio_frame,
+std::vector<double> Windowing(const std::vector<double> &audio_frame,
                               const std::function<std::vector<double>(const std::vector<double> &)> &window_type_func,
                               unsigned int size,
                               unsigned int zero_padding_size,
                               bool zero_phase,
-                              bool _normalize) {
+                              bool _Normalize) {
   int signal_size = audio_frame.size();
   int total_size = signal_size + zero_padding_size;
 
@@ -434,8 +434,8 @@ std::vector<double> windowing(const std::vector<double> &audio_frame,
 
   std::vector<double> windowed_signal(static_cast<size_t>(total_size));
   std::vector<double> window(static_cast<size_t>(signal_size));
-  if (_normalize) {
-    window = normalize(window_type_func(window));
+  if (_Normalize) {
+    window = Normalize(window_type_func(window));
   } else {
     window = window_type_func(window);
   }
@@ -491,7 +491,7 @@ double Magnitude(const std::complex<double> complex_pair) {
  * @param frame Input audio frame.
  * @return std::vector<double> Frequency spectrum of the input audio signal.
  */
-std::vector<double> convertToFrequencySpectrum(const std::vector<double> &audio_frame) {
+std::vector<double> ConvertToFrequencySpectrum(const std::vector<double> &audio_frame) {
   std::vector<double> v1(audio_frame);
   std::vector<double> ret;
 
@@ -524,7 +524,7 @@ std::vector<double> convertToFrequencySpectrum(const std::vector<double> &audio_
   pocketfft::stride_t s1_out{ s1_out_shape, sizeof(std::complex<double>) };
   auto d1_in = reinterpret_cast<const double *>(v1.data());
   auto d1_out = reinterpret_cast<std::complex<double> *>(v1_out.data());
-  double v1_fct = normFct(inorm, v1_dims_in, axes);
+  double v1_fct = NormFct(inorm, v1_dims_in, axes);
   pocketfft::r2c(v1_dims_in, s1_in, s1_out, axes, forward, d1_in, d1_out, v1_fct, nthreads);
 
   // Get element-wise absolute value of a complex vector
@@ -559,7 +559,7 @@ std::vector<double> convertToFrequencySpectrum(const std::vector<double> &audio_
  * @param middle_point_index Position of the middle point in the parabola.
  * @return std::tuple<double, double> Tuple of (location (position) of the peak, peak height estimate).
  */
-std::tuple<double, double> quadraticInterpolation(double a, double b, double y, int middle_point_index) {
+std::tuple<double, double> QuadraticInterpolation(double a, double b, double y, int middle_point_index) {
   /*
   Smith, J.O. "Quadratic Interpolation of Spectral Peaks", in
   Spectral Audio Signal Processing,
@@ -601,7 +601,7 @@ std::tuple<double, double> quadraticInterpolation(double a, double b, double y, 
  * @return std::vector<std::tuple<double, double>> Vector of peaks,
  * each peak being a tuple (positions, heights).
  */
-std::vector<std::tuple<double, double>> peakDetect(const std::vector<double> &inp,
+std::vector<std::tuple<double, double>> PeakDetect(const std::vector<double> &inp,
                                                    double threshold,
                                                    bool interpolate,
                                                    std::string sort_by,
@@ -676,7 +676,7 @@ std::vector<std::tuple<double, double>> peakDetect(const std::vector<double> &in
         double val;
 
         if (interpolate) {
-          std::tie(pos, val) = quadraticInterpolation(inp[i - 1], inp[i], inp[i + 1], j);
+          std::tie(pos, val) = QuadraticInterpolation(inp[i - 1], inp[i], inp[i + 1], j);
         } else {
           pos = i;
           val = inp[i];
@@ -713,7 +713,7 @@ std::vector<std::tuple<double, double>> peakDetect(const std::vector<double> &in
         val = inp[i];
       } else {  // Interpolate peak at i-1, i and i+1
         if (interpolate) {
-          std::tie(pos, val) = quadraticInterpolation(inp[i - 1], inp[i], inp[i + 1], j);
+          std::tie(pos, val) = QuadraticInterpolation(inp[i - 1], inp[i], inp[i + 1], j);
         } else {
           pos = j;
           val = inp[j];
@@ -788,7 +788,7 @@ std::vector<std::tuple<double, double>> SpectralPeaks(const std::vector<double> 
                                                       double sample_rate,
                                                       int min_pos,
                                                       int max_pos) {
-  return peakDetect(input_spectrum, threshold, true, sort_by, max_num_peaks, sample_rate / 2.0, min_pos, max_pos);
+  return PeakDetect(input_spectrum, threshold, true, sort_by, max_num_peaks, sample_rate / 2.0, min_pos, max_pos);
 }
 
 /**
@@ -828,13 +828,13 @@ void AddContributionWithWeight(double freq,
   // Apply weight to all bins in the window
   for (int i = left_bin; i <= right_bin; i++) {
     double distance = std::abs(pcp_bin_F - static_cast<double>(i)) / resolution;
-    double normalized_distance = distance / window_size;
+    double Normalized_distance = distance / window_size;
     double weight = 0.;
 
     if (weight_type == COSINE) {
-      weight = std::cos(M_PI * normalized_distance);
+      weight = std::cos(M_PI * Normalized_distance);
     } else if (weight_type == SQUARED_COSINE) {
-      weight = std::cos(M_PI * normalized_distance);
+      weight = std::cos(M_PI * Normalized_distance);
       weight *= weight;
     }
 
@@ -984,9 +984,9 @@ int MaxVectorElement(const std::vector<double> &vec) {
  * @param window_size Size, in semitones, of the window used for the weighting.
  * @param sample_rate Sampling rate of the audio signal [Hz].
  * @param max_shifted Whether to shift the HPCP vector so that the maximum peak is at index 0.
- * @param non_linear Apply non-linear post-processing to the output (use with normalized='unitMax'). Boosts values close
+ * @param non_linear Apply non-linear post-processing to the output (use with Normalized='unitMax'). Boosts values close
  * to 1, decreases values close to 0.
- * @param _normalized Whether to normalize the HPCP vector.
+ * @param _Normalized Whether to Normalize the HPCP vector.
  * @return std::vector<double> Resulting harmonic pitch class profile.
  */
 std::vector<double> HPCP(const std::vector<double> &frequencies,
@@ -1003,7 +1003,7 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
                          double sample_rate,
                          bool max_shifted,
                          bool non_linear,
-                         std::string _normalized) {
+                         std::string _Normalized) {
   // Input validation
   if (size % 12 != 0) {
     throw std::runtime_error("HPCP: The size parameter is not a multiple of 12.");
@@ -1043,21 +1043,21 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
     throw std::runtime_error(err_message);
   }
 
-  NormalizeType normalized;
-  if (_normalized == "none")
-    normalized = N_NONE;
-  else if (_normalized == "unit sum")
-    normalized = N_UNIT_SUM;
-  else if (_normalized == "unit max")
-    normalized = N_UNIT_MAX;
+  NormalizeType Normalized;
+  if (_Normalized == "none")
+    Normalized = N_NONE;
+  else if (_Normalized == "unit sum")
+    Normalized = N_UNIT_SUM;
+  else if (_Normalized == "unit max")
+    Normalized = N_UNIT_MAX;
   else {
-    std::string err_message = "HPCP: Invalid normalize type of: ";
-    err_message += _normalized;
+    std::string err_message = "HPCP: Invalid Normalize type of: ";
+    err_message += _Normalized;
     throw std::runtime_error(err_message);
   }
 
-  if (non_linear && normalized != N_UNIT_MAX) {
-    throw std::runtime_error("HPCP: Cannot apply non-linear filter when HPCP vector is not normalized to unit max.");
+  if (non_linear && Normalized != N_UNIT_MAX) {
+    throw std::runtime_error("HPCP: Cannot apply non-linear filter when HPCP vector is not Normalized to unit max.");
   }
   // ========
 
@@ -1069,14 +1069,14 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
 
   if (band_preset) {
     hpcp_LO.resize(size);
-    std::fill(hpcp_LO.begin(), hpcp_LO.end(), (double)0.0);
+    std::fill(hpcp_LO.begin(), hpcp_LO.end(), static_cast<double>(0.0));
 
     hpcp_HI.resize(size);
-    std::fill(hpcp_HI.begin(), hpcp_HI.end(), (double)0.0);
+    std::fill(hpcp_HI.begin(), hpcp_HI.end(), static_cast<double>(0.0));
   }
 
   // Add each contribution of the spectral frequencies to the HPCP
-  for (int i = 0; i < (int)frequencies.size(); i++) {
+  for (int i = 0; i < static_cast<int>(frequencies.size()); i++) {
     double freq = frequencies[i];
     double mag_lin = magnitudes[i];
 
@@ -1092,31 +1092,31 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
   }
 
   if (band_preset) {
-    if (normalized == N_UNIT_MAX) {
-      normalizeInPlace(hpcp_LO);
-      normalizeInPlace(hpcp_HI);
-    } else if (normalized == N_UNIT_SUM) {
+    if (Normalized == N_UNIT_MAX) {
+      NormalizeInPlace(hpcp_LO);
+      NormalizeInPlace(hpcp_HI);
+    } else if (Normalized == N_UNIT_SUM) {
       // TODO does it makes sense to apply band preset together with unit sum normalization?
-      normalizeSum(hpcp_LO);
-      normalizeSum(hpcp_HI);
+      NormalizeSum(hpcp_LO);
+      NormalizeSum(hpcp_HI);
     }
 
-    for (int i = 0; i < (int)hpcp.size(); i++) {
+    for (int i = 0; i < static_cast<int>(hpcp.size()); i++) {
       hpcp[i] = hpcp_LO[i] + hpcp_HI[i];
     }
   }
 
-  if (normalized == N_UNIT_MAX) {
-    normalizeInPlace(hpcp);
-  } else if (normalized == N_UNIT_SUM) {
-    normalizeSum(hpcp);
+  if (Normalized == N_UNIT_MAX) {
+    NormalizeInPlace(hpcp);
+  } else if (Normalized == N_UNIT_SUM) {
+    NormalizeSum(hpcp);
   }
 
   /* Perform the Jordi non-linear post-processing step
    This makes small values (below 0.6) even smaller
    while boosting further values close to 1. */
   if (non_linear) {
-    for (int i = 0; i < (int)hpcp.size(); i++) {
+    for (int i = 0; i < static_cast<int>(hpcp.size()); i++) {
       hpcp[i] = sin(hpcp[i] * M_PI * 0.5);
       hpcp[i] *= hpcp[i];
       if (hpcp[i] < 0.6) {
@@ -1130,7 +1130,7 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
   if (max_shifted) {
     int idx_max = MaxVectorElement(hpcp);
     std::vector<double> hpcp_bak = hpcp;
-    for (int i = idx_max; i < (int)hpcp.size(); i++) {
+    for (int i = idx_max; i < static_cast<int>(hpcp.size()); i++) {
       hpcp[i - idx_max] = hpcp_bak[i];
     }
     int offset = hpcp.size() - idx_max;
@@ -1159,9 +1159,9 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
  * @param window_size Size, in semitones, of the window used for the weighting.
  * @param sample_rate Sampling rate of the audio signal [Hz].
  * @param max_shifted Whether to shift the HPCP vector so that the maximum peak is at index 0.
- * @param non_linear Apply non-linear post-processing to the output (use with normalized='unitMax'). Boosts values close
+ * @param non_linear Apply non-linear post-processing to the output (use with Normalized='unitMax'). Boosts values close
  * to 1, decreases values close to 0.
- * @param _normalized Whether to normalize the HPCP vector.
+ * @param _Normalized Whether to Normalize the HPCP vector.
  * @return std::vector<double> Resulting harmonic pitch class profile.
  */
 std::vector<double> HPCP(const std::vector<std::tuple<double, double>> &peaks,
@@ -1177,7 +1177,7 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>> &peaks,
                          double sample_rate,
                          bool max_shifted,
                          bool non_linear,
-                         std::string _normalized) {
+                         std::string _Normalized) {
   std::vector<double> frequencies(peaks.size());
   std::vector<double> magnitudes(peaks.size());
 
@@ -1187,7 +1187,7 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>> &peaks,
 
   return HPCP(frequencies, magnitudes, size, reference_frequency, harmonics, band_preset, band_split_frequency,
               min_frequency, max_frequency, _weight_type, window_size, sample_rate, max_shifted, non_linear,
-              _normalized);
+              _Normalized);
 }
 
 /**
@@ -1214,7 +1214,7 @@ std::vector<double> Framecutter::compute() {
         "is centered on the beginning of the audio)");
   }
 
-  int valid_frame_threshold = (int)round(valid_frame_threshold_ratio_ * frame_size_);
+  int valid_frame_threshold = static_cast<int>(std::round(valid_frame_threshold_ratio_ * frame_size_));
   int start_index;
   size_t buffer_size = buffer_.size();
 
@@ -1224,7 +1224,7 @@ std::vector<double> Framecutter::compute() {
     start_index = start_index_;
 
   if (last_frame_ || buffer_.empty()) return std::vector<double>();
-  if (start_index >= (int)buffer_size) return std::vector<double>();
+  if (start_index >= static_cast<int>(buffer_size)) return std::vector<double>();
 
   std::vector<double> frame(static_cast<size_t>(frame_size_));
   int idx_in_frame = 0;
@@ -1233,26 +1233,26 @@ std::vector<double> Framecutter::compute() {
   if (start_index < 0) {
     int how_much = std::min(-start_index, frame_size_);
     for (; idx_in_frame < how_much; idx_in_frame++) {
-      frame[idx_in_frame] = (double)0.0;
+      frame[idx_in_frame] = static_cast<double>(0.0);
     }
   }
 
   // Now, just copy from the buffer to the frame
-  int how_much = std::min(frame_size_, (int)buffer_size - start_index) - idx_in_frame;
-  memcpy(&frame[0] + idx_in_frame, &buffer_[0] + start_index + idx_in_frame, how_much * sizeof(double));
+  int how_much = std::min(frame_size_, static_cast<int>(buffer_size - start_index)) - idx_in_frame;
+  std::memcpy(&frame[0] + idx_in_frame, &buffer_[0] + start_index + idx_in_frame, how_much * sizeof(double));
   idx_in_frame += how_much;
 
   // Check if the idx_in_frame is below the threshold (this would only happen
   // for the last frame in the stream)
   if (idx_in_frame < valid_frame_threshold) return std::vector<double>();
 
-  if (start_index + idx_in_frame >= (int)buffer_size && !start_from_center_ && !last_frame_to_end_of_file_)
+  if (start_index + idx_in_frame >= static_cast<int>(buffer_size) && !start_from_center_ && !last_frame_to_end_of_file_)
     last_frame_ = true;
 
   if (idx_in_frame < frame_size_) {
     if (!start_from_center_) {
       if (last_frame_to_end_of_file_) {
-        if (start_index >= (int)buffer_size) last_frame_ = true;
+        if (start_index >= static_cast<int>(buffer_size)) last_frame_ = true;
       }
       // if we're zero-padding with start_from_center=false, it means we're filling
       // in the last frame, so we'll have to stop after this one
@@ -1261,13 +1261,13 @@ std::vector<double> Framecutter::compute() {
     } else {
       // if we're zero-padding and the center of the frame is past the end of the
       // stream, then this is the last frame and we need to stop after this one
-      if (start_index + frame_size_ / 2 >= (int)buffer_.size()) {
+      if (start_index + frame_size_ / 2 >= static_cast<int>(buffer_.size())) {
         last_frame_ = true;
       }
     }
     // Fill in the frame with 0 until the end of the buffer
     for (; idx_in_frame < frame_size_; idx_in_frame++) {
-      frame[idx_in_frame] = (double)0.0;
+      frame[idx_in_frame] = static_cast<double>(0.0);
     }
   }
   start_index_ += hop_size_;

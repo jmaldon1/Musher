@@ -17,7 +17,7 @@ using namespace musher::core;
 TEST(PeakDetection, LastPositionPeak) {
   std::vector<double> inp{1.0, 1.0, 1.0, 1.0, 2.0};
   std::vector<std::tuple<double, double>> peaks;
-  peaks = peakDetect(inp, -1000.0, true);
+  peaks = PeakDetect(inp, -1000.0, true);
 
   double actual_position;
   double actual_value;
@@ -34,7 +34,7 @@ TEST(PeakDetection, LastPositionPeak) {
 TEST(PeakDetection, FlatPeakMiddle1) {
   std::vector<double> inp{1.0, 2.0, 2.0, 2.0, 1.0};
   std::vector<std::tuple<double, double>> peaks;
-  peaks = peakDetect(inp, -1000.0, true);
+  peaks = PeakDetect(inp, -1000.0, true);
 
   double actual_position;
   double actual_value;
@@ -50,7 +50,7 @@ TEST(PeakDetection, FlatPeakMiddle1) {
 TEST(PeakDetection, FlatPeakMiddle2) {
   std::vector<double> inp{1.0, 2.0, 2.0, 2.0, 1.0, 0};
   std::vector<std::tuple<double, double>> peaks;
-  peaks = peakDetect(inp, -1000.0, true);
+  peaks = PeakDetect(inp, -1000.0, true);
 
   double actual_position;
   double actual_value;
@@ -75,7 +75,7 @@ TEST(PeakDetection, FlatPeakMiddle2) {
 TEST(PeakDetection, FlatToPeakInterpolation) {
   std::vector<double> inp{1, 2, 2, 2, 3, 0};
   std::vector<std::tuple<double, double>> peaks;
-  peaks = peakDetect(inp, -1000.0, true);
+  peaks = PeakDetect(inp, -1000.0, true);
 
   double actual_position;
   double actual_value;
@@ -92,7 +92,7 @@ TEST(PeakDetection, FlatToPeakInterpolation) {
 TEST(PeakDetection, FlatToPeakNoInterpolation) {
   std::vector<double> inp{1, 2, 2, 2, 3, 0};
   std::vector<std::tuple<double, double>> peaks;
-  peaks = peakDetect(inp, -1000.0, false);
+  peaks = PeakDetect(inp, -1000.0, false);
   std::vector<double> actual_positions(peaks.size());
   std::vector<double> actual_height(peaks.size());
 
@@ -115,7 +115,7 @@ TEST(PeakDetection, FlatToPeakNoInterpolation) {
 TEST(PeakDetection, ManyPeaksWithInterpolation) {
   std::vector<double> inp{0, 2, 1, 2, 1, 2, 0};
   std::vector<std::tuple<double, double>> peaks;
-  peaks = peakDetect(inp, -1000.0, true);
+  peaks = PeakDetect(inp, -1000.0, true);
 
   double actual_position_0;
   double actual_height_0;
@@ -143,7 +143,7 @@ TEST(PeakDetection, ManyPeaksWithInterpolation) {
 TEST(PeakDetection, SortByPosition) {
   std::vector<double> inp{0, 2, 1, 4, 1, 6, 0};
   std::vector<std::tuple<double, double>> peaks;
-  peaks = peakDetect(inp, -1000.0, false, "position");
+  peaks = PeakDetect(inp, -1000.0, false, "position");
   std::vector<double> actual_positions(peaks.size());
   std::vector<double> actual_height(peaks.size());
 
@@ -166,7 +166,7 @@ TEST(PeakDetection, SortByPosition) {
 TEST(PeakDetection, SortByHeight) {
   std::vector<double> inp{0, 2, 1, 4, 1, 6, 0};
   std::vector<std::tuple<double, double>> peaks;
-  peaks = peakDetect(inp, -1000.0, false, "height");
+  peaks = PeakDetect(inp, -1000.0, false, "height");
   std::vector<double> actual_positions(peaks.size());
   std::vector<double> actual_height(peaks.size());
 
@@ -189,7 +189,7 @@ TEST(PeakDetection, SortByHeight) {
 TEST(PeakDetection, MaxPeaks) {
   std::vector<double> inp{0, 2, 1, 4, 1, 6, 0};
   std::vector<std::tuple<double, double>> peaks;
-  peaks = peakDetect(inp, -1000.0, false, "position", 2);
+  peaks = PeakDetect(inp, -1000.0, false, "position", 2);
 
   size_t actual_num_of_peaks = 2;
   EXPECT_EQ(actual_num_of_peaks, peaks.size());
@@ -202,7 +202,7 @@ TEST(PeakDetection, MaxPeaks) {
 TEST(PeakDetection, MinPosition) {
   std::vector<double> inp{5, 0, 1, 0, 0, 0, 0};
   std::vector<std::tuple<double, double>> peaks;
-  peaks = peakDetect(inp, -1000.0, false, "position", 0, 0.0, 2);
+  peaks = PeakDetect(inp, -1000.0, false, "position", 0, 0.0, 2);
 
   double actual_position;
   double actual_height;
@@ -218,7 +218,7 @@ TEST(PeakDetection, MinPosition) {
 TEST(PeakDetection, MaxPosition) {
   std::vector<double> inp{0, 0, 0, 0, 1, 0, 2};
   std::vector<std::tuple<double, double>> peaks;
-  peaks = peakDetect(inp, -1000.0, false, "position", 0, 0.0, 0, 4);
+  peaks = PeakDetect(inp, -1000.0, false, "position", 0, 0.0, 0, 4);
 
   double actual_position;
   double actual_height;
@@ -234,7 +234,7 @@ TEST(PeakDetection, MaxPosition) {
 TEST(PeakDetection, Range) {
   std::vector<double> inp{5, 0, 1, 0, 2, 0, 1};
   std::vector<std::tuple<double, double>> peaks;
-  peaks = peakDetect(inp, -1000.0, false, "position", 0, 3.0);
+  peaks = PeakDetect(inp, -1000.0, false, "position", 0, 3.0);
   std::vector<double> actual_positions(peaks.size());
   std::vector<double> actual_height(peaks.size());
 
@@ -259,7 +259,7 @@ TEST(PeakDetection, RangeWithMinAndMaxPositions) {
   std::vector<double> inp{5, 0, 1, 0, 2, 0, 1};
   std::vector<std::tuple<double, double>> peaks;
   /* Min and Max positions should be within the range */
-  peaks = peakDetect(inp, -1000.0, false, "position", 0, 3.0, 2, 3);
+  peaks = PeakDetect(inp, -1000.0, false, "position", 0, 3.0, 2, 3);
   std::vector<double> actual_positions(peaks.size());
   std::vector<double> actual_height(peaks.size());
 

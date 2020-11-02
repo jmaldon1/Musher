@@ -12,14 +12,14 @@ using namespace musher::core;
 
 TEST(TestUtils, Uint8_tVectorToHexString) {
   std::vector<uint8_t> actual = { 1, 2, 3, 4, 5 };
-  std::string actualHex = uint8VectorToHexString(actual);
+  std::string actualHex = Uint8VectorToHexString(actual);
   std::string expectedHex = "0102030405";
   EXPECT_EQ(actualHex, expectedHex);
 }
 
 TEST(TestUtils, GetStringBetweenSingleQuotes) {
   std::string stringInsideSQuotes = "Hello This is a 'Test'";
-  std::string actual = strBetweenSQuotes(stringInsideSQuotes);
+  std::string actual = StrBetweenSQuotes(stringInsideSQuotes);
   std::string expected = "Test";
   EXPECT_EQ(actual, expected);
 }
@@ -38,7 +38,7 @@ TEST(TestUtils, FrequencySpectrumTest) {
   std::vector<double> inp(inp_size, 1.0);
 
   std::vector<double> actual_out;
-  actual_out = convertToFrequencySpectrum(inp);
+  actual_out = ConvertToFrequencySpectrum(inp);
 
   std::vector<double> expected_out(inp_size / 2 + 1, 0.0);
   // out = [100, 0, 0, 0, 0 ...]
@@ -64,7 +64,7 @@ TEST(TestUtils, QuadraticInterpolationTest) {
   double actual_peak_location;
   double actual_peak_height_estimate;
   std::tie(actual_peak_location, actual_peak_height_estimate) =
-      quadraticInterpolation(left_point_val, middle_point_val, right_point_val, middle_point_index);
+      QuadraticInterpolation(left_point_val, middle_point_val, right_point_val, middle_point_index);
 
   EXPECT_NEAR(expected_peak_location, actual_peak_location, 0.00001);
   EXPECT_NEAR(expected_peak_height_estimate, actual_peak_height_estimate, 0.00001);

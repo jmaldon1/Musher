@@ -184,13 +184,13 @@ std::vector<double> AddContributionHarmonics(const std::vector<double>& chords,
   std::vector<double> chords_with_harmonics(chords);
 
   for (int iHarm = 1; iHarm <= num_harmonics; iHarm++) {
-    double index = pitch_class + 12 * std::log2((double)iHarm);
+    double index = pitch_class + 12 * std::log2(static_cast<double>(iHarm));
 
     double before = std::floor(index);
     double after = std::ceil(index);
 
-    int ibefore = static_cast<int>(std::fmod((double)before, (double)12.0));
-    int iafter = static_cast<int>(std::fmod((double)after, (double)12.0));
+    int ibefore = static_cast<int>(std::fmod(static_cast<double>(before), static_cast<double>(12.0)));
+    int iafter = static_cast<int>(std::fmod(static_cast<double>(after), static_cast<double>(12.0)));
 
     // Weight goes proportionally to ibefore & iafter
     if (ibefore < iafter) {
@@ -390,7 +390,7 @@ KeyOutput DetectKey(const std::vector<double>& pcp,
 
   std::vector<double> M;
   std::vector<double> m;
-  std::vector<double> O(12, (double)0.0);
+  std::vector<double> O(12, static_cast<double>(0.0));
 
   const std::vector<std::vector<double>> key_profile = SelectKeyProfile(profile_type);
   M = key_profile[0];
@@ -423,8 +423,8 @@ KeyOutput DetectKey(const std::vector<double>& pcp,
     --essentia: https://github.com/MTG/essentia/blob/master/src/algorithms/tonal/key.cpp
   */
 
-  std::vector<double> M_chords_empty(12, (double)0.0);
-  std::vector<double> m_chords_empty(12, (double)0.0);
+  std::vector<double> M_chords_empty(12, static_cast<double>(0.0));
+  std::vector<double> m_chords_empty(12, static_cast<double>(0.0));
 
   // MAJOR KEY
   std::vector<double> M_chords = fplus::fwd::apply(

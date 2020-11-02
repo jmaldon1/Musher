@@ -36,6 +36,7 @@ def get_build_dir() -> str:
 class CMakeExtension(Extension):
     """Project extension.
     """
+
     def __init__(self, name, sourcedir=""):
         Extension.__init__(self, name, sources=[])
         self.sourcedir = os.path.abspath(sourcedir)
@@ -95,6 +96,7 @@ class CMakeBuild(build_ext):
     Debug (with tests): python setup.py cmake --debug
     Release (no tests): python setup.py cmake
     """
+
     def run(self):
         try:
             subprocess.check_output(["cmake", "--version"])
@@ -117,9 +119,11 @@ class CMakeBuild(build_ext):
             os.makedirs(build_dir)
 
         subprocess.run(['cmake', ext.sourcedir] + cmake_args,
-                       cwd=build_dir, check=True)
+                       cwd=build_dir,
+                       check=True)
         subprocess.run(['cmake', '--build', '.'],
-                       cwd=build_dir, check=True)
+                       cwd=build_dir,
+                       check=True)
 
 
 class CTest(test):
@@ -128,14 +132,28 @@ class CTest(test):
     python setup.py cmake --debug
     python setup.py ctest
     """
+
     def run(self):
         build_dir = get_build_dir()
 
         if platform.system().lower() == "windows":
             build_dir = os.path.join(build_dir, "Debug")
 
-        result = subprocess.run(['ctest', "--output-on-failure"], cwd=build_dir, check=True)
+        try:
+            result = subprocess.run(['ctest', "--output-on-failure"],
+                                    cwd=build_dir,
+                                    check=True,
+                                    stderr=subprocess.PIPE)
+        except FileNotFoundError:
+            # cwd was not found.
+            print("HINT: Did you compile the code first? "
+                  "(python setup.py cmake --debug)")
+            raise
 
+        if result.stderr:
+            print(result.stderr.decode("utf-8"))
+            print("HINT: Did you compile the code in debug mode first? "
+                  "(python setup.py cmake --debug)")
         if result.returncode == 8:
             print("C++ Seg fault.")
 
@@ -171,8 +189,15 @@ class GTest(test):
         if platform.system().lower() == "windows":
             bin_dir = os.path.join(bin_dir, "Debug")
 
-        result = subprocess.run(
-            ['./musher-core-test', self.gtest_options], cwd=bin_dir, check=True)
+        try:
+            result = subprocess.run(['./musher-core-test', self.gtest_options],
+                                    cwd=bin_dir,
+                                    check=True)
+        except FileNotFoundError:
+            # Test executable not found / cwd not found.
+            print("HINT: Did you compile the code in debug mode first? "
+                  "(python setup.py cmake --debug)")
+            raise
 
         if result.returncode == -11:
             print("C++ Seg fault.")

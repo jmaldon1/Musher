@@ -12,7 +12,7 @@ using namespace musher::core;
 
 TEST(TestUtils, Uint8_tVectorToHexString) {
   std::vector<uint8_t> actual = { 1, 2, 3, 4, 5 };
-  std::string actualHex = uint8_vector_to_hex_string(actual);
+  std::string actualHex = uint8VectorToHexString(actual);
   std::string expectedHex = "0102030405";
   EXPECT_EQ(actualHex, expectedHex);
 }

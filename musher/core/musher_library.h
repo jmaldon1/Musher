@@ -41,26 +41,12 @@ struct Mp3Decoded {
 };
 
 void CPrintFunctionalMessage(const char* message);
-
-std::vector<uint8_t> CLoadAudioFile(const std::string& filePath);
-
-WavDecoded CDecodeWavDualChannel(const std::vector<uint8_t>& file_data);
+std::vector<uint8_t> CLoadAudioFile(const std::string& file_path);
 WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data);
 WavDecoded CDecodeWav(const std::string& file_path);
-
 std::vector<double> CDecodeMp3(Mp3Decoded& mp3_decoded, const std::string file_path);
-
-double bpmDetection(std::vector<double>& flattened_normalized_samples, uint32_t sample_rate);
-
-double bpmsOverWindow(std::vector<double>& flattened_normalized_samples, size_t num_samples, uint32_t sample_rate,
-                      int windowSeconds);
-
-// bool CDecodeAudio(const char* message, bool (*decodef)(const char*))
-// {
-//     // *decodef("hello")
-//     std::cout << "Hello from Accept Decode!" << std::endl;
-//     return decodef(message);
-// }
+double bpmDetection(std::vector<double>& samples, uint32_t sample_rate);
+double bpmsOverWindow(std::vector<double>& samples, uint32_t sample_rate, unsigned int window_seconds = 3);
 
 }  // namespace core
 }  // namespace musher

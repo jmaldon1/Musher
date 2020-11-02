@@ -46,7 +46,7 @@ TEST(AudioFileDecoding, LoadsAudioFileTest) {
   std::string outputFile = "test_include/filedata.txt";
   // outputVectorToFile<uint8_t>(fileData, outputFile);
 
-  std::string fileDataHex = uint8_vector_to_hex_string(fileData);
+  std::string fileDataHex = uint8VectorToHexString(fileData);
   // ASSERT_TRUE(fileData == fileDataExpected);
 }
 
@@ -110,7 +110,7 @@ TEST(AudioFileDecoding, BeatDetection) {
   uint32_t sampleRate = wav_decoded.sample_rate;
   std::vector<double> normalized_samples = wav_decoded.interleaved_normalized_samples;
 
-  double bpm = bpmsOverWindow(normalized_samples, normalized_samples.size(), sampleRate, 3);
+  double bpm = bpmsOverWindow(normalized_samples, sampleRate, 3);
 
   // std::cout << bpm << std::endl;
   EXPECT_EQ(bpm, 80.0);
@@ -130,18 +130,6 @@ TEST(AudioFileDecoding, DecodeMp3) {
 
   // uint32_t sampleRate = variantToType<uint32_t>(wavDecodedData["sample_rate"]);
 
-  double bpm = bpmsOverWindow(normalizedSamples, normalizedSamples.size(), sampleRate, 3);
+  double bpm = bpmsOverWindow(normalizedSamples, sampleRate, 3);
   std::cout << bpm << std::endl;
 }
-
-// TEST(AudioFileDecoding, Windowing) {
-//     // inputSize = 1024
-//     // input = [1] * inputSize
-//     std::vector<double> inp(1024, 1.0);
-//     std::vector<double> out;
-//     out = blackmanHarris92dB(inp);
-
-//     for (auto & element : out) {
-//         std::cout << element << std::endl;
-//     }
-// }

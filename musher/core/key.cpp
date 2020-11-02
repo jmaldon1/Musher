@@ -189,8 +189,8 @@ std::vector<double> AddContributionHarmonics(const std::vector<double>& chords,
     double before = std::floor(index);
     double after = std::ceil(index);
 
-    int ibefore = (int)std::fmod((double)before, (double)12.0);
-    int iafter = (int)std::fmod((double)after, (double)12.0);
+    int ibefore = static_cast<int>(std::fmod((double)before, (double)12.0));
+    int iafter = static_cast<int>(std::fmod((double)after, (double)12.0));
 
     // Weight goes proportionally to ibefore & iafter
     if (ibefore < iafter) {
@@ -338,7 +338,7 @@ double Correlation(const std::vector<double>& v1,
                    const double std2,
                    const int shift) {
   double r = 0.0;
-  int size = (int)v1.size();
+  int size = static_cast<int>(v1.size());
 
   for (int i = 0; i < size; i++) {
     int index = (i - shift) % size;
@@ -600,21 +600,21 @@ KeyOutput DetectKey(const std::vector<double>& pcp,
   }
 
   if (max_major > max_minor && max_major > max_other) {
-    key_index = (int)(key_index_major * 12 / pcp_size + 0.5);
+    key_index = static_cast<int>((key_index_major * 12 / pcp_size + 0.5));
     scale = Scales::MAJOR;
     max = max_major;
     max2 = max_2_major;
   }
 
   else if (max_minor >= max_major && max_minor >= max_other) {
-    key_index = (int)(key_index_minor * 12 / pcp_size + 0.5);
+    key_index = static_cast<int>((key_index_minor * 12 / pcp_size + 0.5));
     scale = Scales::MINOR;
     max = max_minor;
     max2 = max_2_minor;
   }
 
   else if (max_other > max_major && max_other > max_minor) {
-    key_index = (int)(key_index_other * 12 / pcp_size + 0.5);
+    key_index = static_cast<int>((key_index_other * 12 / pcp_size + 0.5));
     scale = Scales::MAJMIN;
     max = max_other;
     max2 = max_2_other;
@@ -634,7 +634,7 @@ KeyOutput DetectKey(const std::vector<double>& pcp,
 
     if (pcp[sixth] > pcp[fifth]) {
       key_index = sixth;
-      key_index = (int)(key_index * 12 / pcp_size + .5);
+      key_index = static_cast<int>((key_index * 12 / pcp_size + .5));
       scale = Scales::MINOR;
     }
   }

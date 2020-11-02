@@ -15,54 +15,45 @@
 namespace musher {
 namespace core {
 
-// std::unordered_map<std::string, std::variant<int, uint32_t, double, bool>> um;
-/*
-bitDept: int
-numChannels: int
-numSamplesPerChannel: int
-sampleRate: uint32_t
-lengthInSeconds: double
-isMono: bool
-isStereo: bool
-*/
-
 void CPrintFunctionalMessage(const char* message) { std::cout << message << std::endl; }
 
-std::vector<uint8_t> CLoadAudioFile(const std::string& filePath) {
-  std::error_code e;
+/**
+ * @brief Load an the data from an audio file.
+ * 
+ * @param file_path File path to a .wav file.
+ * @return std::vector<uint8_t> Audio file data.
+ */
+std::vector<uint8_t> CLoadAudioFile(const std::string& file_path) {
+  // std::error_code e;
   // fs::path audioFileAbsPath = fs::canonical(filePath, e);
-  if (filePath.empty()) {
+  if (file_path.empty()) {
     throw std::runtime_error("No file provided");
   }
-  std::ifstream audioFile(filePath, std::ios::binary);
+  std::ifstream audio_file(file_path, std::ios::binary);
 
   /* skip white space */
-  audioFile.unsetf(std::ios::skipws);
-  std::istream_iterator<uint8_t> begin(audioFile), end;
-  if (audioFile.fail()) {
+  audio_file.unsetf(std::ios::skipws);
+  std::istream_iterator<uint8_t> begin(audio_file), end;
+  if (audio_file.fail()) {
     std::stringstream ss;
-    ss << "Failed to load file '" << filePath << "'";
+    ss << "Failed to load file '" << file_path << "'";
     throw std::runtime_error(ss.str().c_str());
   }
 
-  std::vector<uint8_t> fileData(begin, end);
-  return fileData;
+  std::vector<uint8_t> file_data(begin, end);
+  return file_data;
 }
 
 /**
- * @brief Decodes a wav file, analysis stored into wav_decode_data
- *
- * @tparam double type of the returned samples
- * @tparam Map unordered or ordered map
- * @tparam K string
- * @tparam V variant
- * @param wav_decoded_data map that will be used to store the music file analysis
- * @param file_path path to wav file
- * @return std::vector< std::vector< double > > CDecodeWav 2D vector of samples,
- * samples[0] holds channel 1
- * samples[1] holds channel 2 (Will not exist if mono file)
+ * @brief Decode a wav file.
+ * WavDecoded.normalized_samples contains:
+ *  samples[0] holds channel 1
+ *  samples[1] holds channel 2 (Will not exist if mono file)
+ * 
+ * @param file_data WAV file data.
+ * @return WavDecoded Decoded .wav file information.
  */
-WavDecoded CDecodeWavDualChannel(const std::vector<uint8_t>& file_data) {
+WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
   std::vector<std::vector<double>> samples;
 
   if (!samples.empty()) {
@@ -110,7 +101,7 @@ WavDecoded CDecodeWavDualChannel(const std::vector<uint8_t>& file_data) {
   uint32_t sample_rate = (uint32_t)fourBytesToInt(file_data, f + 12);
   int32_t num_bytes_per_second = fourBytesToInt(file_data, f + 16);
   int16_t num_bytes_per_block = twoBytesToInt(file_data, f + 20);
-  int bit_depth = (int)twoBytesToInt(file_data, f + 22);
+  int bit_depth = static_cast<int>(twoBytesToInt(file_data, f + 22));
 
   int num_bytes_per_sample = bit_depth / 8;
 
@@ -216,30 +207,11 @@ WavDecoded CDecodeWavDualChannel(const std::vector<uint8_t>& file_data) {
 }
 
 /**
- * @brief Overloaded wrapper around CDecodeWav that accepts a file path to a wav file and returns interleaved samples
- *
- * @tparam double type of the final samples
- * @tparam Map unordered or ordered map
- * @tparam K string
- * @tparam V variant
- * @param wav_decoded_data map that will be used to store the music file analysis
- * @param file_path path to wav file
- * @return std::vector< double > CDecodeWav interleaved samples
+ * @brief Overloaded wrapper around CDecodeWav that accepts a file path to a .wav file.
+ * 
+ * @param file_path File path to a .wav file.
+ * @return WavDecoded Decoded .wav file information.
  */
-WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) { return CDecodeWavDualChannel(file_data); }
-
-/**
- * @brief Overloaded wrapper around CDecodeWav that accepts a file path to a wav file and returns interleaved samples
- *
- * @tparam double type of the final samples
- * @tparam Map unordered or ordered map
- * @tparam K string
- * @tparam V variant
- * @param wav_decoded_data map that will be used to store the music file analysis
- * @param file_path path to wav file
- * @return std::vector< double > CDecodeWav interleaved samples
- */
-
 WavDecoded CDecodeWav(const std::string& file_path) {
   std::vector<uint8_t> file_data = CLoadAudioFile(file_path);
   return CDecodeWav(file_data);
@@ -254,13 +226,13 @@ WavDecoded CDecodeWav(const std::string& file_path) {
  * @tparam V variant
  * @param wav_decoded_data map that will be used to store the music file analysis
  * @param file_path path to mp3 file
- * @return std::vector< double > CDecodeMp3 interleaved samples
+ * @return std::vector<double> CDecodeMp3 interleaved samples
  */
 std::vector<double> CDecodeMp3(Mp3Decoded& mp3_decoded, const std::string file_path) {
   mp3dec_t mp3d;
   mp3dec_file_info_t info;
   if (mp3dec_load(&mp3d, file_path.c_str(), &info, NULL, NULL)) {
-    /* error */
+    // error
     throw std::runtime_error("BAD MP3");
   }
 
@@ -289,13 +261,20 @@ std::vector<double> CDecodeMp3(Mp3Decoded& mp3_decoded, const std::string file_p
   return normalized_samples;
 }
 
-double bpmDetection(std::vector<double>& flattened_normalized_samples, uint32_t sample_rate) {
+/**
+ * @brief Calculate the BPM (Beats per minute) of audio samples.
+ *
+ * @param samples Input audio signal.
+ * @param sample_rate Sampling rate of the audio signal [Hz].
+ * @return double BPM
+ */
+double bpmDetection(std::vector<double>& samples, uint32_t sample_rate) {
   wave_object obj;
   wt_object wt;
   int J = 1;
 
   const int total_levels = 4;
-  const int max_decimation = pow(2, (total_levels - 1));
+  const int max_decimation = std::pow(2, (total_levels - 1));
 
   double min_index = 60. / 220 * (sample_rate / max_decimation);
   double max_index = 60. / 40 * (sample_rate / max_decimation);
@@ -309,42 +288,45 @@ double bpmDetection(std::vector<double>& flattened_normalized_samples, uint32_t 
       cD_mean_removed_signal_partial;
   std::vector<double> cA, cA_filtered, cA_mean_removed_signal_partial;
   for (int level = 0; level < total_levels; level++) {
-    /* Discrete Wavelet Transform */
+    // Discrete Wavelet Transform
     if (level == 0) {
-      wt = wt_init(obj, (char*)"dwt", flattened_normalized_samples.size(),
-                   J);  // Initialize the wavelet transform object on input
+      // Initialize the wavelet transform object on input
+      wt = wt_init(obj, (char*)"dwt", samples.size(), J);
       setDWTExtension(wt, (char*)"sym");
       setWTConv(wt, (char*)"direct");
 
-      dwt(wt, flattened_normalized_samples.data());  // Perform DWT
+      // Perform DWT
+      dwt(wt, samples.data());
 
       cD_min_len = wt->length[1] / max_decimation + 1;
       cD_sum.resize(cD_min_len, 0.0);
       cD_mean_removed_signal_partial.resize(cD_min_len);
     } else {
-      wt = wt_init(obj, (char*)"dwt", cA.size(), J);  // Initialize the wavelet transform object
+      // Initialize the wavelet transform object
+      wt = wt_init(obj, (char*)"dwt", cA.size(), J);
       setDWTExtension(wt, (char*)"sym");
       setWTConv(wt, (char*)"direct");
 
-      dwt(wt, cA.data());  // Perform remaining DWT's on cA
+      // Perform remaining DWT's on cA
+      dwt(wt, cA.data());
     }
 
-    /* Fill cA */
+    // Fill cA
     cA.clear();
     for (int i = 0; i < wt->length[0]; ++i) {
       cA.push_back(wt->output[i]);
     }
 
-    /* Fill cD */
+    // Fill cD
     for (int i = wt->length[1]; i < wt->outlength; ++i) {
       cD.push_back(wt->output[i]);
     }
 
-    /* Perform One Pole filter on cD */
+    // Perform One Pole filter on cD
     cD_filtered = onePoleFilter(cD);
 
-    /* Decimate */
-    int dc = pow(2, (total_levels - level - 1));
+    // Decimate
+    int dc = std::pow(2, (total_levels - level - 1));
     for (int ax = 0; ax < cD_filtered.size(); ax += dc) {
       cD_decimated_signal.push_back(std::abs(cD_filtered[ax]));
     }
@@ -352,40 +334,40 @@ double bpmDetection(std::vector<double>& flattened_normalized_samples, uint32_t 
     decimated_signal_sum = std::accumulate(cD_decimated_signal.begin(), cD_decimated_signal.end(), 0.0);
     decimated_signal_mean = decimated_signal_sum / static_cast<double>(cD_decimated_signal.size());
 
-    /* Remove the mean */
+    // Remove the mean
     cD_mean_removed_signal.resize(cD_decimated_signal.size());
     auto remove_mean = [decimated_signal_mean](const double x) { return x - decimated_signal_mean; };
     std::transform(cD_decimated_signal.begin(), cD_decimated_signal.end(), cD_mean_removed_signal.begin(), remove_mean);
 
-    /* Reconstruct */
+    // Reconstruct
     std::copy_n(cD_mean_removed_signal.begin(), cD_min_len, cD_mean_removed_signal_partial.begin());
-    /* Perform element-wise sum of 2 vectors and store into cD_sum */
+    // Perform element-wise sum of 2 vectors and store into cD_sum
     std::transform(cD_sum.begin(), cD_sum.end(), cD_mean_removed_signal_partial.begin(), cD_sum.begin(),
                    std::plus<double>());
 
-    /* Clear variables */
+    // Clear variables
     wt_free(wt);
     cD.clear();
     cD_filtered.clear();
     cD_decimated_signal.clear();
     cD_mean_removed_signal.clear();
-    //cD_mean_removed_signal_partial.clear();
+    // cD_mean_removed_signal_partial.clear();
   }
   wave_free(obj);
 
-  /* Check if cA has any useful data */
+  // Check if cA has any useful data
   bool zeros = std::all_of(cA.begin(), cA.end(), [](const double d) { return d == 0.0; });
   if (zeros) return 0.0;
 
-  /* Filter cA */
+  // Filter cA
   cA_filtered = onePoleFilter(cA);
 
-  /* Make cA_filtered absolute */
+  // Make cA_filtered absolute
   std::vector<double> cA_absolute(cA_filtered.size());
   auto absolute_val = [](const double x) { return std::abs(x); };
   std::transform(cA_filtered.begin(), cA_filtered.end(), cA_absolute.begin(), absolute_val);
 
-  /* Get mean */
+  // Get mean
   double cA_absolute_sum = std::accumulate(cA_absolute.begin(), cA_absolute.end(), 0.0);
   double cA_absolute_mean = cA_absolute_sum / static_cast<double>(cA_absolute.size());
 
@@ -395,25 +377,25 @@ double bpmDetection(std::vector<double>& flattened_normalized_samples, uint32_t 
 
   cA_mean_removed_signal_partial.resize(cD_min_len);
   std::copy_n(cA_mean_removed_signal.begin(), cD_min_len, cA_mean_removed_signal_partial.begin());
-  /* Add elements of cD_sum and cD_mean_removed_signal_partial together and store into cD_sum */
+  // Add elements of cD_sum and cD_mean_removed_signal_partial together and store into cD_sum
   std::transform(cD_sum.begin(), cD_sum.end(), cA_mean_removed_signal_partial.begin(), cD_sum.begin(),
                  std::plus<double>());
 
   size_t data_len = cD_sum.size();
   std::vector<double> b(data_len * 2);
 
-  /* Fill a section of b with cD_sum data */
+  // Fill a section of b with cD_sum data
   int k = 0;
   for (int i = data_len / 2; i < (data_len / 2) + data_len; ++i) {
     b[i] = cD_sum[k];
     k += 1;
   }
 
-  /* Reverse cD_sum */
+  // Reverse cD_sum
   std::vector<double> reverse_cD(cD_sum);
   std::reverse(reverse_cD.begin(), reverse_cD.end());
 
-  /* Perform an array flipped convolution, which is the same as a cross-correlation on the samples.  */
+  // Perform an array flipped convolution, which is the same as a cross-correlation on the samples.
   std::vector<double> correl = fftConvolve(b, reverse_cD);
   correl.pop_back();  // We don't need the last element
   size_t midpoint = correl.size() / 2;
@@ -421,7 +403,7 @@ double bpmDetection(std::vector<double>& flattened_normalized_samples, uint32_t 
   std::vector<double> sliced_correl_midpoint_tmp(correl_midpoint_tmp.begin() + std::floor(min_index),
                                                  correl_midpoint_tmp.begin() + std::floor(max_index));
 
-  /* Peak Detection */
+  // Peak Detection
   std::vector<double> sliced_correl_midpoint_tmp_abs(sliced_correl_midpoint_tmp.size());
   std::transform(sliced_correl_midpoint_tmp.begin(), sliced_correl_midpoint_tmp.end(),
                  sliced_correl_midpoint_tmp_abs.begin(), [](const double x) { return std::abs(x); });
@@ -431,7 +413,7 @@ double bpmDetection(std::vector<double>& flattened_normalized_samples, uint32_t 
   std::string sort_by = "height";
   peaks = peakDetect(sliced_correl_midpoint_tmp_abs, threshold, interpolate, sort_by);
 
-  /* Get the first item from peaks because we want the highest peak */
+  // Get the first item from peaks because we want the highest peak
   const double peak_index = std::get<0>(peaks[0]);
 
   if (peak_index == 0.0) return 0.0;
@@ -441,16 +423,27 @@ double bpmDetection(std::vector<double>& flattened_normalized_samples, uint32_t 
   return bpm;
 }
 
-double bpmsOverWindow(std::vector<double>& flattened_normalized_samples, size_t num_samples, uint32_t sample_rate,
-                      int windowSeconds) {
-  int window_samples = windowSeconds * sample_rate;
+/**
+ * @brief Calculate the average BPM of samples.
+ * This function will slice the samples into windows and calculate the BPM over each
+ * window and then average them to achieve a final BPM over all samples.
+ *
+ * @param samples Input audio samples.
+ * @param sample_rate Sampling rate of the audio signal [Hz].
+ * @param window_seconds Size of the the window [Seconds] that will be scanned to determine the bpm,
+ * typically less than 10 seconds.
+ * @return double Average BPM.
+ */
+double bpmsOverWindow(std::vector<double>& samples, uint32_t sample_rate, unsigned int window_seconds) {
+  int num_samples = samples.size();
+  int window_samples = window_seconds * sample_rate;
   int sample_index = 0;
   int max_windows_index = num_samples / window_samples;
   std::vector<double> bpms(max_windows_index, 0.0);
   std::vector<double> seconds_mid(max_windows_index, 0.0);
 
   for (int window_index = 0; window_index < max_windows_index; window_index++) {
-    typename std::vector<double>::iterator samp_it = flattened_normalized_samples.begin() + sample_index;
+    typename std::vector<double>::iterator samp_it = samples.begin() + sample_index;
     std::vector<double> sliced_samples(samp_it, samp_it + window_samples);
 
     double bpm = bpmDetection(sliced_samples, sample_rate);
@@ -461,22 +454,6 @@ double bpmsOverWindow(std::vector<double>& flattened_normalized_samples, size_t 
 
   return std::round(median(bpms));
 }
-
-// std::unordered_map<std::string, std::variant<int, uint32_t, double, bool>>
-// template <class UnorderedMapIterator>
-// void CDecodeAudio(UnorderedMapIterator first, const std::string& filePath, const std::vector<uint8_t>& fileData){
-// 	if(!filePath.empty()){
-// 		std::vector<uint8_t> fileData;
-// 		fileData = CLoadAudioFile(filePath);
-// 	}
-// }
-
-// bool CAcceptDecode(const char* message, bool (*decodef)(const char*))
-// {
-// 	// *decodef("hello")
-// 	std::cout << "Hello from Accept Decode!" << std::endl;
-// 	return decodef(message);
-// }
 
 }  // namespace core
 }  // namespace musher

@@ -32,7 +32,7 @@ TEST(Key, TestCMajorClassical) {
         std::vector<double> windowed_frame = windowing(frame, blackmanHarris62dB);
         std::vector<double> spectrum = convertToFrequencySpectrum(windowed_frame);
         std::vector<std::tuple<double, double>> spectral_peaks =
-            spectralPeaks(spectrum, -1000.0, true, "height", 100, sample_rate, 0, sample_rate / 2);
+            SpectralPeaks(spectrum, -1000.0, "height", 100, sample_rate, 0, sample_rate / 2);
         std::vector<double> hpcp =
             HPCP(spectral_peaks, pcp_size, 440.0, num_harmonics - 1, true, 500.0, 40.0, 5000.0, "squared cosine", .5);
 
@@ -76,7 +76,7 @@ TEST(Key, TestEbMajorEDM) {
         std::vector<double> windowed_frame = windowing(frame, blackmanHarris62dB);
         std::vector<double> spectrum = convertToFrequencySpectrum(windowed_frame);
         std::vector<std::tuple<double, double>> spectral_peaks =
-            spectralPeaks(spectrum, -1000.0, true, "height", 100, sample_rate, 0, sample_rate / 2);
+            SpectralPeaks(spectrum, -1000.0, "height", 100, sample_rate, 0, sample_rate / 2);
         std::vector<double> hpcp =
             HPCP(spectral_peaks, pcp_size, 440.0, num_harmonics - 1, true, 500.0, 40.0, 5000.0, "squared cosine", .5);
 

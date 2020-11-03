@@ -38,6 +38,7 @@ struct HarmonicPeak {
  * @return std::string string of hex
  */
 std::string Uint8VectorToHexString(const std::vector<uint8_t> &v);
+
 /**
  * @brief Get string between two single quotes.
  * NOTE: There must only be 2 quotes in the entire string.
@@ -46,6 +47,7 @@ std::string Uint8VectorToHexString(const std::vector<uint8_t> &v);
  * @return string between single quotes
  */
 std::string StrBetweenSQuotes(const std::string &s);
+
 /**
  * @brief Check if the architecture of the machine running the code is big endian.
  *
@@ -76,19 +78,20 @@ double NormalizeInt32_t(const int32_t sample);
 // }
 
 /**
- * @brief Interleave two vectors.
- *
+ * @brief Deinterweave a vector in alternating order to form two vectors.
  * Example:
- *  vec1 = {1, 2, 3, 4}
- *  vec2 = {9, 8, 7, 6}
+ *  interweaved_vector = {1, 9, 2, 8, 3, 7, 4, 6}
  *
- *  interleaved_vector = {1, 9, 2, 8, 3, 7, 4, 6}
+ *  deinterweaved_vector = {
+ *      {1, 2, 3, 4},
+ *      {9, 8, 7, 6}
+ *  }
  *
- * @param vec1 Vector 1.
- * @param vec2 Vector 2.
- * @return std::vector<double> Interleaved vectors.
+ * @param interweaved_vector Interleaved vector.
+ * @return std::vector<std::vector<double>> Deinterweaved vector.
  */
-std::vector<double> Interleave2Vectors(const std::vector<double> &vec1, const std::vector<double> &vec2);
+std::vector<std::vector<double>> Deinterweave(const std::vector<double> &interweaved_vector);
+
 /**
  * @brief Compute the median of a vector.
  *
@@ -96,6 +99,7 @@ std::vector<double> Interleave2Vectors(const std::vector<double> &vec1, const st
  * @return double Median.
  */
 double Median(std::vector<double> &inVec);
+
 /**
  * @brief Compute a one pole filter on an audio signal.
  *
@@ -103,6 +107,7 @@ double Median(std::vector<double> &inVec);
  * @return std::vector<double> Filtered audio signal.
  */
 std::vector<double> OnePoleFilter(const std::vector<double> &vec);
+
 /**
  * @brief Calculate an efficient length to pad the inputs of the FFT.
  *
@@ -129,6 +134,7 @@ double NormFct(int inorm,
  * @return std::vector<double> Centered vector.
  */
 std::vector<double> CenterVector(const std::vector<double> &vec, size_t new_shape);
+
 /**
  * @brief Perform 'same' convolve of two 1-dimensional arrays using FFT.
  * Convolve `vec1` and `vec2` using the fast Fourier transform method.
@@ -145,6 +151,7 @@ std::vector<double> CenterVector(const std::vector<double> &vec, size_t new_shap
  * convolution of `in1` with `in2`.
  */
 std::vector<double> FFTConvolve(const std::vector<double> &vec1, const std::vector<double> &vec2);
+
 /**
  * @brief Normalize a vector (to have an area of 1) and then scale by a factor of 2.
  *
@@ -152,6 +159,7 @@ std::vector<double> FFTConvolve(const std::vector<double> &vec1, const std::vect
  * @return std::vector<double> Normalized vector.
  */
 std::vector<double> Normalize(const std::vector<double> &input);
+
 /**
  * @brief Blackmanharris windowing algorithm.
  * Window functions help control spectral leakage when doing Fourier Analysis.
@@ -166,6 +174,7 @@ std::vector<double> Normalize(const std::vector<double> &input);
 std::vector<double> BlackmanHarris(const std::vector<double> &window, double a0, double a1, double a2, double a3);
 std::vector<double> BlackmanHarris62dB(const std::vector<double> &window);
 std::vector<double> BlackmanHarris92dB(const std::vector<double> &window);
+
 /**
  * @brief Applies windowing to an audio signal.
  * It optionally applies zero-phase windowing and optionally adds zero-padding. The resulting windowed frame size is
@@ -200,6 +209,7 @@ std::vector<double> Windowing(
  * @return double The magnitude of a complex number.
  */
 double Magnitude(const std::complex<double> complex_pair);
+
 /**
  * @brief Computes the frequency spectrum of an array of Reals.
  * The resulting spectrum has a size which is half the size of the input array plus one.
@@ -209,6 +219,7 @@ double Magnitude(const std::complex<double> complex_pair);
  * @return std::vector<double> Frequency spectrum of the input audio signal.
  */
 std::vector<double> ConvertToFrequencySpectrum(const std::vector<double> &audio_frame);
+
 /**
  * @brief Interpolate the peak of a parabola given 3 points on the parabola.
  * α(a) = left point value of parabola
@@ -310,6 +321,7 @@ void AddContributionWithWeight(double freq,
                                WeightType weight_type,
                                double harmonic_weight,
                                std::vector<double> &hpcp);
+
 /**
  * @brief Add contribution to the HPCP without weight.
  *
@@ -324,6 +336,7 @@ void AddContributionWithoutWeight(double freq,
                                   double reference_frequency,
                                   double harmonic_weight,
                                   std::vector<double> &hpcp);
+
 /**
  * @brief Adds the magnitude contribution of the given frequency as the tonic semitone.
  * As well as its possible contribution as a harmonic of another pitch.
@@ -357,8 +370,8 @@ std::vector<HarmonicPeak> InitHarmonicContributionTable(int harmonics);
 /**
  * @brief Normalize a vector so its largest value gets mapped to 1.
  * If zero, the vector isn't touched.
- * 
- * @tparam T 
+ *
+ * @tparam T
  * @param vec Vector to normalize.
  */
 template <typename T>
@@ -377,8 +390,8 @@ void NormalizeInPlace(std::vector<T> &vec) {
 /**
  * @brief Normalize a vector so it's sum is equal to 1.
  * The vector is not touched if it contains negative elements or the sum is zero.
- * 
- * @tparam T 
+ *
+ * @tparam T
  * @param vec Vector to normalize.
  */
 template <typename T>

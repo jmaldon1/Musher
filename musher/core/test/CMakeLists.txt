@@ -1,7 +1,8 @@
 project_test(musher-core-test
     SOURCES
         gtest_extras.h
-        test_utils.h
+        utils.h
+        utils.cpp
         test_musher_utils.cpp
         test_musher_library.cpp
         test_peak_detection.cpp

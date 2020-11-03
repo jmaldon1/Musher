@@ -1,5 +1,5 @@
 #include "musher/core/test/gtest_extras.h"
-#include "musher/core/test/test_utils.h"
+#include "musher/core/test/utils.h"
 #include "musher/core/utils.h"
 
 using namespace musher::core;

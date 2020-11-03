@@ -1,3 +1,4 @@
+#include <fplus/fplus.hpp>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -17,12 +18,6 @@ namespace core {
 
 void CPrintFunctionalMessage(const char* message) { std::cout << message << std::endl; }
 
-/**
- * @brief Load an the data from an audio file.
- * 
- * @param file_path File path to a .wav file.
- * @return std::vector<uint8_t> Audio file data.
- */
 std::vector<uint8_t> CLoadAudioFile(const std::string& file_path) {
   // std::error_code e;
   // fs::path audioFileAbsPath = fs::canonical(filePath, e);
@@ -31,7 +26,7 @@ std::vector<uint8_t> CLoadAudioFile(const std::string& file_path) {
   }
   std::ifstream audio_file(file_path, std::ios::binary);
 
-  /* skip white space */
+  // skip white space
   audio_file.unsetf(std::ios::skipws);
   std::istream_iterator<uint8_t> begin(audio_file), end;
   if (audio_file.fail()) {
@@ -44,15 +39,6 @@ std::vector<uint8_t> CLoadAudioFile(const std::string& file_path) {
   return file_data;
 }
 
-/**
- * @brief Decode a wav file.
- * WavDecoded.Normalized_samples contains:
- *  samples[0] holds channel 1
- *  samples[1] holds channel 2 (Will not exist if mono audio)
- * 
- * @param file_data WAV file data.
- * @return WavDecoded Decoded .wav file information.
- */
 WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
   std::vector<std::vector<double>> samples;
 
@@ -67,7 +53,7 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
   std::string format(file_data.begin() + 8, file_data.begin() + 12);
   // -----------------------------------------------------------
 
-  /* find data chunk in file_data */
+  // find data chunk in file_data
   const std::string data_chunk_key = "data";
   int data_chunk_index = -1;
   auto data_chunk_it = std::search(file_data.begin(), file_data.end(), data_chunk_key.begin(), data_chunk_key.end());
@@ -75,7 +61,7 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
     data_chunk_index = std::distance(file_data.begin(), data_chunk_it);
   }
 
-  /* find format chunk in file_data */
+  // find format chunk in file_data
   std::string format_chunk_key = "fmt";
   int format_chunk_index = -1;
   auto formatChunkIt =
@@ -147,12 +133,12 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
       int sample_index = samples_start_index + (num_bytes_per_block * i) + channel * num_bytes_per_sample;
 
       if (bit_depth == 8) {
-        /* Normalize samples to between -1 and 1 */
+        // Normalize samples to between -1 and 1
         double sample = NormalizeInt8_t(file_data[sample_index]);
         samples[channel].push_back(sample);
       } else if (bit_depth == 16) {
         int16_t sample_as_int = TwoBytesToInt(file_data, sample_index);
-        /* Normalize samples to between -1 and 1 */
+        // Normalize samples to between -1 and 1
         double sample = NormalizeInt16_t(sample_as_int);
         samples[channel].push_back(sample);
       } else if (bit_depth == 24) {
@@ -163,7 +149,7 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
         if (sample_as_int & 0x800000)  // if the 24th bit is set, this is a negative number in 24-bit world
           sample_as_int = sample_as_int | ~0xFFFFFF;  // so make sure sign is extended to the 32 bit float
 
-        /* Normalize samples to between -1 and 1 */
+        // Normalize samples to between -1 and 1
         double sample = NormalizeInt32_t(sample_as_int);
         samples[channel].push_back(sample);
       } else {
@@ -193,58 +179,52 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
   wav_decoded.length_in_seconds = length_in_seconds;
   wav_decoded.file_type = file_type;
   wav_decoded.avg_bitrate_kbps = avg_bitrate_kbps;
-  wav_decoded.Normalized_samples = samples;
+  wav_decoded.normalized_samples = samples;
 
   if (stereo) {
     const std::vector<double> channel_one = samples[0];
     const std::vector<double> channel_two = samples[1];
-    wav_decoded.interleaved_Normalized_samples = Interleave2Vectors(channel_one, channel_two);
+    wav_decoded.interleaved_normalized_samples = fplus::interweave(channel_one, channel_two);
   } else {
-    wav_decoded.interleaved_Normalized_samples = samples[0];
+    wav_decoded.interleaved_normalized_samples = samples[0];
   }
 
   return wav_decoded;
 }
 
-/**
- * @brief Overloaded wrapper around CDecodeWav that accepts a file path to a .wav file.
- * 
- * @param file_path File path to a .wav file.
- * @return WavDecoded Decoded .wav file information.
- */
 WavDecoded CDecodeWav(const std::string& file_path) {
   std::vector<uint8_t> file_data = CLoadAudioFile(file_path);
   return CDecodeWav(file_data);
 }
 
-/**
- * @brief Decodes a mp3 file, analysis stored into wav_decode_data
- *
- * @tparam double type of the final samples
- * @tparam Map unordered or ordered map
- * @tparam K string
- * @tparam V variant
- * @param wav_decoded_data map that will be used to store the music file analysis
- * @param file_path path to mp3 file
- * @return std::vector<double> CDecodeMp3 interleaved samples
- */
-std::vector<double> CDecodeMp3(Mp3Decoded& mp3_decoded, const std::string file_path) {
+Mp3Decoded CDecodeMp3(const std::string file_path) {
   mp3dec_t mp3d;
   mp3dec_file_info_t info;
   if (mp3dec_load(&mp3d, file_path.c_str(), &info, NULL, NULL)) {
     // error
-    throw std::runtime_error("BAD MP3");
+    throw std::runtime_error("Unable to decode MP3.");
   }
 
   std::vector<int32_t> interleaved_samples(info.buffer, info.buffer + info.samples);
   int num_samples = static_cast<int>(info.samples);
-  int samples_per_channel = static_cast<int>(info.samples) / 2;
   bool mono = info.channels == 1;
   bool stereo = info.channels == 2;
+  int samples_per_channel;
+  if (stereo) {
+    samples_per_channel = num_samples / 2;
+  } else {
+    samples_per_channel = info.samples;
+  }
+
   uint32_t sample_rate = info.hz;
   double length_in_seconds = static_cast<double>(samples_per_channel) / static_cast<double>(sample_rate);
   std::string file_type = "mp3";
 
+  std::vector<double> interleaved_normalized_samples(interleaved_samples.size());
+  std::transform(interleaved_samples.begin(), interleaved_samples.end(), interleaved_normalized_samples.begin(),
+                 [](const int32_t x) { return NormalizeInt32_t(x); });
+
+  Mp3Decoded mp3_decoded;
   mp3_decoded.sample_rate = sample_rate;
   mp3_decoded.channels = info.channels;
   mp3_decoded.mono = mono;
@@ -253,21 +233,12 @@ std::vector<double> CDecodeMp3(Mp3Decoded& mp3_decoded, const std::string file_p
   mp3_decoded.length_in_seconds = length_in_seconds;
   mp3_decoded.file_type = file_type;
   mp3_decoded.avg_bitrate_kbps = info.avg_bitrate_kbps;
+  mp3_decoded.interleaved_normalized_samples = interleaved_normalized_samples;
+  mp3_decoded.normalized_samples = Deinterweave(interleaved_normalized_samples);
 
-  std::vector<double> Normalized_samples(interleaved_samples.size());
-  std::transform(interleaved_samples.begin(), interleaved_samples.end(), Normalized_samples.begin(),
-                 [](const int32_t x) { return NormalizeInt32_t(x); });
-
-  return Normalized_samples;
+  return mp3_decoded;
 }
 
-/**
- * @brief Calculate the BPM (Beats per minute) of audio samples.
- *
- * @param samples Input audio signal.
- * @param sample_rate Sampling rate of the audio signal [Hz].
- * @return double BPM
- */
 double BPMDetection(std::vector<double>& samples, uint32_t sample_rate) {
   wave_object obj;
   wt_object wt;
@@ -423,18 +394,7 @@ double BPMDetection(std::vector<double>& samples, uint32_t sample_rate) {
   return bpm;
 }
 
-/**
- * @brief Calculate the average BPM (Beats per minute) of samples.
- * This function will slice the samples into windows and calculate the BPM over each
- * window and then average them to achieve a final BPM over all samples.
- *
- * @param samples Input audio samples.
- * @param sample_rate Sampling rate of the audio signal [Hz].
- * @param window_seconds Size of the the window [Seconds] that will be scanned to determine the bpm,
- * typically less than 10 seconds.
- * @return double Average BPM.
- */
-double BPMsOverWindow(std::vector<double>& samples, uint32_t sample_rate, unsigned int window_seconds) {
+double BPMOverWindow(std::vector<double>& samples, uint32_t sample_rate, unsigned int window_seconds) {
   int num_samples = samples.size();
   int window_samples = window_seconds * sample_rate;
   int sample_index = 0;

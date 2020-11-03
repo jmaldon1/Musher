@@ -7,11 +7,11 @@
 #include <algorithm>
 
 #include "musher/core/musher_library.h"
-#include "musher/core/utils.h"
-#include "musher/python/utils.h"
+// #include "musher/core/utils.h"
+// #include "musher/python/utils.h"
 
 
-using namespace musher;
+using namespace musher::core;
 
 /* Unordered map of python decode functions mapped to their C++ function equivalent */
 // typedef bool (*DecodeFunction)(const char*); // function pointer type
@@ -36,7 +36,7 @@ PyObject* PrintFunctionalMessage(PyObject* self, PyObject* args)
     return Py_BuildValue("");
 }
 
-
+#if 0  
 PyObject* LoadAudioFile(PyObject* self, PyObject* args)
 {
     /* Arguments passed in from Python */
@@ -168,6 +168,7 @@ PyObject* DecodeWav(PyObject* self, PyObject* args)
     /* Return nothing */
     return wav_decoded_data_dict;
 }
+#endif
 
 /* define the functions provided by the module */
 static PyMethodDef cFuncs[] =
@@ -179,18 +180,18 @@ static PyMethodDef cFuncs[] =
         METH_VARARGS,
         "Print a message from a function"
     },
-    {
-        "load_audio_file",
-        LoadAudioFile,
-        METH_VARARGS,
-        "Load audio file from path"
-    },
-    {
-        "decode_wav",
-        DecodeWav,
-        METH_VARARGS,
-        "Decode Wav file"
-    },
+    // {
+    //     "load_audio_file",
+    //     LoadAudioFile,
+    //     METH_VARARGS,
+    //     "Load audio file from path"
+    // },
+    // {
+    //     "decode_wav",
+    //     DecodeWav,
+    //     METH_VARARGS,
+    //     "Decode Wav file"
+    // },
     /* last one must be empty */
     {NULL, NULL, 0, NULL}
 };

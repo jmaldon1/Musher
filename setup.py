@@ -210,6 +210,8 @@ setup(
     packages=find_packages(),
     ext_modules=[CMakeExtension("musher")],
     cmdclass={
+        # build_ext is called while running 'pip install .'
+        "build_ext": CMakeBuild,
         "cmake": CMakeBuild,
         "ctest": CTest,
         "gtest": GTest,

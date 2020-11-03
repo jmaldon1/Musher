@@ -3,6 +3,10 @@ include_guard(GLOBAL)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# TODO: is this needed? fix  python
+# For setting fPIC. Required for wavelib to compile.
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 option(ENABLE_PACKAGE_BUILD "Build package using Conan" OFF)
 option(ENABLE_TESTS "Build unit tests" OFF)
 
@@ -80,5 +84,6 @@ include(compile-options)
 include(tests)
 include(python)
 include(library)
+# include(module)
 include(executable)
 include(utils)

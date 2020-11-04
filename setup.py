@@ -135,9 +135,11 @@ class CTest(test):
 
     def run(self):
         build_dir = get_build_dir()
-
+        
         if platform.system().lower() == "windows":
-            build_dir = os.path.join(build_dir, "Debug")
+            build_dir_win_debug = os.path.join(build_dir, "Debug")
+            if os.path.isdir(build_dir_win_debug):
+                build_dir = build_dir_win_debug
 
         try:
             result = subprocess.run(['ctest', "--output-on-failure"],
@@ -187,7 +189,9 @@ class GTest(test):
         bin_dir = os.path.join(get_build_dir(), "bin")
 
         if platform.system().lower() == "windows":
-            bin_dir = os.path.join(bin_dir, "Debug")
+            bin_dir_win_debug = os.path.join(bin_dir, "Debug")
+            if os.path.isdir(bin_dir_win_debug):
+                bin_dir = bin_dir_win_debug
 
         try:
             result = subprocess.run(['./musher-core-test', self.gtest_options],

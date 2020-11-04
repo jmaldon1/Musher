@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <string>
 #include <unordered_map>
-#include <variant>
 #include <vector>
 
 #include "musher/core/utils.h"

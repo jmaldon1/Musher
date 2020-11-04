@@ -6,7 +6,6 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
-#include <variant>
 
 #include "gtest/gtest.h"
 #include "musher/core/musher_library.h"

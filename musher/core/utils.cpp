@@ -710,14 +710,7 @@ std::vector<HarmonicPeak> InitHarmonicContributionTable(int harmonics) {
   return harmonic_peaks;
 }
 
-/**
- * @brief Get the max element in a vector.
- * Checks if the vector is empty first.
- *
- * @param vec Vector
- * @return int Max element
- */
-int MaxVectorElement(const std::vector<double> &vec) {
+int ArgMax(const std::vector<double> &vec) {
   if (vec.empty()) throw std::runtime_error("Trying to get max vector element of empty vector.");
   return std::max_element(vec.begin(), vec.end()) - vec.begin();
 }
@@ -861,7 +854,7 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
   /* Shift all of the elements so that the largest HPCP value is at index 0,
    only if this option is enabled. */
   if (max_shifted) {
-    int idx_max = MaxVectorElement(hpcp);
+    int idx_max = ArgMax(hpcp);
     std::vector<double> hpcp_bak = hpcp;
     for (int i = idx_max; i < static_cast<int>(hpcp.size()); i++) {
       hpcp[i - idx_max] = hpcp_bak[i];

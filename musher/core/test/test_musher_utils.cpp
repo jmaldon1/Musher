@@ -1,7 +1,6 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <variant>
 #include <vector>
 
 #include "gtest/gtest.h"

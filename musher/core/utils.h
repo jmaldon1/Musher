@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include <complex>
+#include <fplus/fplus.hpp>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -11,7 +12,6 @@
 #include <string>
 #include <tuple>
 #include <valarray>
-#include <variant>
 #include <vector>
 
 #include "musher/third-party/pocketfft/pocketfft.h"
@@ -379,6 +379,7 @@ void NormalizeInPlace(std::vector<T> &vec) {
   if (vec.empty()) return;
 
   T maxElement = *std::max_element(vec.begin(), vec.end());
+  // T maxElement = fplus::maximum(vec);
 
   if (maxElement != (T)0.0) {
     for (size_t i = 0; i < vec.size(); i++) {
@@ -413,13 +414,13 @@ void NormalizeSum(std::vector<T> &vec) {
 }
 
 /**
- * @brief Get the max element in a vector.
+ * @brief Get the arg max of a vector.
  * Checks if the vector is empty first.
  *
  * @param vec Vector
- * @return int Max element
+ * @return int Arg max
  */
-int MaxVectorElement(const std::vector<double> &input);
+int ArgMax(const std::vector<double> &input);
 
 /**
  * @brief Computes a Harmonic Pitch Class Profile (HPCP) from the spectral peaks of a signal.

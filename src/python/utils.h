@@ -8,7 +8,7 @@
 #include <typeinfo>
 #include <iostream>
 
-#include "musher/core/utils.h"
+#include "src/core/utils.h"
 
 namespace musher {
 namespace python {

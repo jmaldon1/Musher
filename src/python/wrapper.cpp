@@ -6,9 +6,9 @@
 #include <stdexcept>
 #include <algorithm>
 
-#include "musher/core/musher_library.h"
-// #include "musher/core/utils.h"
-// #include "musher/python/utils.h"
+#include "src/core/musher_library.h"
+// #include "src/core/utils.h"
+// #include "src/python/utils.h"
 
 
 using namespace musher::core;
@@ -201,7 +201,7 @@ static PyMethodDef cFuncs[] =
 static struct PyModuleDef cModule =
 {
     PyModuleDef_HEAD_INIT,
-    "musher",
+    "musher_python",
     NULL,
     -1,
     cFuncs
@@ -209,7 +209,7 @@ static struct PyModuleDef cModule =
 
 
 /* Initialize the Python module */
-PyMODINIT_FUNC PyInit_musher(void)
+PyMODINIT_FUNC PyInit_musher_python(void)
 {
     return PyModule_Create(&cModule);
 }

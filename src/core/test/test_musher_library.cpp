@@ -9,8 +9,8 @@
 #include <variant>
 
 #include "gtest/gtest.h"
-#include "musher/core/musher_library.h"
-#include "musher/core/utils.h"
+#include "src/core/musher_library.h"
+#include "src/core/utils.h"
 
 /* TEST INCLUDES */
 // #include "test_load_audio_file.h"

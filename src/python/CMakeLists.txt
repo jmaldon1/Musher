@@ -1,4 +1,4 @@
-project_py_module(musher-python
+project_py_module(musher_python
     SOURCES
         # utils.h
         # utils.cpp

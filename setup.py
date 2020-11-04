@@ -39,6 +39,7 @@ class CMakeExtension(Extension):
 
     def __init__(self, name, sourcedir=""):
         Extension.__init__(self, name, sources=[])
+        # self.sourcedir = os.path.abspath(sourcedir)
         self.sourcedir = os.path.abspath(sourcedir)
 
 
@@ -48,6 +49,7 @@ class CMakeExtension(Extension):
 class CleanBuildCommand(Command):
     """Clean the project directory of temporary files involved with
     building the C extension and python module.
+    This will also uninstall the development version of musher.
     """
     user_options = []
 
@@ -74,7 +76,8 @@ class CleanBuildCommand(Command):
             os.path.join(root_dir, "musher.egg-info"),
             os.path.join(root_dir, ".eggs"),
             os.path.join(root_dir, ".pytest_cache"),
-            os.path.join(root_dir, ".tox")
+            os.path.join(root_dir, ".tox"),
+            os.path.join(root_dir, "musher", "musher_python.so")
         ]
 
         for item in cleanup_list:
@@ -109,6 +112,7 @@ class CMakeBuild(build_ext):
             self.build_extension(ext)
 
     def build_extension(self, ext):
+        shared_lib_name = "musher_python.so"
         build_dir = get_build_dir()
         if self.debug:
             cmake_args = ["-DCMAKE_BUILD_TYPE=Debug", "-DENABLE_TESTS=On"]
@@ -124,6 +128,12 @@ class CMakeBuild(build_ext):
         subprocess.run(['cmake', '--build', '.'],
                        cwd=build_dir,
                        check=True)
+
+        # Copy the python shared module to the musher dummy wrapper.
+        shared_lib_path = os.path.join(build_dir, "lib", shared_lib_name)
+        root_dir_path = os.path.dirname(os.path.realpath(__file__))
+        python_module_path = os.path.join(root_dir_path, "musher", shared_lib_name)
+        shutil.copyfile(shared_lib_path, python_module_path)
 
 
 class CTest(test):
@@ -207,7 +217,7 @@ setup(
     name='musher',
     version='0.1',
     description='Mush songs together',
-    packages=find_packages(),
+    # packages=find_packages(),
     ext_modules=[CMakeExtension("musher")],
     cmdclass={
         # build_ext is called while running 'pip install .'

@@ -14,7 +14,7 @@
 #include <variant>
 #include <vector>
 
-#include "musher/third-party/pocketfft/pocketfft.h"
+#include "src/third-party/pocketfft/pocketfft.h"
 
 namespace musher {
 namespace core {

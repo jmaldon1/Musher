@@ -10,8 +10,8 @@
 #include <vector>
 
 #define MINIMP3_IMPLEMENTATION
-#include "musher/core/musher_library.h"
-#include "musher/core/utils.h"
+#include "src/core/musher_library.h"
+#include "src/core/utils.h"
 
 namespace musher {
 namespace core {

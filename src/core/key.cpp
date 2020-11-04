@@ -1,9 +1,9 @@
-#include "musher/core/key.h"
+#include "src/core/key.h"
 
 #include <cmath>
 #include <fplus/fplus.hpp>
 
-#include "musher/core/utils.h"
+#include "src/core/utils.h"
 
 namespace musher {
 namespace core {

@@ -12,4 +12,4 @@ include_directories(${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR})
 include(conan)
 include(base)
 
-add_subdirectory(musher)
+add_subdirectory(src)

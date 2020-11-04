@@ -6,9 +6,9 @@
 #include <variant>
 #include <vector>
 
-#include "musher/core/utils.h"
-#include "musher/third-party/minimp3/minimp3_ex.h"
-#include "musher/third-party/wavelib/header/wavelib.h"
+#include "src/core/utils.h"
+#include "src/third-party/minimp3/minimp3_ex.h"
+#include "src/third-party/wavelib/header/wavelib.h"
 
 namespace musher {
 namespace core {

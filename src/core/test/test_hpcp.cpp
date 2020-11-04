@@ -1,7 +1,7 @@
 #include <cmath>
 
-#include "musher/core/test/gtest_extras.h"
-#include "musher/core/utils.h"
+#include "src/core/test/gtest_extras.h"
+#include "src/core/utils.h"
 
 using namespace musher::core;
 

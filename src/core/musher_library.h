@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <string>
 #include <unordered_map>
-#include <variant>
 #include <vector>
 
 #include "src/core/utils.h"

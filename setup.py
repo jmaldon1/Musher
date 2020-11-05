@@ -113,7 +113,6 @@ class CMakeBuild(build_ext):
             self.build_extension(ext)
 
     def build_extension(self, ext):
-        shared_lib_name = "musher_python.so"
         build_dir = get_build_dir()
         if self.debug:
             cmake_args = ["-DCMAKE_BUILD_TYPE=Debug", "-DENABLE_TESTS=On"]
@@ -123,22 +122,12 @@ class CMakeBuild(build_ext):
         if not os.path.exists(build_dir):
             os.makedirs(build_dir)
 
-        # from musher/build
-        # cmake .. -DCMAKE_BUILD_TYPE=XXXXXX
-
         subprocess.run(['cmake', ROOT_DIR] + cmake_args,
                        cwd=build_dir,
                        check=True)
         subprocess.run(['cmake', '--build', '.'],
                        cwd=build_dir,
                        check=True)
-
-        # Copy the python shared module to the musher dummy wrapper.
-        shared_lib_path = os.path.join(build_dir, "lib", shared_lib_name)
-        root_dir_path = os.path.dirname(os.path.realpath(__file__))
-        python_module_path = os.path.join(
-            root_dir_path, "musher", shared_lib_name)
-        shutil.copyfile(shared_lib_path, python_module_path)
 
 
 class CTest(test):
@@ -279,8 +268,6 @@ setup(
          )
     ],
     cmdclass={
-        # # build_ext is called while running 'pip install .'
-        # "build_ext": CMakeBuild,
         "cmake": CMakeBuild,
         "ctest": CTest,
         "gtest": GTest,

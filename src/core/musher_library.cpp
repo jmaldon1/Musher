@@ -56,7 +56,7 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
   int data_chunk_index = -1;
   auto data_chunk_it = std::search(file_data.begin(), file_data.end(), data_chunk_key.begin(), data_chunk_key.end());
   if (data_chunk_it != file_data.end()) {
-    data_chunk_index = std::distance(file_data.begin(), data_chunk_it);
+    data_chunk_index = static_cast<int>(std::distance(file_data.begin(), data_chunk_it));
   }
 
   // find format chunk in file_data
@@ -65,7 +65,7 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
   auto formatChunkIt =
       std::search(file_data.begin(), file_data.end(), format_chunk_key.begin(), format_chunk_key.end());
   if (formatChunkIt != file_data.end()) {
-    format_chunk_index = std::distance(file_data.begin(), formatChunkIt);
+    format_chunk_index = static_cast<int>(std::distance(file_data.begin(), formatChunkIt));
   }
 
   // if we can't find the data or format chunks, or the IDs/formats don't seem to be as expected
@@ -211,7 +211,7 @@ Mp3Decoded CDecodeMp3(const std::string file_path) {
   if (stereo) {
     samples_per_channel = num_samples / 2;
   } else {
-    samples_per_channel = info.samples;
+    samples_per_channel = static_cast<int>(info.samples);
   }
 
   uint32_t sample_rate = info.hz;

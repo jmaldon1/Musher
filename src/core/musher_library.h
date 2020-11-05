@@ -1,7 +1,5 @@
 #pragma once
 
-#include <minimp3/minimp3_ex.h>
-
 #include <algorithm>
 #include <string>
 #include <unordered_map>

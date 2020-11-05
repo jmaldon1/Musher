@@ -46,7 +46,7 @@ void CPrintFunctionalMessage(const char* message);
  * @param file_path File path to a .wav file.
  * @return std::vector<uint8_t> Audio file data.
  */
-std::vector<uint8_t> CLoadAudioFile(const std::string& file_path);
+std::vector<uint8_t> LoadAudioFile(const std::string& file_path);
 
 /**
  * @brief Decode a wav file.
@@ -57,15 +57,15 @@ std::vector<uint8_t> CLoadAudioFile(const std::string& file_path);
  * @param file_data WAV file data.
  * @return WavDecoded .wav file information.
  */
-WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data);
+WavDecoded DecodeWav(const std::vector<uint8_t>& file_data);
 
 /**
- * @brief Overloaded wrapper around CDecodeWav that accepts a file path to a .wav file.
+ * @brief Overloaded wrapper around DecodeWav that accepts a file path to a .wav file.
  *
  * @param file_path File path to a .wav file.
  * @return WavDecoded .wav file information.
  */
-WavDecoded CDecodeWav(const std::string& file_path);
+WavDecoded DecodeWav(const std::string& file_path);
 
 /**
  * @brief Decode am mp3 file.

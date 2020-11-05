@@ -11,7 +11,7 @@ class MusherConan(ConanFile):
 
     def requirements(self):
         self.requires("gtest/[>=1.10.0]")
-        self.requires("functionalplus/v0.2.10-p0@dobiasd/stable")
+        # self.requires("functionalplus/v0.2.10-p0@dobiasd/stable")
 
     def set_version(self):
         self.version = "0.0.1"

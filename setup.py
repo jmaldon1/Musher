@@ -4,11 +4,15 @@ import os
 import platform
 import subprocess
 import shutil
+import pip
 import glob
 import codecs
 from setuptools import setup, find_packages, Extension, Command
 from setuptools.command.build_ext import build_ext
 from setuptools.command.test import test
+
+import pybind11
+# import numpy as np
 
 
 README_NOTE = """\
@@ -210,49 +214,55 @@ class GTest(test):
         if result.returncode == -11:
             print("C++ Seg fault.")
 
+
 def relax_warnings():
     if platform.system().lower() == "windows":
         return []
     return [
-            "-Wno-all",
-            "-Wno-deprecated-declarations",
-            "-Wno-error",
-            "-Wno-extra",
-            "-Wno-fatal-errors",
-            '-Wno-ignored-qualifiers',
-            '-Wno-missing-field-initializers',
-            '-Wno-parenthesis',
-            '-Wno-reorder',
-            '-Wno-return-type',
-            '-Wno-shadow',
-            '-Wno-sign-compare',
-            '-Wno-switch',
-            '-Wno-undef',
-            '-Wno-unused-but-set-variable',
-            '-Wno-unused-local-typedefs',
-            '-Wno-unused-parameter',
-            '-Wno-unused-result',
-            '-Wno-unused-variable'
-            ]
+        # "-Wall",
+        # "-Wno-cpp"
+        # "-Werror"
+        # "-Wall",
+        # "-Wno-deprecated-declarations",
+        # "-Wno-error",
+        # "-Wno-extra",
+        # "-Wno-fatal-errors",
+        # '-Wno-ignored-qualifiers',
+        # '-Wno-missing-field-initializers',
+        # '-Wno-parentheses',
+        # '-Wno-reorder',
+        # '-Wno-return-type',
+        # '-Wno-shadow',
+        # '-Wno-sign-compare',
+        # '-Wno-switch',
+        # '-Wno-undef',
+        # '-Wno-unused-but-set-variable',
+        # '-Wno-unused-local-typedefs',
+        # '-Wno-unused-parameter',
+        # '-Wno-unused-result',
+        # '-Wno-unused-variable'
+    ]
+
 setup(
     name='musher',
     version='0.1',
     description='Mush songs together',
-    # packages=find_packages(),
-    # ext_modules=[CMakeExtension("musher")],
+    packages=find_packages(),
     ext_modules=[
          Extension(
              # destination of .so
              'musher.musher_python',
              include_dirs=[
-                 # https://caligari.dartmouth.edu/doc/ibmcxx/en_US/doc/complink/tasks/tuinclud.htm
-                 # Allows for root level imports within C++
-                 ROOT_DIR,
-                 # 3rd party libraries
-                 os.path.join(ROOT_DIR, "src", "third-party")
+                # https://caligari.dartmouth.edu/doc/ibmcxx/en_US/doc/complink/tasks/tuinclud.htm
+                # Allows for root level imports within C++
+                ROOT_DIR,
+                # 3rd party libraries
+                os.path.join(ROOT_DIR, "src", "third-party"),
+                pybind11.get_include()
              ],
              sources=[
-                 'src/python/wrapper.cpp',
+                 #  'src/python/wrapper.cpp',
+                 'src/python/wrapper_bind.cpp',
                  'src/core/musher_library.cpp',
                  'src/core/utils.cpp',
                  'src/core/key.cpp',
@@ -264,12 +274,13 @@ setup(
                  'src/core/key.h'
                  'src/python/utils.h'
              ],
-             extra_compile_args=relax_warnings()
+             extra_compile_args=[*relax_warnings()]
             #   depends=['src/core/musher_library.h', 'src/core/utils.h'],
             #   extra_compile_args=extra_compile_args,
             #   extra_link_args=extra_link_args,
          )
     ],
+    setup_requires=['pybind11>=2.6.0'],
     cmdclass={
         "cmake": CMakeBuild,
         "ctest": CTest,

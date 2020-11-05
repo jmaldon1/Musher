@@ -19,7 +19,7 @@ TEST(Key, TestCMajorClassical) {
   double sample_rate = 44100.;
   int num_harmonics = 4;
 
-  WavDecoded wav_decoded = CDecodeWav(filePath);
+  WavDecoded wav_decoded = DecodeWav(filePath);
   std::vector<std::vector<double>> Normalized_samples = wav_decoded.normalized_samples;
   std::vector<double> mixed_audio = monoMixer(Normalized_samples);
 
@@ -105,7 +105,7 @@ TEST(Key, TestEbMajorEDM) {
   int pcp_size = 36;
   int num_harmonics = 4;
 
-  WavDecoded wav_decoded = CDecodeWav(filePath);
+  WavDecoded wav_decoded = DecodeWav(filePath);
   double sample_rate = wav_decoded.sample_rate;
   std::vector<std::vector<double>> Normalized_samples = wav_decoded.normalized_samples;
   std::vector<double> mixed_audio = monoMixer(Normalized_samples);

@@ -7,8 +7,8 @@ project_library(musher-core
         musher_library.h
         musher_library.cpp
     DEPENDENCIES
-        CONAN
-            functionalplus
+        # CONAN
+        #     functionalplus
         # OTHER
         #     wavelib
 )

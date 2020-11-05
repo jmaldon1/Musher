@@ -40,7 +40,7 @@ namespace core {
  *  [4] Faraldo, Á., Jordà, S., & Herrera, P. (2017, June). A multi-profile method"
  *  for key estimation in edm. In Audio Engineering Society Conference: 2017 AES"
  *  International Conference on Semantic Audio. Audio Engineering Society.
- * 
+ *
  * --essentia: https://github.com/MTG/essentia/blob/master/src/algorithms/tonal/key.cpp
  *
  * @param profile_type Key profile type.
@@ -153,6 +153,8 @@ std::vector<std::vector<double>> SelectKeyProfile(const PolyphicProfile profile_
       return braw;
     case PolyphicProfile::Edma:
       return edma;
+    default:
+      throw std::runtime_error("SelectKeyProfile: Was a profile type not accounted for?");
   }
 }
 
@@ -304,7 +306,7 @@ std::tuple<std::vector<double>, double, double> ResizeProfileToPcpSize(const uns
       incr = (key_profile[i] - key_profile[i + 1]) / n;
     }
 
-    for (int j = 1; j <= (n - 1); j++) {
+    for (unsigned int j = 1; j <= (n - 1); j++) {
       profile_do[i * n + j] = key_profile[i] - j * incr;
     }
   }
@@ -569,7 +571,7 @@ KeyOutput DetectKey(const std::vector<double>& pcp,
 
   // calculate the correlation between the profiles and the PCP...
   // we shift the profile around to find the best match
-  for (int shift = 0; shift < pcp_size; shift++) {
+  for (unsigned int shift = 0; shift < pcp_size; shift++) {
     double corr_major = Correlation(pcp, mean_pcp, std_pcp, profile_doM, mean_profile_M, std_profile_M, shift);
     // Compute maximum value for major keys
     if (corr_major > max_major) {
@@ -627,13 +629,13 @@ KeyOutput DetectKey(const std::vector<double>& pcp,
       throw std::runtime_error("Key: error in Wei Chai algorithm. Wei Chai algorithm does not support minor scales.");
 
     int fifth = key_index + 7 * n;
-    if (fifth > pcp_size) fifth -= pcp_size;
+    if (fifth > static_cast<int>(pcp_size)) fifth -= static_cast<int>(pcp_size);
     int sixth = key_index + 9 * n;
-    if (sixth > pcp_size) sixth -= pcp_size;
+    if (sixth > static_cast<int>(pcp_size)) sixth -= static_cast<int>(pcp_size);
 
     if (pcp[sixth] > pcp[fifth]) {
       key_index = sixth;
-      key_index = static_cast<int>((key_index * 12 / pcp_size + .5));
+      key_index = (key_index * 12 / static_cast<int>(pcp_size) + .5);
       scale = Scales::MINOR;
     }
   }

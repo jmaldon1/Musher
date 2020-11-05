@@ -16,7 +16,7 @@ namespace core {
 
 void CPrintFunctionalMessage(const char* message) { std::cout << message << std::endl; }
 
-std::vector<uint8_t> CLoadAudioFile(const std::string& file_path) {
+std::vector<uint8_t> LoadAudioFile(const std::string& file_path) {
   // std::error_code e;
   // fs::path audioFileAbsPath = fs::canonical(filePath, e);
   if (file_path.empty()) {
@@ -37,7 +37,7 @@ std::vector<uint8_t> CLoadAudioFile(const std::string& file_path) {
   return file_data;
 }
 
-WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
+WavDecoded DecodeWav(const std::vector<uint8_t>& file_data) {
   std::vector<std::vector<double>> samples;
 
   if (!samples.empty()) {
@@ -190,9 +190,9 @@ WavDecoded CDecodeWav(const std::vector<uint8_t>& file_data) {
   return wav_decoded;
 }
 
-WavDecoded CDecodeWav(const std::string& file_path) {
-  std::vector<uint8_t> file_data = CLoadAudioFile(file_path);
-  return CDecodeWav(file_data);
+WavDecoded DecodeWav(const std::string& file_path) {
+  std::vector<uint8_t> file_data = LoadAudioFile(file_path);
+  return DecodeWav(file_data);
 }
 
 Mp3Decoded CDecodeMp3(const std::string file_path) {

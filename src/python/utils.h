@@ -4,6 +4,8 @@
 #include <Python.h>
 
 #include <vector>
+// #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+// #include "numpy/arrayobject.h"
 // #include <variant>
 #include <iostream>
 #include <typeinfo>
@@ -23,7 +25,7 @@ const char* CppTypeToPythonType(const std::string type_name);
  * @param var any arithmetic type
  * @return PyObject of the same type as c++ type
  */
-template <typename BasicType, typename = std::enable_if_t<std::is_arithmetic<BasicType>::value> >
+template <typename BasicType, typename = std::enable_if_t<std::is_arithmetic<BasicType>::value>>
 PyObject* BasicTypeToPyobject(const BasicType& var) {
   /* Get type of variable passed in */
   std::string type_name = typeid(BasicType).name();
@@ -141,6 +143,37 @@ std::vector<T> ListToVector(PyObject*& listObj) {
   }
   return data;
 }
+
+// /** Convert a c++ vector into a numpy array
+//  *
+//  * @param const vector<T>& vec : 1D vector data
+//  * @return PyArrayObject* array : converted numpy array
+//  *
+//  * Transforms an arbitrary C++ vector into a numpy array. Throws in case of
+//  * unregular shape. The array may contain empty columns or something else, as
+//  * long as it's shape is square.
+//  *
+//  * Warning this routine makes a copy of the memory!
+//  */
+// template <typename T>
+// static PyArrayObject* VectorToNpArray(const std::vector<T>& vec, int type_num = PyArray_FLOAT) {
+//   // rows not empty
+//   if (!vec.empty()) {
+//     size_t n_rows = vec.size();
+//     npy_intp dims[1] = { n_rows };
+
+//     PyArrayObject* vec_array = (PyArrayObject*)PyArray_SimpleNew(1, dims, type_num);
+//     T* vec_array_pointer = (T*)PyArray_DATA(vec_array);
+
+//     std::copy(vec.begin(), vec.end(), vec_array_pointer);
+//     return vec_array;
+
+//     // no data at all
+//   } else {
+//     npy_intp dims[1] = { 0 };
+//     return (PyArrayObject*)PyArray_ZEROS(1, dims, PyArray_FLOAT, 0);
+//   }
+// }
 
 }  // namespace python
 }  // namespace musher

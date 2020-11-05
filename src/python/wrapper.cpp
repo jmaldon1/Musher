@@ -1,6 +1,5 @@
 #define PY_SSIZE_T_CLEAN  // It is recommended to always define this before Python.h
 #include <Python.h>
-
 #include <algorithm>
 #include <iostream>
 #include <stdexcept>
@@ -39,7 +38,7 @@ PyObject* LoadAudioFile(PyObject* self, PyObject* args) {
   // Must convert all C++ exceptions to python exceptions to prevent seg faults
   std::vector<uint8_t> fileData;
   try {
-    fileData = CLoadAudioFile(filePath);
+    fileData = LoadAudioFile(filePath);
     PyObject* pyIntList = VectorToList(fileData);
     return pyIntList;
   } catch (const std::runtime_error& e) {
@@ -69,7 +68,7 @@ PyObject* DecodeWav(PyObject* self, PyObject* args) {
     PyObject* wav_decoded_data_dict = PyDict_New();
     std::vector<uint8_t> file_data = ListToVector<uint8_t>(listObj);
 
-    WavDecoded wav_decoded = CDecodeWav(file_data);
+    WavDecoded wav_decoded = DecodeWav(file_data);
 
     std::vector<std::pair<PyObject*, PyObject*>> kv_pair;
     kv_pair.push_back(CreateKVPair("sample_rate", wav_decoded.sample_rate));
@@ -83,6 +82,12 @@ PyObject* DecodeWav(PyObject* self, PyObject* args) {
 
     PyObject* py_interleaved_normalized_samples = VectorToList(wav_decoded.interleaved_normalized_samples);
     kv_pair.push_back(CreateKVPairFromPyObject("interleaved_normalized_samples", py_interleaved_normalized_samples));
+    // PyArrayObject* py_interleaved_normalized_samples = VectorToNpArray(wav_decoded.interleaved_normalized_samples);
+    // kv_pair.push_back(CreateKVPairFromPyObject("interleaved_normalized_samples", py_interleaved_normalized_samples));
+
+    // PyObject* pykey = BasicTypeToPyobject("interleaved_normalized_samples");
+    // // kv_pair.push_back(test);
+    // PyDict_SetItem(wav_decoded_data_dict, pykey, py_interleaved_normalized_samples);
 
     PyObject* py_normalized_samples = VectorToList2D(wav_decoded.normalized_samples);
     kv_pair.push_back(CreateKVPairFromPyObject("normalized_samples", py_normalized_samples));

@@ -27,7 +27,7 @@ TEST(AudioFileDecoding, AudioFileNotFoundTest) {
   EXPECT_THROW(
       {
         try {
-          CLoadAudioFile("/unknown/abs/file/path.wav");
+          LoadAudioFile("/unknown/abs/file/path.wav");
         } catch (const std::runtime_error& e) {
           /* This tests if the error message is equal */
           EXPECT_STREQ("Failed to load file '/unknown/abs/file/path.wav'", e.what());
@@ -40,7 +40,7 @@ TEST(AudioFileDecoding, AudioFileNotFoundTest) {
 TEST(AudioFileDecoding, LoadsAudioFileTest) {
   std::vector<uint8_t> fileData;
   std::string filePath = TEST_DATA_DIR + std::string("audio_files/CantinaBand3sec.wav");
-  fileData = CLoadAudioFile(filePath);
+  fileData = LoadAudioFile(filePath);
 
   std::string outputFile = "test_include/filedata.txt";
   // outputVectorToFile<uint8_t>(fileData, outputFile);
@@ -51,7 +51,7 @@ TEST(AudioFileDecoding, LoadsAudioFileTest) {
 
 TEST(AudioFileDecoding, DecodeWav) {
   const std::string filePath = TEST_DATA_DIR + std::string("audio_files/mozart_c_major_30sec.wav");
-  WavDecoded wav_decoded = CDecodeWav(filePath);
+  WavDecoded wav_decoded = DecodeWav(filePath);
 
   uint32_t expected_sample_rate = 44100;
   uint32_t actual_sample_rate = wav_decoded.sample_rate;
@@ -93,7 +93,7 @@ TEST(AudioFileDecoding, DecodeWav) {
 // TEST(AudioFileDecoding, BeatDetection) {
 //   const std::string filePath = TEST_DATA_DIR + std::string("audio_files/CantinaBand3sec.wav");
 
-//   WavDecoded wav_decoded = CDecodeWav(filePath);
+//   WavDecoded wav_decoded = DecodeWav(filePath);
 //   uint32_t sampleRate = wav_decoded.sample_rate;
 //   std::vector<double> interleaved_normalized_samples = wav_decoded.interleaved_normalized_samples;
 

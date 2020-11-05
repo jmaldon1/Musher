@@ -3,7 +3,7 @@
 #include <assert.h>
 
 #include <complex>
-#include <fplus/fplus.hpp>
+// #include <fplus/fplus.hpp>
 #include <functional>
 #include <iomanip>
 #include <iostream>
@@ -345,7 +345,7 @@ std::vector<double> Windowing(const std::vector<double> &audio_frame,
     }
 
     // zero padding
-    for (int j = 0; j < zero_padding_size; j++) {
+    for (unsigned int j = 0; j < zero_padding_size; j++) {
       windowed_signal[i++] = 0.0;
     }
 
@@ -360,7 +360,7 @@ std::vector<double> Windowing(const std::vector<double> &audio_frame,
     }
 
     // zero padding
-    for (int j = 0; j < zero_padding_size; j++) {
+    for (unsigned int j = 0; j < zero_padding_size; j++) {
       windowed_signal[i++] = 0.0;
     }
   }
@@ -510,7 +510,6 @@ std::vector<std::tuple<double, double>> PeakDetect(const std::vector<double> &in
       // We are dividing by scale because the scale should have been accounted for when the user input the value
       double scale_removed_max_pos = max_pos / scale;
       // Check if element before last is a peak right before breaking the loop
-      int last_index = inp_size - 1;
       if (scale_removed_max_pos > inp_size - 2 && scale_removed_max_pos <= inp_size - 1 &&
           inp[inp_size - 1] > inp[inp_size - 2] && inp[inp_size - 1] > threshold) {
         std::tuple<double, double> peak((inp_size - 1) * scale, inp[inp_size - 1]);

@@ -9,9 +9,13 @@ project_library(musher-core
     DEPENDENCIES
         CONAN
             functionalplus
-        OTHER
-            wavelib
+        # OTHER
+        #     wavelib
 )
+
+
+# TODO: Go through code and fix warnings
+relaxed_compile_options(musher-core PUBLIC)
 
 if(ENABLE_TESTS)
     add_subdirectory(test)

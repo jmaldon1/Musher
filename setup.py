@@ -4,6 +4,7 @@ import os
 import platform
 import subprocess
 import shutil
+import glob
 import codecs
 from setuptools import setup, find_packages, Extension, Command
 from setuptools.command.build_ext import build_ext
@@ -21,6 +22,8 @@ README_NOTE = """\
 with codecs.open('README.md', encoding='utf-8') as fobj:
     long_description = README_NOTE + fobj.read()
 
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
+
 
 def get_build_dir() -> str:
     """Get the build directory that will store all C/C++ extension by-products.
@@ -28,8 +31,7 @@ def get_build_dir() -> str:
     Returns:
         str: build directory path.
     """
-    root_dir_path = os.path.dirname(os.path.realpath(__file__))
-    return os.path.join(root_dir_path, "build")
+    return os.path.join(ROOT_DIR, "build")
 
 
 # pylint: disable=too-few-public-methods
@@ -66,18 +68,17 @@ class CleanBuildCommand(Command):
     def run(self):
         """Run the clean
         """
-        root_dir = os.path.dirname(os.path.abspath(__file__))
 
         cleanup_list = [
             # Cmake
-            os.path.join(root_dir, "build"),
+            os.path.join(ROOT_DIR, "build"),
             # Python
-            os.path.join(root_dir, "dist"),
-            os.path.join(root_dir, "musher.egg-info"),
-            os.path.join(root_dir, ".eggs"),
-            os.path.join(root_dir, ".pytest_cache"),
-            os.path.join(root_dir, ".tox"),
-            os.path.join(root_dir, "musher", "musher_python.so")
+            os.path.join(ROOT_DIR, "dist"),
+            os.path.join(ROOT_DIR, "musher.egg-info"),
+            os.path.join(ROOT_DIR, ".eggs"),
+            os.path.join(ROOT_DIR, ".pytest_cache"),
+            os.path.join(ROOT_DIR, ".tox"),
+            *glob.glob(os.path.join(ROOT_DIR, "musher", "*.so"))
         ]
 
         for item in cleanup_list:
@@ -132,7 +133,8 @@ class CMakeBuild(build_ext):
         # Copy the python shared module to the musher dummy wrapper.
         shared_lib_path = os.path.join(build_dir, "lib", shared_lib_name)
         root_dir_path = os.path.dirname(os.path.realpath(__file__))
-        python_module_path = os.path.join(root_dir_path, "musher", shared_lib_name)
+        python_module_path = os.path.join(
+            root_dir_path, "musher", shared_lib_name)
         shutil.copyfile(shared_lib_path, python_module_path)
 
 
@@ -145,7 +147,7 @@ class CTest(test):
 
     def run(self):
         build_dir = get_build_dir()
-        
+
         if platform.system().lower() == "windows":
             build_dir_win_debug = os.path.join(build_dir, "Debug")
             if os.path.isdir(build_dir_win_debug):
@@ -222,13 +224,63 @@ setup(
     version='0.1',
     description='Mush songs together',
     # packages=find_packages(),
-    ext_modules=[CMakeExtension("musher")],
+    # ext_modules=[CMakeExtension("musher")],
+    ext_modules=[
+         Extension(
+             # destination of .so
+             'musher.musher_python',
+             include_dirs=[
+                 # https://caligari.dartmouth.edu/doc/ibmcxx/en_US/doc/complink/tasks/tuinclud.htm
+                 # Allows for root level imports within C++
+                 ROOT_DIR,
+                 # 3rd party libraries
+                 os.path.join(ROOT_DIR, "src", "third-party")
+             ],
+             sources=[
+                 'src/python/wrapper.cpp',
+                 'src/core/musher_library.cpp',
+                 'src/core/utils.cpp',
+                 'src/core/key.cpp',
+                 'src/python/utils.cpp'
+             ],
+             depends=[
+                 'src/core/musher_library.h',
+                 'src/core/utils.h',
+                 'src/core/key.h'
+                 'src/python/utils.h'
+             ],
+             extra_compile_args=[
+                "-Wno-all",
+                "-Wno-deprecated-declarations",
+                "-Wno-error",
+                "-Wno-extra",
+                "-Wno-fatal-errors",
+                '-Wno-ignored-qualifiers',
+                '-Wno-missing-field-initializers',
+                '-Wno-parenthesis',
+                '-Wno-reorder',
+                '-Wno-return-type',
+                '-Wno-shadow',
+                '-Wno-sign-compare',
+                '-Wno-switch',
+                '-Wno-undef',
+                '-Wno-unused-but-set-variable',
+                '-Wno-unused-local-typedefs',
+                '-Wno-unused-parameter',
+                '-Wno-unused-result',
+                '-Wno-unused-variable'
+             ]
+            #   depends=['src/core/musher_library.h', 'src/core/utils.h'],
+            #   extra_compile_args=extra_compile_args,
+            #   extra_link_args=extra_link_args,
+         )
+    ],
     cmdclass={
-        # build_ext is called while running 'pip install .'
-        "build_ext": CMakeBuild,
-        "cmake": CMakeBuild,
-        "ctest": CTest,
-        "gtest": GTest,
+        # # build_ext is called while running 'pip install .'
+        # "build_ext": CMakeBuild,
+        # "cmake": CMakeBuild,
+        # "ctest": CTest,
+        # "gtest": GTest,
         "clean": CleanBuildCommand,
     },
     zip_safe=False,

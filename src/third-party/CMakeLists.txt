@@ -1,5 +1,5 @@
 add_subdirectory(minimp3)
 add_subdirectory(pocketfft)
-add_subdirectory(wavelib)
+# add_subdirectory(wavelib)
 
-relaxed_compile_options(wavelib PUBLIC)
+# relaxed_compile_options(wavelib PUBLIC)

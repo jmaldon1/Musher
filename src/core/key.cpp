@@ -1,7 +1,6 @@
 #include "src/core/key.h"
 
 #include <cmath>
-#include <fplus/fplus.hpp>
 
 #include "src/core/utils.h"
 

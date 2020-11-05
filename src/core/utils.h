@@ -2,6 +2,7 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <pocketfft/pocketfft.h>
 
 #include <complex>
 #include <fplus/fplus.hpp>
@@ -14,8 +15,6 @@
 #include <valarray>
 #include <vector>
 
-#include "src/third-party/pocketfft/pocketfft.h"
-
 namespace musher {
 namespace core {
 
@@ -27,8 +26,8 @@ struct HarmonicPeak {
   double harmonic_strength;
 
   /* Constructor */
-  HarmonicPeak(double semitone, double harmonic_strength = 0.0)
-      : semitone(semitone), harmonic_strength(harmonic_strength){};
+  HarmonicPeak(double semitone_, double harmonic_strength_ = 0.0)
+      : semitone(semitone_), harmonic_strength(harmonic_strength_){};
 };
 
 /**

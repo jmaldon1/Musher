@@ -102,11 +102,11 @@ T pyObjectToBasicType(PyObject* pyObj) {
 }
 
 template <typename T>
-PyObject* VectorToList(const std::vector<T>& data) {
-  PyObject* list_obj = PyList_New(data.size());
+PyObject* VectorToList(const std::vector<T>& vec) {
+  PyObject* list_obj = PyList_New(vec.size());
 
-  for (unsigned int i = 0; i < data.size(); i++) {
-    PyObject* item = BasicTypeToPyobject(data[i]);
+  for (unsigned int i = 0; i < vec.size(); i++) {
+    PyObject* item = BasicTypeToPyobject(vec[i]);
     if (!item) {
       Py_DECREF(list_obj);
       throw std::logic_error("Unable to allocate memory for Python list");
@@ -114,6 +114,18 @@ PyObject* VectorToList(const std::vector<T>& data) {
     PyList_SetItem(list_obj, i, item);
   }
   return list_obj;
+}
+
+template <typename T>
+PyObject* VectorToList2D(const std::vector<std::vector<T>>& vec_2d) {
+  unsigned int vec_2d_size = vec_2d.size();
+  PyObject* list_obj_2d = PyList_New(vec_2d_size);
+
+  for (unsigned int i = 0; i < vec_2d_size; i++) {
+    PyObject* list_item = VectorToList(vec_2d[i]);
+    PyList_SetItem(list_obj_2d, i, list_item);
+  }
+  return list_obj_2d;
 }
 
 template <typename T>

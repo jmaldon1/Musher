@@ -84,6 +84,9 @@ PyObject* DecodeWav(PyObject* self, PyObject* args) {
     PyObject* py_interleaved_normalized_samples = VectorToList(wav_decoded.interleaved_normalized_samples);
     kv_pair.push_back(CreateKVPairFromPyObject("interleaved_normalized_samples", py_interleaved_normalized_samples));
 
+    PyObject* py_normalized_samples = VectorToList2D(wav_decoded.normalized_samples);
+    kv_pair.push_back(CreateKVPairFromPyObject("normalized_samples", py_normalized_samples));
+
     for (std::pair<PyObject*, PyObject*>& key_val : kv_pair) {
       auto key = key_val.first;
       auto val = key_val.second;

@@ -1,13 +1,12 @@
 #pragma once
 
+#define NOMINMAX
 #define _USE_MATH_DEFINES
 #include <math.h>
-#pragma warning(push)
 #include <minimp3/minimp3_ex.h>
 #include <pocketfft/pocketfft.h>
 
 #include <fplus/fplus.hpp>
-#pragma warning(pop)
 
 #include <complex>
 #include <fstream>

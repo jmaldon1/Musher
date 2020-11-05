@@ -123,7 +123,10 @@ class CMakeBuild(build_ext):
         if not os.path.exists(build_dir):
             os.makedirs(build_dir)
 
-        subprocess.run(['cmake', ext.sourcedir] + cmake_args,
+        # from musher/build
+        # cmake .. -DCMAKE_BUILD_TYPE=XXXXXX
+
+        subprocess.run(['cmake', ROOT_DIR] + cmake_args,
                        cwd=build_dir,
                        check=True)
         subprocess.run(['cmake', '--build', '.'],
@@ -278,9 +281,9 @@ setup(
     cmdclass={
         # # build_ext is called while running 'pip install .'
         # "build_ext": CMakeBuild,
-        # "cmake": CMakeBuild,
-        # "ctest": CTest,
-        # "gtest": GTest,
+        "cmake": CMakeBuild,
+        "ctest": CTest,
+        "gtest": GTest,
         "clean": CleanBuildCommand,
     },
     zip_safe=False,

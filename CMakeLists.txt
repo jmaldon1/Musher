@@ -7,7 +7,7 @@ endif()
 project(musher CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-include_directories(${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src/third-party)
 
 include(conan)
 include(base)

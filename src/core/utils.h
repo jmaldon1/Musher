@@ -202,7 +202,7 @@ std::vector<double> Windowing(
     unsigned size = 1024,
     unsigned zero_padding_size = 0,
     bool zero_phase = true,
-    bool _Normalize = true);
+    bool _normalize = true);
 
 /**
  * @brief Calculate the magnitude (absolute value or modulus) of a complex number.
@@ -553,6 +553,7 @@ class Framecutter {
   // Iterator functions
   // Keep iterating while frame is not empty.
   bool operator!=(const Framecutter &) const { return !frame_.empty(); }
+  bool operator==(const Framecutter &) const { return frame_.empty(); }
   void operator++() { frame_ = compute(); }
   std::vector<double> operator*() const { return frame_; }
 
@@ -580,7 +581,7 @@ class Framecutter {
  * @param input Stereo or mono audio signal
  * @return std::vector<double> Downmixed audio signal
  */
-std::vector<double> monoMixer(const std::vector<std::vector<double>> &input);
+std::vector<double> MonoMixer(const std::vector<std::vector<double>> &input);
 
 /**
  * @brief Calculate the standard deviation of a vector.

@@ -4,7 +4,6 @@ import os
 import platform
 import subprocess
 import shutil
-import pip
 import glob
 import codecs
 from setuptools import setup, find_packages, Extension, Command
@@ -36,17 +35,6 @@ def get_build_dir() -> str:
         str: build directory path.
     """
     return os.path.join(ROOT_DIR, "build")
-
-
-# pylint: disable=too-few-public-methods
-class CMakeExtension(Extension):
-    """Project extension.
-    """
-
-    def __init__(self, name, sourcedir=""):
-        Extension.__init__(self, name, sources=[])
-        # self.sourcedir = os.path.abspath(sourcedir)
-        self.sourcedir = os.path.abspath(sourcedir)
 
 
 # pylint: disable=no-self-use
@@ -261,8 +249,8 @@ setup(
                 pybind11.get_include()
              ],
              sources=[
-                 #  'src/python/wrapper.cpp',
-                 'src/python/wrapper_bind.cpp',
+                 'src/python/module.cpp',
+                 'src/python/wrapper.cpp',
                  'src/core/musher_library.cpp',
                  'src/core/utils.cpp',
                  'src/core/key.cpp',
@@ -272,15 +260,15 @@ setup(
                  'src/core/musher_library.h',
                  'src/core/utils.h',
                  'src/core/key.h'
-                 'src/python/utils.h'
+                 'src/python/utils.h',
+                 'src/python/wrapper.h'
              ],
-             extra_compile_args=[*relax_warnings()]
-            #   depends=['src/core/musher_library.h', 'src/core/utils.h'],
+            #  extra_compile_args=[*relax_warnings()]
             #   extra_compile_args=extra_compile_args,
             #   extra_link_args=extra_link_args,
          )
     ],
-    setup_requires=['pybind11>=2.6.0'],
+    setup_requires=['wheel', 'pybind11>=2.6.0', 'numpy>=1.19.3'],
     cmdclass={
         "cmake": CMakeBuild,
         "ctest": CTest,

@@ -1,47 +1,44 @@
-#define PY_SSIZE_T_CLEAN // It is recommended to always define this before Python.h
+#define PY_SSIZE_T_CLEAN  // It is recommended to always define this before Python.h
 // #include <Python.h>
-#include <vector>
-#include <stdexcept>
-
 #include "src/python/utils.h"
 
+#include <stdexcept>
+#include <vector>
+
+using namespace musher::core;
 
 namespace musher {
 namespace python {
 
-const char* CppTypeToPythonType(const std::string type_name) {
-    std::unordered_map<std::string, std::string> cpp_to_python_types({
-        {typeid(int).name(),         "i"},
-        {typeid(uint32_t).name(),    "I"},
-        {typeid(uint16_t).name(),    "H"},
-        {typeid(uint8_t).name(),     "B"},
-        {typeid(double).name(),      "d"},
-        {typeid(float).name(),       "f"},
-        {typeid(std::string).name(), "s"},
-        {typeid(char*).name(),       "s"},
-        {typeid(char).name(),        "C"},
-    });
+py::dict ConvertWavDecodedToPyDict(WavDecoded wav_decoded) {
+  py::dict output_dict;
+  output_dict["sample_rate"] = wav_decoded.sample_rate;
+  output_dict["bit_depth"] = wav_decoded.bit_depth;
+  output_dict["channels"] = wav_decoded.channels;
+  output_dict["mono"] = wav_decoded.mono;
+  output_dict["stereo"] = wav_decoded.stereo;
+  output_dict["samples_per_channel"] = wav_decoded.samples_per_channel;
+  output_dict["length_in_seconds"] = wav_decoded.length_in_seconds;
+  output_dict["file_type"] = wav_decoded.file_type;
+  output_dict["avg_bitrate_kbps"] = wav_decoded.avg_bitrate_kbps;
+  // Convert vector to numpy array without copying.
+  std::vector<double> interleaved_normalized_samples = wav_decoded.interleaved_normalized_samples;
+  output_dict["interleaved_normalized_samples"] = ConvertSequenceToPyarray(interleaved_normalized_samples);
 
-    std::unordered_map<std::string, std::string>::const_iterator got = cpp_to_python_types.find(type_name);
+  // Convert 2D vector to 2D numpy array with copy.
+  std::vector<std::vector<double>> normalized_samples = wav_decoded.normalized_samples;
+  size_t rows = normalized_samples.size();
+  size_t cols = normalized_samples[0].size();
+  py::array_t<float, py::array::c_style> numpy_arr({ rows, cols });
+  auto ra = numpy_arr.mutable_unchecked();
+  for (size_t i = 0; i < rows; i++) {
+    for (size_t j = 0; j < cols; j++) {
+      ra(i, j) = normalized_samples[i][j];
+    };
+  };
+  output_dict["normalized_samples"] = numpy_arr;
 
-    if ( got == cpp_to_python_types.end() )
-        {
-            std::string err_message = "Could not match C++ data type to Pyobject type";
-            throw std::runtime_error(err_message);
-        }
-
-    return got->second.c_str();
-}
-
-PyObject* BasicTypeToPyobject(const std::string &var)
-{ 
-    return Py_BuildValue("s", var.c_str());
-}
-
-std::pair<PyObject*, PyObject*> CreateKVPairFromPyObject(const char* key, PyObject* val)
-{
-    PyObject* pykey = BasicTypeToPyobject(key);
-    return std::make_pair(pykey, val);
+  return output_dict;
 }
 
 }  // namespace python

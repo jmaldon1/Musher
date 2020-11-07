@@ -1,141 +1,58 @@
-#define PY_SSIZE_T_CLEAN  // It is recommended to always define this before Python.h
-#include <Python.h>
-#include <algorithm>
-#include <iostream>
-#include <stdexcept>
-#include <string>
-#include <unordered_map>
+#include "src/python/wrapper.h"
 
-// #include "src/python/temp.h"
-#include "src/core/musher_library.h"
-// #include "src/core/utils.h"
 #include "src/python/utils.h"
 
 using namespace musher::core;
-using namespace musher::python;
 
-PyObject* PrintFunctionalMessage(PyObject* self, PyObject* args) {
-  // Arguments passed in from Python
-  const char* message;
+namespace musher {
+namespace python {
 
-  // Process arguments from Python
-  PyArg_ParseTuple(args, "s", &message);
+int add(int i, int j) { return i + j; }
 
-  // Call function
-  CPrintFunctionalMessage(message);
-
-  // Return nothing
-  return Py_BuildValue("");
+py::array_t<uint8_t> _LoadAudioFile(const std::string& file_path) {
+  std::vector<uint8_t> fileData = LoadAudioFile(file_path);
+  return ConvertSequenceToPyarray(fileData);
 }
 
-PyObject* LoadAudioFile(PyObject* self, PyObject* args) {
-  // Arguments passed in from Python
-  const char* filePath;
-
-  // Process arguments from Python
-  if (!PyArg_ParseTuple(args, "s", &filePath)) return NULL;
-
-  // Must convert all C++ exceptions to python exceptions to prevent seg faults
-  std::vector<uint8_t> fileData;
-  try {
-    fileData = LoadAudioFile(filePath);
-    PyObject* pyIntList = VectorToList(fileData);
-    return pyIntList;
-  } catch (const std::runtime_error& e) {
-    const std::string unknownFilePath = StrBetweenSQuotes(e.what());
-    // Raise a filenotfounderror in python
-    PyErr_SetFromErrnoWithFilename(PyExc_FileNotFoundError, unknownFilePath.c_str());
-    return NULL;
-  } catch (const std::exception& e) {
-    // Catch all standard exceptions
-    PyErr_SetString(PyExc_Exception, e.what());
-    return NULL;
-  } catch (...) {
-    // Catch all other exceptions
-    PyErr_SetString(PyExc_Exception, "Unknown error occured.");
-    return NULL;
-  }
+py::dict _DecodeWavFromData(std::vector<uint8_t>& file_data) {
+  WavDecoded wav_decoded = DecodeWav(file_data);
+  return ConvertWavDecodedToPyDict(wav_decoded);
 }
 
-PyObject* DecodeWav(PyObject* self, PyObject* args) {
-  // Arguments passed in from Python
-  PyObject* listObj;
-
-  // Process arguments from Python
-  if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &listObj)) return NULL;
-
-  try {
-    PyObject* wav_decoded_data_dict = PyDict_New();
-    std::vector<uint8_t> file_data = ListToVector<uint8_t>(listObj);
-
-    WavDecoded wav_decoded = DecodeWav(file_data);
-
-    std::vector<std::pair<PyObject*, PyObject*>> kv_pair;
-    kv_pair.push_back(CreateKVPair("sample_rate", wav_decoded.sample_rate));
-    kv_pair.push_back(CreateKVPair("bit_depth", wav_decoded.bit_depth));
-    kv_pair.push_back(CreateKVPair("channels", wav_decoded.channels));
-    kv_pair.push_back(CreateKVPair("mono", wav_decoded.mono));
-    kv_pair.push_back(CreateKVPair("stereo", wav_decoded.stereo));
-    kv_pair.push_back(CreateKVPair("length_in_seconds", wav_decoded.length_in_seconds));
-    kv_pair.push_back(CreateKVPair("file_type", wav_decoded.file_type));
-    kv_pair.push_back(CreateKVPair("avg_bitrate_kbps", wav_decoded.avg_bitrate_kbps));
-
-    PyObject* py_interleaved_normalized_samples = VectorToList(wav_decoded.interleaved_normalized_samples);
-    kv_pair.push_back(CreateKVPairFromPyObject("interleaved_normalized_samples", py_interleaved_normalized_samples));
-    // PyArrayObject* py_interleaved_normalized_samples = VectorToNpArray(wav_decoded.interleaved_normalized_samples);
-    // kv_pair.push_back(CreateKVPairFromPyObject("interleaved_normalized_samples", py_interleaved_normalized_samples));
-
-    // PyObject* pykey = BasicTypeToPyobject("interleaved_normalized_samples");
-    // // kv_pair.push_back(test);
-    // PyDict_SetItem(wav_decoded_data_dict, pykey, py_interleaved_normalized_samples);
-
-    PyObject* py_normalized_samples = VectorToList2D(wav_decoded.normalized_samples);
-    kv_pair.push_back(CreateKVPairFromPyObject("normalized_samples", py_normalized_samples));
-
-    for (std::pair<PyObject*, PyObject*>& key_val : kv_pair) {
-      auto key = key_val.first;
-      auto val = key_val.second;
-      PyDict_SetItem(wav_decoded_data_dict, key, val);
-    }
-
-    return wav_decoded_data_dict;
-  } catch (const std::exception& e) {
-    // Catch all standard exceptions
-    PyErr_SetString(PyExc_Exception, e.what());
-    return NULL;
-  } catch (...) {
-    // Catch all other exceptions
-    PyErr_SetString(PyExc_Exception, "Unknown error occured.");
-    return NULL;
-  }
+py::dict _DecodeWavFromFile(const std::string file_path) {
+  WavDecoded wav_decoded = DecodeWav(file_path);
+  return ConvertWavDecodedToPyDict(wav_decoded);
 }
 
-// Define the functions provided by the module
-static PyMethodDef cFuncs[] = {
-  {
-      "PrintFunctionalMessage",
-      PrintFunctionalMessage,
-      METH_VARARGS,
-      "Print a message from a function",
-  },
-  {
-      "load_audio_file",
-      LoadAudioFile,
-      METH_VARARGS,
-      "Load audio file from path",
-  },
-  {
-      "decode_wav",
-      DecodeWav,
-      METH_VARARGS,
-      "Decode Wav file",
-  },
-  // last one must be empty
-  { NULL, NULL, 0, NULL },
-};
+py::array_t<double> _MonoMixer(const std::vector<std::vector<double>>& normalized_samples) {
+  std::vector<double> mixed_audio = MonoMixer(normalized_samples);
+  return ConvertSequenceToPyarray(mixed_audio);
+}
 
-// define the module
-static struct PyModuleDef cModule = { PyModuleDef_HEAD_INIT, "musher_python", NULL, -1, cFuncs };
+py::array_t<double> _Windowing(const std::vector<double>& audio_frame,
+                               const std::function<std::vector<double>(const std::vector<double>&)>& window_type_func,
+                               unsigned int size,
+                               unsigned int zero_padding_size,
+                               bool zero_phase,
+                               bool _normalize) {
+  const std::vector<double> vec = Windowing(audio_frame, window_type_func, size, zero_padding_size, zero_phase, _normalize);
+  return ConvertSequenceToPyarray(vec);
+}
 
-// Initialize the Python module
-PyMODINIT_FUNC PyInit_musher_python(void) { return PyModule_Create(&cModule); }
+py::array_t<double> _BlackmanHarris(const std::vector<double>& window, double a0, double a1, double a2, double a3) {
+  const std::vector<double> vec = BlackmanHarris(window, a0, a1, a2, a3);
+  return ConvertSequenceToPyarray(vec);
+}
+
+py::array_t<double> _BlackmanHarris62dB(const std::vector<double>& window) {
+  const std::vector<double> vec = BlackmanHarris62dB(window);
+  return ConvertSequenceToPyarray(vec);
+}
+
+py::array_t<double> _BlackmanHarris92dB(const std::vector<double>& window) {
+  const std::vector<double> vec = BlackmanHarris92dB(window);
+  return ConvertSequenceToPyarray(vec);
+}
+
+}  // namespace python
+}  // namespace musher

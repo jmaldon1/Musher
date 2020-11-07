@@ -319,7 +319,7 @@ std::vector<double> Windowing(const std::vector<double> &audio_frame,
                               unsigned int size,
                               unsigned int zero_padding_size,
                               bool zero_phase,
-                              bool _Normalize) {
+                              bool _normalize) {
   int signal_size = audio_frame.size();
   int total_size = signal_size + zero_padding_size;
 
@@ -329,7 +329,7 @@ std::vector<double> Windowing(const std::vector<double> &audio_frame,
 
   std::vector<double> windowed_signal(static_cast<size_t>(total_size));
   std::vector<double> window(static_cast<size_t>(signal_size));
-  if (_Normalize) {
+  if (_normalize) {
     window = Normalize(window_type_func(window));
   } else {
     window = window_type_func(window);
@@ -962,7 +962,7 @@ std::vector<double> Framecutter::compute() {
   return frame;
 }
 
-std::vector<double> monoMixer(const std::vector<std::vector<double>> &input) {
+std::vector<double> MonoMixer(const std::vector<std::vector<double>> &input) {
   int num_channels = input.size();
   if (num_channels > 2 || input.empty()) {
     std::runtime_error("Audio samples must be either mono or stereo.");

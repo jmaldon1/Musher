@@ -20,8 +20,8 @@ TEST(Key, TestCMajorClassical) {
   int num_harmonics = 4;
 
   WavDecoded wav_decoded = DecodeWav(filePath);
-  std::vector<std::vector<double>> Normalized_samples = wav_decoded.normalized_samples;
-  std::vector<double> mixed_audio = monoMixer(Normalized_samples);
+  std::vector<std::vector<double>> normalized_samples = wav_decoded.normalized_samples;
+  std::vector<double> mixed_audio = MonoMixer(normalized_samples);
 
   Framecutter framecutter(mixed_audio, 4096, 512);
 
@@ -65,7 +65,7 @@ TEST(Key, TestCMajorClassical) {
 
 //   Mp3Decoded mp3_decoded = CDecodeMp3(filePath);
 //   std::vector<std::vector<double>> Normalized_samples = mp3_decoded.normalized_samples;
-//   std::vector<double> mixed_audio = monoMixer(Normalized_samples);
+//   std::vector<double> mixed_audio = MonoMixer(Normalized_samples);
 
 //   Framecutter framecutter(mixed_audio, 4096, 512);
 
@@ -107,8 +107,8 @@ TEST(Key, TestEbMajorEDM) {
 
   WavDecoded wav_decoded = DecodeWav(filePath);
   double sample_rate = wav_decoded.sample_rate;
-  std::vector<std::vector<double>> Normalized_samples = wav_decoded.normalized_samples;
-  std::vector<double> mixed_audio = monoMixer(Normalized_samples);
+  std::vector<std::vector<double>> normalized_samples = wav_decoded.normalized_samples;
+  std::vector<double> mixed_audio = MonoMixer(normalized_samples);
 
   Framecutter framecutter(mixed_audio, 4096, 512);
 

@@ -728,7 +728,7 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
                          double sample_rate,
                          bool max_shifted,
                          bool non_linear,
-                         std::string _Normalized) {
+                         std::string _normalized) {
   // Input validation
   if (size % 12 != 0) {
     throw std::runtime_error("HPCP: The size parameter is not a multiple of 12.");
@@ -769,15 +769,15 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
   }
 
   NormalizeType Normalized;
-  if (_Normalized == "none")
+  if (_normalized == "none")
     Normalized = N_NONE;
-  else if (_Normalized == "unit sum")
+  else if (_normalized == "unit sum")
     Normalized = N_UNIT_SUM;
-  else if (_Normalized == "unit max")
+  else if (_normalized == "unit max")
     Normalized = N_UNIT_MAX;
   else {
     std::string err_message = "HPCP: Invalid Normalize type of: ";
-    err_message += _Normalized;
+    err_message += _normalized;
     throw std::runtime_error(err_message);
   }
 
@@ -879,7 +879,7 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>> &peaks,
                          double sample_rate,
                          bool max_shifted,
                          bool non_linear,
-                         std::string _Normalized) {
+                         std::string _normalized) {
   std::vector<double> frequencies(peaks.size());
   std::vector<double> magnitudes(peaks.size());
 
@@ -889,7 +889,7 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>> &peaks,
 
   return HPCP(frequencies, magnitudes, size, reference_frequency, harmonics, band_preset, band_split_frequency,
               min_frequency, max_frequency, _weight_type, window_size, sample_rate, max_shifted, non_linear,
-              _Normalized);
+              _normalized);
 }
 
 std::vector<double> Framecutter::compute() {

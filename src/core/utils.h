@@ -447,7 +447,7 @@ int ArgMax(const std::vector<double> &input);
  * @param max_shifted Whether to shift the HPCP vector so that the maximum peak is at index 0.
  * @param non_linear Apply non-linear post-processing to the output (use with Normalized='unitMax'). Boosts values close
  * to 1, decreases values close to 0.
- * @param _Normalized Whether to Normalize the HPCP vector.
+ * @param _normalized Whether to normalize the HPCP vector.
  * @return std::vector<double> Resulting harmonic pitch class profile.
  */
 std::vector<double> HPCP(const std::vector<double> &frequencies,
@@ -464,7 +464,7 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
                          double sample_rate = 44100.,
                          bool max_shifted = false,
                          bool non_linear = false,
-                         std::string _Normalized = "unit max");
+                         std::string _normalized = "unit max");
 
 /**
  * @brief Overloaded function for HPCP that accepts a vector of peaks. Refer to original HPCP function for more details.
@@ -486,7 +486,7 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
  * @param max_shifted Whether to shift the HPCP vector so that the maximum peak is at index 0.
  * @param non_linear Apply non-linear post-processing to the output (use with Normalized='unitMax'). Boosts values close
  * to 1, decreases values close to 0.
- * @param _Normalized Whether to Normalize the HPCP vector.
+ * @param _normalized Whether to normalize the HPCP vector.
  * @return std::vector<double> Resulting harmonic pitch class profile.
  */
 std::vector<double> HPCP(const std::vector<std::tuple<double, double>> &peaks,
@@ -502,7 +502,7 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>> &peaks,
                          double sample_rate = 44100.,
                          bool max_shifted = false,
                          bool non_linear = false,
-                         std::string _Normalized = "unit max");
+                         std::string _normalized = "unit max");
 
 /**
  * @brief This class should be treated like an iterator.

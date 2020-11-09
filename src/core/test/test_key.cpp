@@ -26,7 +26,7 @@ TEST(Key, TestCMajorClassical) {
   Framecutter framecutter(mixed_audio, 4096, 512);
 
   int count = 0;
-  std::vector<double> sums((size_t)pcp_size, 0.);
+  std::vector<double> sums(static_cast<size_t>(pcp_size), 0.);
 
   for (const std::vector<double> &frame : framecutter) {
     std::vector<double> windowed_frame = Windowing(frame, BlackmanHarris62dB);
@@ -43,7 +43,7 @@ TEST(Key, TestCMajorClassical) {
   }
   std::vector<double> avgs(sums.size());
   std::transform(sums.begin(), sums.end(), avgs.begin(), [&count](auto const &sum) { return sum / count; });
-  KeyOutput key_output = DetectKey(avgs, true, true, 4, 0.6, PolyphicProfile::Temperley);
+  KeyOutput key_output = DetectKey(avgs, true, true, 4, 0.6, "Temperley");
 
   EXPECT_EQ(key_output.key, "C");
   EXPECT_EQ(key_output.scale, "major");
@@ -131,7 +131,7 @@ TEST(Key, TestEbMajorEDM) {
   }
   std::vector<double> avgs(sums.size());
   std::transform(sums.begin(), sums.end(), avgs.begin(), [&count](auto const &sum) { return sum / count; });
-  KeyOutput key_output = DetectKey(avgs, true, true, 4, 0.6, PolyphicProfile::Edmm);
+  KeyOutput key_output = DetectKey(avgs, true, true, 4, 0.6, "Edmm");
 
   EXPECT_EQ(key_output.key, "Eb");
   EXPECT_EQ(key_output.scale, "major");

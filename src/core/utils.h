@@ -6,9 +6,8 @@
 #include <minimp3/minimp3_ex.h>
 #include <pocketfft/pocketfft.h>
 
-#include <fplus/fplus.hpp>
-
 #include <complex>
+#include <fplus/fplus.hpp>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -258,7 +257,7 @@ std::tuple<double, double> QuadraticInterpolation(double a, double b, double y, 
  * @param interpolate Enables interpolation.
  * @param sort_by Ordering type of the outputted peaks (ascending by position
  * or descending by height).
- * @param max_num_peaks Maximum number of returned peaks.
+ * @param max_num_peaks Maximum number of returned peaks (set to 0 to return all peaks).
  * @param range Input range.
  * @param min_pos Maximum position of the range to evaluate.
  * @param max_pos Minimum position of the range to evaluate.
@@ -290,7 +289,7 @@ std::vector<std::tuple<double, double>> PeakDetect(const std::vector<double> &in
  * @param threshold Peaks below this given threshold are not outputted.
  * @param sort_by Ordering type of the outputted peaks (ascending by frequency (position)
  * or descending by magnitude (height)).
- * @param max_num_peaks Maximum number of returned peaks.
+ * @param max_num_peaks Maximum number of returned peaks (set to 0 to return all peaks).
  * @param sample_rate Sampling rate of the audio signal [Hz].
  * @param min_pos Maximum frequency (position) of the range to evaluate [Hz].
  * @param max_pos Minimum frequency (position) of the range to evaluate [Hz].
@@ -528,6 +527,20 @@ class Framecutter {
   std::vector<double> frame_;
 
  public:
+  /**
+   * @brief Construct a new Framecutter object
+   *
+   * @param buffer Buffer from which to read data.
+   * @param frame_size Output frame size.
+   * @param hop_size Hop size between frames.
+   * @param start_from_center If true start from the center of the buffer (zero-centered at -frameSize/2) or
+   * if false the first frame at time 0 (centered at frameSize/2).
+   * @param last_frame_to_end_of_file Whether the beginning of the last frame should reach the end of file. Only
+   * applicable if start_from_center is false.
+   * @param valid_frame_threshold_ratio frames smaller than this ratio will be discarded, those larger will be
+   * zero-padded to a full frame. (i.e. a value of 0 will never discard frames and a value of 1 will only keep frames
+   * that are of length 'frameSize')
+   */
   Framecutter(const std::vector<double> buffer,
               int frame_size = 1024,
               int hop_size = 512,
@@ -555,6 +568,11 @@ class Framecutter {
   bool operator!=(const Framecutter &) const { return !frame_.empty(); }
   bool operator==(const Framecutter &) const { return frame_.empty(); }
   void operator++() { frame_ = compute(); }
+  /**
+   * @brief Each iteration returns a frame.
+   * 
+   * @return std::vector<double> Cut frame.
+   */
   std::vector<double> operator*() const { return frame_; }
 
   /**

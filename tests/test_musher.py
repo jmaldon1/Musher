@@ -84,11 +84,11 @@ def test_spectral_peaks():
     # print(type(peaks))
 
 
-def test_detect_key():
-    # abs_audio_file_path = os.path.join(
-    #     TESTS_DIR_PATH, "..", "data", "audio_files", "mozart_c_major_30sec.wav")
+def test_estimate_key():
     abs_audio_file_path = os.path.join(
-        TESTS_DIR_PATH, "..", "data", "audio_files", "EDM_Eb_major_2min.wav")
+        TESTS_DIR_PATH, "..", "data", "audio_files", "mozart_c_major_30sec.wav")
+    # abs_audio_file_path = os.path.join(
+    #     TESTS_DIR_PATH, "..", "data", "audio_files", "EDM_Eb_major_2min.wav")
     pcp_size = 36
     sample_rate = 44100.
     num_harmonics = 4
@@ -109,5 +109,18 @@ def test_detect_key():
 
     avgs = [x/count for x in sums]
 
-    out = musher.detect_key(avgs, True, True, 4, 0.6, "Edmm")
-    print(out)
+    key_output = musher.estimate_key(avgs, True, True, 4, 0.6, "Temperley")
+    print(key_output)
+
+
+def test_detect_key():
+    # abs_audio_file_path = os.path.join(
+    #     TESTS_DIR_PATH, "..", "data", "audio_files", "EDM_Eb_major_2min.wav")
+    abs_audio_file_path = os.path.join(
+        TESTS_DIR_PATH, "..", "data", "audio_files", "mozart_c_major_30sec.wav")
+    wav_decoded = musher.decode_wav_from_file(abs_audio_file_path)
+    normalized_samples = wav_decoded["normalized_samples"]
+    sample_rate = wav_decoded["sample_rate"]
+
+    key_output = musher.detect_key(normalized_samples, sample_rate, "Temperley")
+    print(key_output)

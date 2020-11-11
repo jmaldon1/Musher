@@ -41,5 +41,14 @@ py::dict ConvertWavDecodedToPyDict(WavDecoded wav_decoded) {
   return output_dict;
 }
 
+py::dict ConvertKeyOutputToPyDict(KeyOutput key_output){
+  py::dict key_output_dict;
+  key_output_dict["key"] = key_output.key;
+  key_output_dict["scale"] = key_output.scale;
+  key_output_dict["strength"] = key_output.strength;
+  key_output_dict["first_to_second_relative_strength"] = key_output.first_to_second_relative_strength;
+  return key_output_dict;
+}
+
 }  // namespace python
 }  // namespace musher

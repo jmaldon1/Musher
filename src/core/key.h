@@ -3,6 +3,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "src/core/utils.h"
+
+using namespace musher::core;
 
 namespace musher {
 namespace core {
@@ -159,7 +162,7 @@ double Correlation(const std::vector<double>& v1,
                    const int shift);
 
 /**
- * @brief This algorithm computes key estimate given a pitch class profile (HPCP).
+ * @brief Computes key estimate given a pitch class profile (HPCP).
  *
  * @param pcp The input pitch class profile.
  * @param use_polphony Enables the use of polyphonic profiles to define key profiles (this includes the contributions
@@ -178,13 +181,46 @@ double Correlation(const std::vector<double>& v1,
  *      first_to_second_relative_strength: The relative strength difference between the best estimate and second best
  *       estimate of the key.
  */
-KeyOutput DetectKey(const std::vector<double>& pcp,
-                    const bool use_polphony = true,
-                    const bool use_three_chords = true,
-                    const unsigned int num_harmonics = 4,
-                    const double slope = 0.6,
-                    const std::string profile_type = "Bgate",
-                    const bool use_maj_min = false);
+KeyOutput EstimateKey(const std::vector<double>& pcp,
+                      const bool use_polphony = true,
+                      const bool use_three_chords = true,
+                      const unsigned int num_harmonics = 4,
+                      const double slope = 0.6,
+                      const std::string profile_type = "Bgate",
+                      const bool use_maj_min = false);
+
+/**
+ * @brief Computes key estimate given normalized samples.
+ *
+ * @param normalized_samples Normalized samples, either stereo or mono.
+ * @param sample_rate Sampling rate of the audio signal [Hz].
+ * @param profile_type Key profile.
+ * @param pcp_size Number of array elements used to represent a semitone times 12.
+ * @param num_harmonics Number of harmonics that should contribute to the polyphonic profile (1 only considers the
+ * fundamental harmonic).
+ * @param frame_size Output frame size.
+ * @param hop_size Hop size between frames.
+ * @param window_type_func The window type function. Examples: BlackmanHarris92dB, BlackmanHarris62dB...
+ * @param max_num_peaks Maximum number of returned peaks (set to 0 to return all peaks).
+ * @param window_size Size, in semitones, of the window used for the weighting.
+ * @return KeyOutput A struct containing the following:
+ *      key: Estimated key, from A to G.
+ *      scale: Scale of the key (major or minor).
+ *      strength: Strength of the estimated key.
+ *      first_to_second_relative_strength: The relative strength difference between the best estimate and second best
+ *       estimate of the key.
+ */
+KeyOutput DetectKey(
+    const std::vector<std::vector<double>>& normalized_samples,
+    double sample_rate = 44100.,
+    const std::string profile_type = "Bgate",
+    const unsigned int pcp_size = 36,
+    const unsigned int num_harmonics = 4,
+    const int frame_size = 4096,
+    const int hop_size = 512,
+    const std::function<std::vector<double>(const std::vector<double>&)>& window_type_func = BlackmanHarris62dB,
+    unsigned int max_num_peaks = 0,
+    double window_size = .5);
 
 }  // namespace core
 }  // namespace musher

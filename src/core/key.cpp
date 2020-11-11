@@ -84,21 +84,41 @@ std::vector<std::vector<double>> SelectKeyProfile(const std::string profile_type
     { 1.00, 0.26, 0.35, 0.29, 0.44, 0.36, 0.21, 0.78, 0.26, 0.25, 0.32, 0.26 },
   };
 
-  if(profile_type == "Diatonic") return diatonic;
-  else if (profile_type == "Krumhansl") return krumhansl;
-  else if (profile_type == "Temperley") return temperley;
-  else if (profile_type == "Weichai") return weichai;
-  else if (profile_type == "Tonictriad") return tonictriad;
-  else if (profile_type == "Temperley2005") return temperley2005;
-  else if (profile_type == "Thpcp") return thpcp;
-  else if (profile_type == "Shaath") return shaath;
-  else if (profile_type == "Gomez") return gomez;
-  else if (profile_type == "Noland") return noland;
-  else if (profile_type == "Edmm") return edmm;
-  else if (profile_type == "Bgate") return bgate;
-  else if (profile_type == "Braw") return braw;
-  else if (profile_type == "Edma") return edma;
-  else throw std::runtime_error("SelectKeyProfile: Was a profile type not accounted for?");
+  if (profile_type == "Diatonic")
+    return diatonic;
+  else if (profile_type == "Krumhansl")
+    return krumhansl;
+  else if (profile_type == "Temperley")
+    return temperley;
+  else if (profile_type == "Weichai")
+    return weichai;
+  else if (profile_type == "Tonictriad")
+    return tonictriad;
+  else if (profile_type == "Temperley2005")
+    return temperley2005;
+  else if (profile_type == "Thpcp")
+    return thpcp;
+  else if (profile_type == "Shaath")
+    return shaath;
+  else if (profile_type == "Gomez")
+    return gomez;
+  else if (profile_type == "Noland")
+    return noland;
+  else if (profile_type == "Edmm")
+    return edmm;
+  else if (profile_type == "Bgate")
+    return bgate;
+  else if (profile_type == "Braw")
+    return braw;
+  else if (profile_type == "Edma")
+    return edma;
+  else {
+    std::stringstream ss;
+    ss << "SelectKeyProfile: "
+       << "'" << profile_type << "'"
+       << " is not a valid profile type.";
+    throw std::runtime_error(ss.str().c_str());
+  }
 }
 
 std::vector<double> AddContributionHarmonics(const std::vector<double>& chords,
@@ -232,13 +252,13 @@ double Correlation(const std::vector<double>& v1,
   return r;
 }
 
-KeyOutput DetectKey(const std::vector<double>& pcp,
-                    const bool use_polphony,
-                    const bool use_three_chords,
-                    const unsigned int num_harmonics,
-                    const double slope,
-                    const std::string profile_type,
-                    const bool use_maj_min) {
+KeyOutput EstimateKey(const std::vector<double>& pcp,
+                      const bool use_polphony,
+                      const bool use_three_chords,
+                      const unsigned int num_harmonics,
+                      const double slope,
+                      const std::string profile_type,
+                      const bool use_maj_min) {
   unsigned int pcp_size = static_cast<unsigned int>(pcp.size());
   unsigned int n = pcp_size / 12;
 
@@ -524,6 +544,42 @@ KeyOutput DetectKey(const std::vector<double>& pcp,
   key_output.strength = strength;
   key_output.first_to_second_relative_strength = first_to_second_relative_strength;
   return key_output;
+}
+
+KeyOutput DetectKey(const std::vector<std::vector<double>>& normalized_samples,
+                    double sample_rate,
+                    const std::string profile_type,
+                    const unsigned int pcp_size,
+                    const unsigned int num_harmonics,
+                    const int frame_size,
+                    const int hop_size,
+                    const std::function<std::vector<double>(const std::vector<double>&)>& window_type_func,
+                    unsigned int max_num_peaks,
+                    double window_size) {
+  std::vector<double> mixed_audio = MonoMixer(normalized_samples);
+
+  Framecutter framecutter(mixed_audio, 4096, 512);
+
+  int count = 0;
+  std::vector<double> sums(static_cast<size_t>(pcp_size), 0.);
+
+  for (const std::vector<double>& frame : framecutter) {
+    // NOTE: Windowing and ConvertToFrequencySpectrum are slowest functions here.
+    std::vector<double> windowed_frame = Windowing(frame, BlackmanHarris62dB);
+    std::vector<double> spectrum = ConvertToFrequencySpectrum(windowed_frame);
+    std::vector<std::tuple<double, double>> spectral_peaks =
+        SpectralPeaks(spectrum, -1000.0, "height", 100, sample_rate, 0, sample_rate / 2);
+    std::vector<double> hpcp =
+        HPCP(spectral_peaks, pcp_size, 440.0, num_harmonics - 1, true, 500.0, 40.0, 5000.0, "squared cosine", .5);
+
+    for (int i = 0; i < static_cast<int>(hpcp.size()); i++) {
+      sums[i] += hpcp[i];
+    }
+    count += 1;
+  }
+  std::vector<double> avgs(sums.size());
+  std::transform(sums.begin(), sums.end(), avgs.begin(), [&count](auto const& sum) { return sum / count; });
+  return EstimateKey(avgs, true, true, 4, 0.6, profile_type);
 }
 
 }  // namespace core

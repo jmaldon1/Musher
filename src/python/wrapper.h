@@ -15,19 +15,18 @@ py::dict _DecodeWavFromFile(const std::string file_path);
 
 py::array_t<double> _MonoMixer(const std::vector<std::vector<double>>& normalized_samples);
 
-py::array_t<double> _Windowing(
-    const std::vector<double>& audio_frame,
-    const std::function<std::vector<double>(const std::vector<double>&)>& window_type_func,
-    unsigned size,
-    unsigned zero_padding_size,
-    bool zero_phase,
-    bool _normalize);
+py::array_t<double> _Windowing(const std::vector<double>& audio_frame,
+                               const std::function<std::vector<double>(const std::vector<double>&)>& window_type_func,
+                               unsigned size,
+                               unsigned zero_padding_size,
+                               bool zero_phase,
+                               bool _normalize);
 
 py::array_t<double> _BlackmanHarris(const std::vector<double>& window, double a0, double a1, double a2, double a3);
 py::array_t<double> _BlackmanHarris62dB(const std::vector<double>& window);
 py::array_t<double> _BlackmanHarris92dB(const std::vector<double>& window);
 
-py::array_t<double> _ConvertToFrequencySpectrum(const std::vector<double> &audio_frame);
+py::array_t<double> _ConvertToFrequencySpectrum(const std::vector<double>& audio_frame);
 std::vector<std::tuple<double, double>> _SpectralPeaks(const std::vector<double>& input_spectrum,
                                                        double threshold,
                                                        std::string sort_by,
@@ -50,12 +49,23 @@ py::array_t<double> _HPCP(const std::vector<std::tuple<double, double>>& peaks,
                           bool non_linear,
                           std::string _normalized);
 
-py::dict _DetectKey(const std::vector<double>& pcp,
-                    const bool use_polphony,
-                    const bool use_three_chords,
-                    const unsigned int num_harmonics,
-                    const double slope,
+py::dict _EstimateKey(const std::vector<double>& pcp,
+                      const bool use_polphony,
+                      const bool use_three_chords,
+                      const unsigned int num_harmonics,
+                      const double slope,
+                      const std::string profile_type,
+                      const bool use_maj_min);
+
+py::dict _DetectKey(const std::vector<std::vector<double>>& normalized_samples,
+                    double sample_rate,
                     const std::string profile_type,
-                    const bool use_maj_min);
+                    const unsigned int pcp_size,
+                    const unsigned int num_harmonics,
+                    const int frame_size,
+                    const int hop_size,
+                    const std::function<std::vector<double>(const std::vector<double>&)>& window_type_func,
+                    unsigned int max_num_peaks,
+                    double window_size);
 }  // namespace python
 }  // namespace musher

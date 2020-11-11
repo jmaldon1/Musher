@@ -8,10 +8,10 @@ using namespace musher::core;
 using namespace musher::core::test;
 
 /**
- * @brief Test C Major Classical
+ * @brief Estimate Key C Major Classical
  *
  */
-TEST(Key, TestCMajorClassical) {
+TEST(Key, EstimateKeyCMajorClassical) {
   const std::string filePath = TEST_DATA_DIR + std::string("audio_files/mozart_c_major_30sec.wav");
   // const std::string filePath = TEST_DATA_DIR + std::string("audio_files/1356281_Eb_major.wav");
 
@@ -43,8 +43,25 @@ TEST(Key, TestCMajorClassical) {
   }
   std::vector<double> avgs(sums.size());
   std::transform(sums.begin(), sums.end(), avgs.begin(), [&count](auto const &sum) { return sum / count; });
-  KeyOutput key_output = DetectKey(avgs, true, true, 4, 0.6, "Temperley");
+  KeyOutput key_output = EstimateKey(avgs, true, true, 4, 0.6, "Temperley");
 
+  EXPECT_EQ(key_output.key, "C");
+  EXPECT_EQ(key_output.scale, "major");
+  EXPECT_NEAR(key_output.strength, 0.760322, 0.000001);
+  EXPECT_NEAR(key_output.first_to_second_relative_strength, 0.607807, 0.000001);
+}
+
+/**
+ * @brief Detect Key C Major Classical
+ *
+ */
+TEST(Key, DetectKeyCMajorClassical) { 
+  const std::string filePath = TEST_DATA_DIR + std::string("audio_files/mozart_c_major_30sec.wav");
+  WavDecoded wav_decoded = DecodeWav(filePath);
+  std::vector<std::vector<double>> normalized_samples = wav_decoded.normalized_samples;
+  double sample_rate = wav_decoded.sample_rate;
+
+  KeyOutput key_output = DetectKey(normalized_samples, sample_rate, "Temperley");
   EXPECT_EQ(key_output.key, "C");
   EXPECT_EQ(key_output.scale, "major");
   EXPECT_NEAR(key_output.strength, 0.760322, 0.000001);
@@ -87,7 +104,7 @@ TEST(Key, TestCMajorClassical) {
 //   }
 //   std::vector<double> avgs(sums.size());
 //   std::transform(sums.begin(), sums.end(), avgs.begin(), [&count](auto const &sum) { return sum / count; });
-//   KeyOutput key_output = DetectKey(avgs, true, true, 4, 0.6, PolyphicProfile::Temperley);
+//   KeyOutput key_output = EstimateKey(avgs, true, true, 4, 0.6, PolyphicProfile::Temperley);
 
 //   EXPECT_EQ(key_output.key, "C");
 //   EXPECT_EQ(key_output.scale, "major");
@@ -96,10 +113,10 @@ TEST(Key, TestCMajorClassical) {
 // }
 
 /**
- * @brief Test Eb Major EDM
+ * @brief Estimate Key Eb Major EDM
  *
  */
-TEST(Key, TestEbMajorEDM) {
+TEST(Key, EstimateKeyEbMajorEDM) {
   const std::string filePath = TEST_DATA_DIR + std::string("audio_files/EDM_Eb_major_2min.wav");
 
   int pcp_size = 36;
@@ -131,7 +148,7 @@ TEST(Key, TestEbMajorEDM) {
   }
   std::vector<double> avgs(sums.size());
   std::transform(sums.begin(), sums.end(), avgs.begin(), [&count](auto const &sum) { return sum / count; });
-  KeyOutput key_output = DetectKey(avgs, true, true, 4, 0.6, "Edmm");
+  KeyOutput key_output = EstimateKey(avgs, true, true, 4, 0.6, "Edmm");
 
   EXPECT_EQ(key_output.key, "Eb");
   EXPECT_EQ(key_output.scale, "major");

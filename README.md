@@ -1,58 +1,87 @@
+# Musher
+
+Simple musical key detection.
+
+# Table of Contents
+
 <!-- MarkdownTOC -->
 
 - [Musher](#musher)
-  - [Steps](#steps)
-  - [Installation](#installation)
-    - [Required General Dependencies](#required-general-dependencies)
-    - [Build & install python module](#build--install-python-module)
-      - [Install normally](#install-normally)
-      - [Install in development mode](#install-in-development-mode)
-  - [Tests](#tests)
+- [Table of Contents](#table-of-contents)
+- [Installation](#installation)
+  - [Python (WIP)](#python-wip)
+  - [C++](#c)
+    - [Required General Dependencies:](#required-general-dependencies)
+      - [CMAKE](#cmake)
+      - [Conan](#conan)
+    - [Install (WIP)](#install-wip)
+- [Usage Section (WIP)](#usage-section-wip)
+- [Development](#development)
+  - [Python](#python)
+    - [Install normally](#install-normally)
+    - [Install in debug mode](#install-in-debug-mode)
+  - [C++](#c-1)
+    - [Install normally](#install-normally-1)
+    - [Install in debug mode](#install-in-debug-mode-1)
+- [Tests](#tests)
+  - [Python](#python-1)
     - [Required modules](#required-modules)
-    - [How to run Python tests](#how-to-run-python-tests)
-    - [How to run C++ tests](#how-to-run-c-tests)
+    - [Running tests](#running-tests)
+  - [C++](#c-2)
   - [Cleanup](#cleanup)
-  - [Accomplishments](#accomplishments)
-  - [Next Steps](#next-steps)
   - [Useful links](#useful-links)
 
 <!-- /MarkdownTOC -->
 
 
-# Musher
-Mush songs together to create new songs.
+# Installation
 
-## Steps
-
-1. Get all metadata out of various song files.
-
-2. Combine like pieces of songs together thru their metadata
-
-3. Put songs back together. 
+You can choose to install this package in 2 ways, Python and C++. The package was primary written in C++ and wrapped in Python. Choose either of the following methods of installation.
 
 
-## Installation
+## Python (WIP)
 
-### Required General Dependencies
+```
+pip install musher
+```
 
-**MacOS**
-```sh
+## C++
+
+### Required General Dependencies:
+
+#### CMAKE
+
+```
+-- MacOS --
 brew install cmake
-```
 
-**Linux**
-```sh
+-- Linux --
 sudo apt install cmake
+
+-- Windows --
+Download from https://cmake.org/download/
 ```
 
-**Windows**
+#### Conan
 
-Download from https://cmake.org/download/
+```
+pip install conan
+```
+
+### Install (WIP)
+
+```
+conan install musher
+```
 
 
-### Build & install python module
+# Usage Section (WIP)
 
-#### Install normally
+# Development
+
+## Python
+
+### Install normally
 
 ```sh
 pip install .
@@ -60,7 +89,7 @@ pip install .
 python3 setup.py install
 ```
 
-#### Install in development mode
+### Install in debug mode
 
 ```sh
 pip install -e .
@@ -68,7 +97,38 @@ pip install -e .
 python3 setup.py develop
 ```
 
-## Tests
+_NOTE_: This package has 2 dependencies: **Pybind11** and **Numpy**. You may need to install these python packages if the setup.py does not do it for you.
+
+## C++
+
+### Install normally
+
+```sh
+python setup.py cmake
+
+# OR
+
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build .
+
+```
+
+### Install in debug mode
+
+```sh
+python setup.py cmake --debug
+
+# OR
+
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTS=On
+cmake --build .
+```
+
+# Tests
+
+## Python
 
 ### Required modules
 
@@ -76,92 +136,39 @@ python3 setup.py develop
 pip install tox pytest
 ```
 
-### How to run Python tests
-
-This will run tests against a pip installed copy of the source code (best to do before deploying code)
+### Running tests
+This will run tests against a pip installed copy of the source code (best to do before deploying code).
 
 ```sh
 # Running this command does not require pytest to be installed
 tox 
 ```
 
-This will run tests directly (best to do while modifying the code base)
+This will run tests directly (best to do while modifying the code base).
 
 ```sh
-pytest ./tests
+pytest ./tests -v
 ```
 
-Watch test file changes and rerun pytest on save (Requires [entr](https://bitbucket.org/eradman/entr/src/default/))
-
-[Entr installation instructions](https://bitbucket.org/eradman/entr/src/default/)
+## C++
 
 ```sh
-find ./tests \( -iname \*.py -o -iname \*.conf \) | entr pytest
+# Ctest
+python setup.py ctest
 
-find . \( -iname \*.h -o -iname \*.cpp \) | entr python setup.py build_cpp_tests --r
-```
-
-### How to run C++ tests
-
-This will create an executables of the C++ tests and save them to the `test_bin` folder.
-
-```sh
-# This will simply build the tests
-python setup.py build_cpp_tests
-
-# This will run the tests
-./test_musher_cpp
-
-# This will build & run the tests (--run-tests or --r)
-python setup.py build_cpp_tests --r
-```
-
-The alternative Cmake way:
-
-```sh
-# Build Tests
-mkdir build
-cd build
-cmake .. -DBUILD_PYTHON_MODULE=OFF
-cmake --build .
-
-# Run Test
-../test_bin/test_musher_library
 # OR
-ctest
-# OR
-make test
-```
 
-_NOTE: If your CMake version is less than 3.11 than you must clone the googletest submodules in order for tests to work._
-
-```sh
-git submodule update --init --recursive
+# Google test
+python setup.py gtest
 ```
 
 ## Cleanup
 
-This will remove all the files created from building and testing this package
+This will remove all the temporary files/folders created from building and testing this package.
 
 ```sh
 python setup.py clean
 ```
-
-## Accomplishments
-
-1. Get the python packages to compile using precompiled static and/or shared libraries instead of recompiling the c++ source code on linux and mac.
-
-2. Added support for mac and linux having multiple python versions, this used to cause a seg fault. Along with adding support for windows, which used to not work at all.
-
-3. Seperate the C++ tests from the python module so that we can ship the python code without the c++ tests
-
-4. Solved a linking issue with MacOSX where musher_library (shared library .dylib) would not link with the python module (shared library .so). We changed musher_library to STATIC instead of SHARED and the linking issue went away.
-
-## Next Steps
-
-1. Make sure everything works with windows and linux before moving on.
-
-2. Figure out how to pass python function to C++ function
 
 ## Useful links
 

@@ -30,6 +30,7 @@ Simple musical key detection.
   - [C++](#c-2)
 - [Cleanup](#cleanup)
 - [Useful links](#useful-links)
+- [Credits](#credits)
 
 <!-- /MarkdownTOC -->
 
@@ -209,3 +210,7 @@ python setup.py clean
 Python audio libraries:
 
 * https://github.com/vinta/awesome-python#audio
+
+# Credits
+
+[Essentia](https://github.com/MTG/essentia) - C++ library for audio and music analysis, description and synthesis, including Python bindings

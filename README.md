@@ -15,7 +15,7 @@ Simple musical key detection.
       - [CMAKE](#cmake)
       - [Conan](#conan)
     - [Install (WIP)](#install-wip)
-- [Usage Section (WIP)](#usage-section-wip)
+- [Usage (WIP)](#usage-wip)
 - [Development](#development)
   - [Python](#python)
     - [Install normally](#install-normally)
@@ -75,7 +75,7 @@ conan install musher
 ```
 
 
-# Usage Section (WIP)
+# Usage (WIP)
 
 ```python
 import os

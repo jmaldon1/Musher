@@ -25,7 +25,7 @@ Simple musical key detection.
     - [Install in debug mode](#install-in-debug-mode-1)
 - [Tests](#tests)
   - [Python](#python-1)
-    - [Required modules](#required-modules)
+    - [Required dependencies](#required-dependencies)
     - [Running tests](#running-tests)
   - [C++](#c-2)
 - [Cleanup](#cleanup)
@@ -130,7 +130,7 @@ cmake --build .
 
 ## Python
 
-### Required modules
+### Required dependencies
 
 ```sh
 pip install tox pytest

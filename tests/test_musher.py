@@ -85,8 +85,10 @@ def test_spectral_peaks():
 
 
 def test_detect_key():
+    # abs_audio_file_path = os.path.join(
+    #     TESTS_DIR_PATH, "..", "data", "audio_files", "mozart_c_major_30sec.wav")
     abs_audio_file_path = os.path.join(
-        TESTS_DIR_PATH, "..", "data", "audio_files", "mozart_c_major_30sec.wav")
+        TESTS_DIR_PATH, "..", "data", "audio_files", "EDM_Eb_major_2min.wav")
     pcp_size = 36
     sample_rate = 44100.
     num_harmonics = 4
@@ -107,5 +109,5 @@ def test_detect_key():
 
     avgs = [x/count for x in sums]
 
-    out = musher.detect_key(avgs, True, True, 4, 0.6, "Temperley")
+    out = musher.detect_key(avgs, True, True, 4, 0.6, "Edmm")
     print(out)

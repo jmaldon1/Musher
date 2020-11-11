@@ -28,8 +28,8 @@ Simple musical key detection.
     - [Required modules](#required-modules)
     - [Running tests](#running-tests)
   - [C++](#c-2)
-  - [Cleanup](#cleanup)
-  - [Useful links](#useful-links)
+- [Cleanup](#cleanup)
+- [Useful links](#useful-links)
 
 <!-- /MarkdownTOC -->
 
@@ -162,7 +162,7 @@ python setup.py ctest
 python setup.py gtest
 ```
 
-## Cleanup
+# Cleanup
 
 This will remove all the temporary files/folders created from building and testing this package.
 
@@ -170,7 +170,7 @@ This will remove all the temporary files/folders created from building and testi
 python setup.py clean
 ```
 
-## Useful links
+# Useful links
 
 Python audio libraries:
 

@@ -102,7 +102,8 @@ print(wav_decoded)
 
 normalized_samples = wav_decoded["normalized_samples"]
 sample_rate = wav_decoded["sample_rate"]
-key_output = musher.detect_key(normalized_samples, sample_rate, "Temperley")
+profile_type = "Temperley"
+key_output = musher.detect_key(normalized_samples, sample_rate, profile_type)
 print(key_output)
 {'first_to_second_relative_strength': 0.6078072169442225,
  'key': 'C',

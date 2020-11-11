@@ -77,6 +77,39 @@ conan install musher
 
 # Usage Section (WIP)
 
+```python
+import os
+import musher
+
+abs_audio_file_path = os.path.join("data", "audio_files", "mozart_c_major_30sec.wav")
+wav_decoded = musher.decode_wav_from_file(abs_audio_file_path)
+print(wav_decoded)
+{'avg_bitrate_kbps': 1411,
+ 'bit_depth': 16,
+ 'channels': 2,
+ 'file_type': 'wav',
+ 'interleaved_normalized_samples': array([ 0.        ,  0.        ,  0.        , ..., -0.27130127,
+       -0.32745361, -0.25457764]),
+ 'length_in_seconds': 30.0,
+ 'mono': False,
+ 'normalized_samples': array([[ 0.        ,  0.        ,  0.        , ..., -0.33203125,
+        -0.32833862, -0.3274536 ],
+       [ 0.        ,  0.        ,  0.        , ..., -0.29162598,
+        -0.27130127, -0.25457764]], dtype=float32),
+ 'sample_rate': 44100,
+ 'samples_per_channel': 1323000,
+ 'stereo': True}
+
+normalized_samples = wav_decoded["normalized_samples"]
+sample_rate = wav_decoded["sample_rate"]
+key_output = musher.detect_key(normalized_samples, sample_rate, "Temperley")
+print(key_output)
+{'first_to_second_relative_strength': 0.6078072169442225,
+ 'key': 'C',
+ 'scale': 'major',
+ 'strength': 0.7603224296919142}
+```
+
 # Development
 
 ## Python

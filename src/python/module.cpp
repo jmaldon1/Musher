@@ -1,3 +1,4 @@
+#include "src/core/framecutter.h"
 #include "src/python/utils.h"
 #include "src/python/wrapper.h"
 // #include "src/core/test/utils.h"
@@ -42,8 +43,9 @@ PYBIND11_MODULE(musher_python, m) {
   m.def("estimate_key", &_EstimateKey, "description", py::arg("pcp"), py::arg("use_polphony") = true,
         py::arg("use_three_chords") = true, py::arg("num_harmonics") = 4, py::arg("slope") = .6,
         py::arg("profile_type") = "Bgate", py::arg("use_maj_min") = false);
-  m.def("detect_key", &_DetectKey, "description", py::arg("normalized_samples"), py::arg("sample_rate")=44100.,
-        py::arg("profile_type")="Bgate", py::arg("pcp_size")=36, py::arg("num_harmonics")=4,
-        py::arg("frame_size")=4096, py::arg("hop_size")=512, py::arg("window_type_func")=py::cpp_function(BlackmanHarris62dB),
-        py::arg("max_num_peaks")=0, py::arg("hop_size")=.5);
+  m.def("detect_key", &_DetectKey, "description", py::arg("normalized_samples"), py::arg("sample_rate") = 44100.,
+        py::arg("profile_type") = "Bgate", py::arg("pcp_size") = 36, py::arg("num_harmonics") = 4,
+        py::arg("frame_size") = 4096, py::arg("hop_size") = 512,
+        py::arg("window_type_func") = py::cpp_function(BlackmanHarris62dB), py::arg("max_num_peaks") = 0,
+        py::arg("hop_size") = .5);
 }

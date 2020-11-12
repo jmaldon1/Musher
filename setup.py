@@ -238,7 +238,7 @@ setup(
     packages=find_packages(),
     ext_modules=[
          Extension(
-             # destination of .so
+             # Destination of .so
              'musher.musher_python',
              include_dirs=[
                 # https://caligari.dartmouth.edu/doc/ibmcxx/en_US/doc/complink/tasks/tuinclud.htm
@@ -254,12 +254,18 @@ setup(
                  'src/core/musher_library.cpp',
                  'src/core/utils.cpp',
                  'src/core/key.cpp',
+                 'src/core/hpcp.cpp',
+                 'src/core/framecutter.cpp',
+                 'src/core/windowing.cpp',
                  'src/python/utils.cpp'
              ],
              depends=[
                  'src/core/musher_library.h',
                  'src/core/utils.h',
                  'src/core/key.h'
+                 'src/core/hpcp.h',
+                 'src/core/framecutter.h',
+                 'src/core/windowing.h',
                  'src/python/utils.h',
                  'src/python/wrapper.h'
              ],

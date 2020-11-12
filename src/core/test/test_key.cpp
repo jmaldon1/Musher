@@ -1,11 +1,13 @@
+#include <vector>
+
+#include "gtest/gtest.h"
+#include "src/core/framecutter.h"
+#include "src/core/hpcp.h"
 #include "src/core/key.h"
+#include "src/core/windowing.h"
 #include "src/core/musher_library.h"
-#include "src/core/test/gtest_extras.h"
-#include "src/core/test/utils.h"
-#include "src/core/utils.h"
 
 using namespace musher::core;
-using namespace musher::core::test;
 
 /**
  * @brief Estimate Key C Major Classical
@@ -55,7 +57,7 @@ TEST(Key, EstimateKeyCMajorClassical) {
  * @brief Detect Key C Major Classical
  *
  */
-TEST(Key, DetectKeyCMajorClassical) { 
+TEST(Key, DetectKeyCMajorClassical) {
   const std::string filePath = TEST_DATA_DIR + std::string("audio_files/mozart_c_major_30sec.wav");
   WavDecoded wav_decoded = DecodeWav(filePath);
   std::vector<std::vector<double>> normalized_samples = wav_decoded.normalized_samples;

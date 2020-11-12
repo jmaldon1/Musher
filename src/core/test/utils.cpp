@@ -1,5 +1,8 @@
 #include "src/core/test/utils.h"
-#include "src/core/utils.h"
+
+#include <vector>
+
+#include "src/core/framecutter.h"
 
 namespace musher {
 namespace core {

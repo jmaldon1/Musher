@@ -1,6 +1,8 @@
 #include "src/core/test/gtest_extras.h"
 #include "src/core/test/utils.h"
-#include "src/core/utils.h"
+#include "gtest/gtest.h"
+#include <vector>
+#include <numeric>
 
 using namespace musher::core;
 using namespace musher::core::test;

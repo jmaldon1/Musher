@@ -1,4 +1,7 @@
 #include "src/python/utils.h"
+#include <vector>
+#include <string>
+#include <functional>
 
 using namespace musher::core;
 

@@ -3,7 +3,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include "src/core/hpcp.h"
 #include "src/core/utils.h"
+#include "src/core/windowing.h"
 
 using namespace musher::core;
 

@@ -1,8 +1,16 @@
 #include "src/core/key.h"
 
 #include <cmath>
+#define NOMINMAX
+#include <fplus/fplus.hpp>
+#include <sstream>
+#include <vector>
 
+#include "src/core/hpcp.h"
+// MonoMixer, ConvertToFrequencySpectrum, SpectralPeaks, PeakDetect
 #include "src/core/utils.h"
+#include "src/core/framecutter.h"
+#include "src/core/windowing.h"
 
 namespace musher {
 namespace core {
@@ -445,7 +453,7 @@ KeyOutput EstimateKey(const std::vector<double>& pcp,
   double max_2_other = -1;
   int key_index_other = -1;
 
-  // calculate the correlation between the profiles and the PCP...
+  // Calculate the correlation between the profiles and the PCP...
   // we shift the profile around to find the best match
   for (unsigned int shift = 0; shift < pcp_size; shift++) {
     double corr_major = Correlation(pcp, mean_pcp, std_pcp, profile_doM, mean_profile_M, std_profile_M, shift);

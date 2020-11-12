@@ -4,6 +4,12 @@ project_library(musher-core
         utils.cpp
         key.h
         key.cpp
+        hpcp.h
+        hpcp.cpp
+        framecutter.h
+        framecutter.cpp
+        windowing.h
+        windowing.cpp
         musher_library.h
         musher_library.cpp
     DEPENDENCIES

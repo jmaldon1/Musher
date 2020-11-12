@@ -1,11 +1,14 @@
+#include <string>
 #include <vector>
 
 #include "gtest/gtest.h"
 #include "src/core/framecutter.h"
 #include "src/core/hpcp.h"
 #include "src/core/key.h"
-#include "src/core/windowing.h"
+#include "src/core/spectral_peaks.h"
+#include "src/core/spectrum.h"
 #include "src/core/musher_library.h"
+#include "src/core/windowing.h"
 
 using namespace musher::core;
 

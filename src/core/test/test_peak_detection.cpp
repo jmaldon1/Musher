@@ -1,11 +1,9 @@
-#include <iostream>
-#include <stdexcept>
-#include <string>
+#include <tuple>
 #include <vector>
 
 #include "gtest/gtest.h"
+#include "src/core/peak_detect.h"
 #include "src/core/test/gtest_extras.h"
-#include "src/core/utils.h"
 
 using namespace musher::core;
 
@@ -14,7 +12,7 @@ using namespace musher::core;
  *
  */
 TEST(PeakDetection, LastPositionPeak) {
-  std::vector<double> inp{1.0, 1.0, 1.0, 1.0, 2.0};
+  std::vector<double> inp{ 1.0, 1.0, 1.0, 1.0, 2.0 };
   std::vector<std::tuple<double, double>> peaks;
   peaks = PeakDetect(inp, -1000.0, true);
 
@@ -31,7 +29,7 @@ TEST(PeakDetection, LastPositionPeak) {
  *
  */
 TEST(PeakDetection, FlatPeakMiddle1) {
-  std::vector<double> inp{1.0, 2.0, 2.0, 2.0, 1.0};
+  std::vector<double> inp{ 1.0, 2.0, 2.0, 2.0, 1.0 };
   std::vector<std::tuple<double, double>> peaks;
   peaks = PeakDetect(inp, -1000.0, true);
 
@@ -47,7 +45,7 @@ TEST(PeakDetection, FlatPeakMiddle1) {
  *
  */
 TEST(PeakDetection, FlatPeakMiddle2) {
-  std::vector<double> inp{1.0, 2.0, 2.0, 2.0, 1.0, 0};
+  std::vector<double> inp{ 1.0, 2.0, 2.0, 2.0, 1.0, 0 };
   std::vector<std::tuple<double, double>> peaks;
   peaks = PeakDetect(inp, -1000.0, true);
 
@@ -56,15 +54,6 @@ TEST(PeakDetection, FlatPeakMiddle2) {
   std::tie(actual_position, actual_value) = peaks[0];
   EXPECT_EQ(actual_position, 2.0);
   EXPECT_EQ(actual_value, 2.0);
-  // std::cout << "POSITIONS: " << std::endl;
-  // for (auto & element : peaks) {
-  //     std::cout << std::get<0>(element) << std::endl;
-  // }
-
-  // std::cout << "VALUES: " << std::endl;
-  // for (auto & element : peaks) {
-  //     std::cout << std::get<1>(element) << std::endl;
-  // }
 }
 
 /**
@@ -72,7 +61,7 @@ TEST(PeakDetection, FlatPeakMiddle2) {
  *
  */
 TEST(PeakDetection, FlatToPeakInterpolation) {
-  std::vector<double> inp{1, 2, 2, 2, 3, 0};
+  std::vector<double> inp{ 1, 2, 2, 2, 3, 0 };
   std::vector<std::tuple<double, double>> peaks;
   peaks = PeakDetect(inp, -1000.0, true);
 
@@ -89,7 +78,7 @@ TEST(PeakDetection, FlatToPeakInterpolation) {
  *
  */
 TEST(PeakDetection, FlatToPeakNoInterpolation) {
-  std::vector<double> inp{1, 2, 2, 2, 3, 0};
+  std::vector<double> inp{ 1, 2, 2, 2, 3, 0 };
   std::vector<std::tuple<double, double>> peaks;
   peaks = PeakDetect(inp, -1000.0, false);
   std::vector<double> actual_positions(peaks.size());
@@ -100,10 +89,10 @@ TEST(PeakDetection, FlatToPeakNoInterpolation) {
 
   std::transform(peaks.begin(), peaks.end(), actual_height.begin(), [](auto const& pair) { return std::get<1>(pair); });
 
-  std::vector<double> expected_positions = {4};
+  std::vector<double> expected_positions = { 4 };
   EXPECT_VEC_EQ(actual_positions, expected_positions);
 
-  std::vector<double> expected_height = {3};
+  std::vector<double> expected_height = { 3 };
   EXPECT_VEC_EQ(actual_height, expected_height);
 }
 
@@ -112,7 +101,7 @@ TEST(PeakDetection, FlatToPeakNoInterpolation) {
  *
  */
 TEST(PeakDetection, ManyPeaksWithInterpolation) {
-  std::vector<double> inp{0, 2, 1, 2, 1, 2, 0};
+  std::vector<double> inp{ 0, 2, 1, 2, 1, 2, 0 };
   std::vector<std::tuple<double, double>> peaks;
   peaks = PeakDetect(inp, -1000.0, true);
 
@@ -140,7 +129,7 @@ TEST(PeakDetection, ManyPeaksWithInterpolation) {
  *
  */
 TEST(PeakDetection, SortByPosition) {
-  std::vector<double> inp{0, 2, 1, 4, 1, 6, 0};
+  std::vector<double> inp{ 0, 2, 1, 4, 1, 6, 0 };
   std::vector<std::tuple<double, double>> peaks;
   peaks = PeakDetect(inp, -1000.0, false, "position");
   std::vector<double> actual_positions(peaks.size());
@@ -151,10 +140,10 @@ TEST(PeakDetection, SortByPosition) {
 
   std::transform(peaks.begin(), peaks.end(), actual_height.begin(), [](auto const& pair) { return std::get<1>(pair); });
 
-  std::vector<double> expected_positions = {1, 3, 5};
+  std::vector<double> expected_positions = { 1, 3, 5 };
   EXPECT_VEC_EQ(actual_positions, expected_positions);
 
-  std::vector<double> expected_height = {2, 4, 6};
+  std::vector<double> expected_height = { 2, 4, 6 };
   EXPECT_VEC_EQ(actual_height, expected_height);
 }
 
@@ -163,7 +152,7 @@ TEST(PeakDetection, SortByPosition) {
  *
  */
 TEST(PeakDetection, SortByHeight) {
-  std::vector<double> inp{0, 2, 1, 4, 1, 6, 0};
+  std::vector<double> inp{ 0, 2, 1, 4, 1, 6, 0 };
   std::vector<std::tuple<double, double>> peaks;
   peaks = PeakDetect(inp, -1000.0, false, "height");
   std::vector<double> actual_positions(peaks.size());
@@ -174,10 +163,10 @@ TEST(PeakDetection, SortByHeight) {
 
   std::transform(peaks.begin(), peaks.end(), actual_height.begin(), [](auto const& pair) { return std::get<1>(pair); });
 
-  std::vector<double> expected_positions = {5, 3, 1};
+  std::vector<double> expected_positions = { 5, 3, 1 };
   EXPECT_VEC_EQ(actual_positions, expected_positions);
 
-  std::vector<double> expected_height = {6, 4, 2};
+  std::vector<double> expected_height = { 6, 4, 2 };
   EXPECT_VEC_EQ(actual_height, expected_height);
 }
 
@@ -186,7 +175,7 @@ TEST(PeakDetection, SortByHeight) {
  *
  */
 TEST(PeakDetection, MaxPeaks) {
-  std::vector<double> inp{0, 2, 1, 4, 1, 6, 0};
+  std::vector<double> inp{ 0, 2, 1, 4, 1, 6, 0 };
   std::vector<std::tuple<double, double>> peaks;
   peaks = PeakDetect(inp, -1000.0, false, "position", 2);
 
@@ -199,7 +188,7 @@ TEST(PeakDetection, MaxPeaks) {
  *
  */
 TEST(PeakDetection, MinPosition) {
-  std::vector<double> inp{5, 0, 1, 0, 0, 0, 0};
+  std::vector<double> inp{ 5, 0, 1, 0, 0, 0, 0 };
   std::vector<std::tuple<double, double>> peaks;
   peaks = PeakDetect(inp, -1000.0, false, "position", 0, 0.0, 2);
 
@@ -215,7 +204,7 @@ TEST(PeakDetection, MinPosition) {
  *
  */
 TEST(PeakDetection, MaxPosition) {
-  std::vector<double> inp{0, 0, 0, 0, 1, 0, 2};
+  std::vector<double> inp{ 0, 0, 0, 0, 1, 0, 2 };
   std::vector<std::tuple<double, double>> peaks;
   peaks = PeakDetect(inp, -1000.0, false, "position", 0, 0.0, 0, 4);
 
@@ -231,7 +220,7 @@ TEST(PeakDetection, MaxPosition) {
  *
  */
 TEST(PeakDetection, Range) {
-  std::vector<double> inp{5, 0, 1, 0, 2, 0, 1};
+  std::vector<double> inp{ 5, 0, 1, 0, 2, 0, 1 };
   std::vector<std::tuple<double, double>> peaks;
   peaks = PeakDetect(inp, -1000.0, false, "position", 0, 3.0);
   std::vector<double> actual_positions(peaks.size());
@@ -242,10 +231,10 @@ TEST(PeakDetection, Range) {
 
   std::transform(peaks.begin(), peaks.end(), actual_height.begin(), [](auto const& pair) { return std::get<1>(pair); });
 
-  std::vector<double> expected_positions = {0, 1, 2, 3};
+  std::vector<double> expected_positions = { 0, 1, 2, 3 };
   EXPECT_VEC_EQ(actual_positions, expected_positions);
 
-  std::vector<double> expected_height = {5, 1, 2, 1};
+  std::vector<double> expected_height = { 5, 1, 2, 1 };
   EXPECT_VEC_EQ(actual_height, expected_height);
 }
 
@@ -255,7 +244,7 @@ TEST(PeakDetection, Range) {
  *
  */
 TEST(PeakDetection, RangeWithMinAndMaxPositions) {
-  std::vector<double> inp{5, 0, 1, 0, 2, 0, 1};
+  std::vector<double> inp{ 5, 0, 1, 0, 2, 0, 1 };
   std::vector<std::tuple<double, double>> peaks;
   /* Min and Max positions should be within the range */
   peaks = PeakDetect(inp, -1000.0, false, "position", 0, 3.0, 2, 3);
@@ -267,9 +256,9 @@ TEST(PeakDetection, RangeWithMinAndMaxPositions) {
 
   std::transform(peaks.begin(), peaks.end(), actual_height.begin(), [](auto const& pair) { return std::get<1>(pair); });
 
-  std::vector<double> expected_positions = {2, 3};
+  std::vector<double> expected_positions = { 2, 3 };
   EXPECT_VEC_EQ(actual_positions, expected_positions);
 
-  std::vector<double> expected_height = {2, 1};
+  std::vector<double> expected_height = { 2, 1 };
   EXPECT_VEC_EQ(actual_height, expected_height);
 }

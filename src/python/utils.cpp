@@ -1,5 +1,3 @@
-#define PY_SSIZE_T_CLEAN  // It is recommended to always define this before Python.h
-// #include <Python.h>
 #include "src/python/utils.h"
 
 #include <stdexcept>
@@ -41,7 +39,7 @@ py::dict ConvertWavDecodedToPyDict(WavDecoded wav_decoded) {
   return output_dict;
 }
 
-py::dict ConvertKeyOutputToPyDict(KeyOutput key_output){
+py::dict ConvertKeyOutputToPyDict(KeyOutput key_output) {
   py::dict key_output_dict;
   key_output_dict["key"] = key_output.key;
   key_output_dict["scale"] = key_output.scale;

@@ -251,23 +251,29 @@ setup(
              sources=[
                  'src/python/module.cpp',
                  'src/python/wrapper.cpp',
+                 'src/python/utils.cpp',
                  'src/core/musher_library.cpp',
                  'src/core/utils.cpp',
                  'src/core/key.cpp',
                  'src/core/hpcp.cpp',
                  'src/core/framecutter.cpp',
                  'src/core/windowing.cpp',
-                 'src/python/utils.cpp'
+                 'src/core/peak_detect.cpp',
+                 'src/core/spectral_peaks.cpp',
+                 'src/core/spectrum.cpp',
              ],
              depends=[
+                 'src/python/wrapper.h',
+                 'src/python/utils.h',
                  'src/core/musher_library.h',
                  'src/core/utils.h',
                  'src/core/key.h'
                  'src/core/hpcp.h',
                  'src/core/framecutter.h',
                  'src/core/windowing.h',
-                 'src/python/utils.h',
-                 'src/python/wrapper.h'
+                 'src/core/peak_detect.h',
+                 'src/core/spectral_peaks.h',
+                 'src/core/spectrum.h',
              ],
             #  extra_compile_args=[*relax_warnings()]
             #   extra_compile_args=extra_compile_args,

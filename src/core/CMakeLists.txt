@@ -10,6 +10,12 @@ project_library(musher-core
         framecutter.cpp
         windowing.h
         windowing.cpp
+        peak_detect.h
+        peak_detect.cpp
+        spectral_peaks.h
+        spectral_peaks.cpp
+        spectrum.h
+        spectrum.cpp
         musher_library.h
         musher_library.cpp
     DEPENDENCIES

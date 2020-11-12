@@ -2,6 +2,8 @@
 
 #include "src/core/hpcp.h"
 #include "src/core/windowing.h"
+#include "src/core/spectral_peaks.h"
+#include "src/core/spectrum.h"
 #include "src/python/utils.h"
 
 using namespace musher::core;

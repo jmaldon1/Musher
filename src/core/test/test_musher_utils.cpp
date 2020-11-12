@@ -4,6 +4,8 @@
 #include <vector>
 
 #include "gtest/gtest.h"
+#include "src/core/peak_detect.h"
+#include "src/core/spectrum.h"
 #include "src/core/test/gtest_extras.h"
 #include "src/core/test/utils.h"
 #include "src/core/utils.h"

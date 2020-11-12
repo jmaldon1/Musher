@@ -5,12 +5,15 @@
 #include <fplus/fplus.hpp>
 #include <sstream>
 #include <vector>
+#include <stdexcept>
 
 #include "src/core/hpcp.h"
-// MonoMixer, ConvertToFrequencySpectrum, SpectralPeaks, PeakDetect
+// MonoMixer
 #include "src/core/utils.h"
 #include "src/core/framecutter.h"
+#include "src/core/spectral_peaks.h"
 #include "src/core/windowing.h"
+#include "src/core/spectrum.h"
 
 namespace musher {
 namespace core {

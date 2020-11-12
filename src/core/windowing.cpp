@@ -4,6 +4,7 @@
 #include <cmath>
 #include <functional>
 #include <vector>
+#include <stdexcept>
 
 namespace musher {
 namespace core {

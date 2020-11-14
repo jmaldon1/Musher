@@ -252,7 +252,7 @@ setup(
                  'src/python/module.cpp',
                  'src/python/wrapper.cpp',
                  'src/python/utils.cpp',
-                 'src/core/musher_library.cpp',
+                 'src/core/audio_decoders.cpp',
                  'src/core/utils.cpp',
                  'src/core/key.cpp',
                  'src/core/hpcp.cpp',
@@ -266,7 +266,7 @@ setup(
              depends=[
                  'src/python/wrapper.h',
                  'src/python/utils.h',
-                 'src/core/musher_library.h',
+                 'src/core/audio_decoders.h',
                  'src/core/utils.h',
                  'src/core/key.h'
                  'src/core/hpcp.h',

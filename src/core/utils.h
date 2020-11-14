@@ -3,7 +3,6 @@
 #define NOMINMAX
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <minimp3/minimp3_ex.h>
 #include <pocketfft/pocketfft.h>
 
 #include <complex>

@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 #include "gtest/gtest.h"
-#include "src/core/musher_library.h"
+#include "src/core/audio_decoders.h"
 #include "src/core/utils.h"
 
 /* TEST INCLUDES */

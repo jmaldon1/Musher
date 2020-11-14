@@ -18,8 +18,8 @@ project_library(musher-core
         spectrum.cpp
         mono_mixer.h
         mono_mixer.cpp
-        musher_library.h
-        musher_library.cpp
+        audio_decoders.h
+        audio_decoders.cpp
     DEPENDENCIES
         # CONAN
         #     functionalplus

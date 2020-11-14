@@ -7,7 +7,7 @@
 #include "src/core/key.h"
 #include "src/core/spectral_peaks.h"
 #include "src/core/spectrum.h"
-#include "src/core/musher_library.h"
+#include "src/core/audio_decoders.h"
 #include "src/core/windowing.h"
 #include "src/core/mono_mixer.h"
 

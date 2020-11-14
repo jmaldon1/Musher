@@ -5,6 +5,7 @@
 #include "src/core/spectral_peaks.h"
 #include "src/core/spectrum.h"
 #include "src/core/mono_mixer.h"
+#include "src/core/audio_decoders.h"
 #include "src/python/utils.h"
 
 using namespace musher::core;

@@ -4,7 +4,7 @@ project_test(musher-core-test
         utils.h
         utils.cpp
         test_musher_utils.cpp
-        test_musher_library.cpp
+        test_audio_decoders.cpp
         test_peak_detection.cpp
         test_hpcp.cpp
         test_key.cpp

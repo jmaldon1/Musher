@@ -56,7 +56,7 @@ void NormalizeInPlace(std::vector<T> &vec) {
  * @param vec Vector to normalize.
  */
 template <typename T>
-void NormalizeSumInPace(std::vector<T> &vec) {
+void NormalizeSumInPlace(std::vector<T> &vec) {
   if (vec.empty()) return;
 
   // T sumElements = std::accumulate(vec.begin(), vec.end(), (T) 0.0);

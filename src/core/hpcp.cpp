@@ -246,8 +246,8 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
       NormalizeInPlace(hpcp_HI);
     } else if (Normalized == N_UNIT_SUM) {
       // TODO does it makes sense to apply band preset together with unit sum normalization?
-      NormalizeSumInPace(hpcp_LO);
-      NormalizeSumInPace(hpcp_HI);
+      NormalizeSumInPlace(hpcp_LO);
+      NormalizeSumInPlace(hpcp_HI);
     }
 
     for (int i = 0; i < static_cast<int>(hpcp.size()); i++) {
@@ -258,7 +258,7 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
   if (Normalized == N_UNIT_MAX) {
     NormalizeInPlace(hpcp);
   } else if (Normalized == N_UNIT_SUM) {
-    NormalizeSumInPace(hpcp);
+    NormalizeSumInPlace(hpcp);
   }
 
   /* Perform the Jordi non-linear post-processing step

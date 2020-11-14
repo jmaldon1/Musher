@@ -158,7 +158,7 @@ std::vector<HarmonicPeak> InitHarmonicContributionTable(int harmonics);
  * @param window_size Size, in semitones, of the window used for the weighting.
  * @param sample_rate Sampling rate of the audio signal [Hz].
  * @param max_shifted Whether to shift the HPCP vector so that the maximum peak is at index 0.
- * @param non_linear Apply non-linear post-processing to the output (use with Normalized='unitMax'). Boosts values close
+ * @param non_linear Apply non-linear post-processing to the output (use with _normalized='unit max'). Boosts values close
  * to 1, decreases values close to 0.
  * @param _normalized Whether to normalize the HPCP vector.
  * @return std::vector<double> Resulting harmonic pitch class profile.

@@ -82,7 +82,28 @@ std::vector<std::tuple<double, double>> _SpectralPeaks(const std::vector<double>
   // return numpy_arr;
 }
 
-py::array_t<double> _HPCP(const std::vector<std::tuple<double, double>>& peaks,
+py::array_t<double> _HPCPFromPeaks(const std::vector<std::tuple<double, double>>& peaks,
+                                   unsigned int size,
+                                   double reference_frequency,
+                                   unsigned int harmonics,
+                                   bool band_preset,
+                                   double band_split_frequency,
+                                   double min_frequency,
+                                   double max_frequency,
+                                   std::string _weight_type,
+                                   double window_size,
+                                   double sample_rate,
+                                   bool max_shifted,
+                                   bool non_linear,
+                                   std::string _normalized) {
+  const std::vector<double> vec =
+      HPCP(peaks, size, reference_frequency, harmonics, band_preset, band_split_frequency, min_frequency, max_frequency,
+           _weight_type, window_size, sample_rate, max_shifted, non_linear, _normalized);
+  return ConvertSequenceToPyarray(vec);
+}
+
+py::array_t<double> _HPCP(const std::vector<double>& frequencies,
+                          const std::vector<double>& magnitudes,
                           unsigned int size,
                           double reference_frequency,
                           unsigned int harmonics,
@@ -97,8 +118,8 @@ py::array_t<double> _HPCP(const std::vector<std::tuple<double, double>>& peaks,
                           bool non_linear,
                           std::string _normalized) {
   const std::vector<double> vec =
-      HPCP(peaks, size, reference_frequency, harmonics, band_preset, band_split_frequency, min_frequency, max_frequency,
-           _weight_type, window_size, sample_rate, max_shifted, non_linear, _normalized);
+      HPCP(frequencies, magnitudes, size, reference_frequency, harmonics, band_preset, band_split_frequency,
+           min_frequency, max_frequency, _weight_type, window_size, sample_rate, max_shifted, non_linear, _normalized);
   return ConvertSequenceToPyarray(vec);
 }
 

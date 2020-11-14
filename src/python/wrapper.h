@@ -1,8 +1,8 @@
+#include <pybind11/numpy.h>
+
 #include <functional>
 #include <string>
 #include <vector>
-
-#include <pybind11/numpy.h>
 
 #include "src/python/utils.h"
 
@@ -39,7 +39,23 @@ std::vector<std::tuple<double, double>> _SpectralPeaks(const std::vector<double>
                                                        double sample_rate,
                                                        int min_pos,
                                                        int max_pos);
-py::array_t<double> _HPCP(const std::vector<std::tuple<double, double>>& peaks,
+py::array_t<double> _HPCPFromPeaks(const std::vector<std::tuple<double, double>>& peaks,
+                                   unsigned int size,
+                                   double reference_frequency,
+                                   unsigned int harmonics,
+                                   bool band_preset,
+                                   double band_split_frequency,
+                                   double min_frequency,
+                                   double max_frequency,
+                                   std::string _weight_type,
+                                   double window_size,
+                                   double sample_rate,
+                                   bool max_shifted,
+                                   bool non_linear,
+                                   std::string _normalized);
+
+py::array_t<double> _HPCP(const std::vector<double>& frequencies,
+                          const std::vector<double>& magnitudes,
                           unsigned int size,
                           double reference_frequency,
                           unsigned int harmonics,

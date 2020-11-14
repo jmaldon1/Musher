@@ -101,8 +101,8 @@ def test_estimate_key():
         spectrum = musher.convert_to_frequency_spectrum(windowed_frame)
         spectral_peaks = musher.spectral_peaks(spectrum, -1000.0, "height",
                                                100, sample_rate, 0, int(sample_rate / 2))
-        hpcp = musher.hpcp(spectral_peaks, pcp_size, 440.0, num_harmonics - 1, True, 500.0, 40.0,
-                           5000.0, "squared cosine", .5)
+        hpcp = musher.hpcp_from_peaks(spectral_peaks, pcp_size, 440.0, num_harmonics - 1, True, 500.0, 40.0,
+                                      5000.0, "squared cosine", .5)
         for idx, _ in enumerate(hpcp):
             sums[idx] += hpcp[idx]
         count += 1
@@ -122,5 +122,6 @@ def test_detect_key():
     normalized_samples = wav_decoded["normalized_samples"]
     sample_rate = wav_decoded["sample_rate"]
 
-    key_output = musher.detect_key(normalized_samples, sample_rate, "Temperley")
+    key_output = musher.detect_key(
+        normalized_samples, sample_rate, "Temperley")
     print(key_output)

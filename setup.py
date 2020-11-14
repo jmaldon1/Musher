@@ -202,35 +202,6 @@ class GTest(test):
         if result.returncode == -11:
             print("C++ Seg fault.")
 
-
-def relax_warnings():
-    if platform.system().lower() == "windows":
-        return []
-    return [
-        # "-Wall",
-        # "-Wno-cpp"
-        # "-Werror"
-        # "-Wall",
-        # "-Wno-deprecated-declarations",
-        # "-Wno-error",
-        # "-Wno-extra",
-        # "-Wno-fatal-errors",
-        # '-Wno-ignored-qualifiers',
-        # '-Wno-missing-field-initializers',
-        # '-Wno-parentheses',
-        # '-Wno-reorder',
-        # '-Wno-return-type',
-        # '-Wno-shadow',
-        # '-Wno-sign-compare',
-        # '-Wno-switch',
-        # '-Wno-undef',
-        # '-Wno-unused-but-set-variable',
-        # '-Wno-unused-local-typedefs',
-        # '-Wno-unused-parameter',
-        # '-Wno-unused-result',
-        # '-Wno-unused-variable'
-    ]
-
 setup(
     name='musher',
     version='0.1',
@@ -277,7 +248,6 @@ setup(
                  'src/core/spectrum.h',
                  'src/core/mono_mixer.h'
              ],
-            #  extra_compile_args=[*relax_warnings()]
             #   extra_compile_args=extra_compile_args,
             #   extra_link_args=extra_link_args,
          )

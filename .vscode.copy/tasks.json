@@ -1,0 +1,21 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "setup",
+            "command": "python setup.py cmake --debug",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ],
+    "version": "2.0.0"
+}

@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Musher",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "~/.conan/data/**",
+                "~/.pyenv/versions/**"
+            ],
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14"
+        }
+    ],
+    "version": 4
+}

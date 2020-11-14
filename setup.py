@@ -261,6 +261,7 @@ setup(
                  'src/core/peak_detect.cpp',
                  'src/core/spectral_peaks.cpp',
                  'src/core/spectrum.cpp',
+                 'src/core/mono_mixer.cpp'
              ],
              depends=[
                  'src/python/wrapper.h',
@@ -274,6 +275,7 @@ setup(
                  'src/core/peak_detect.h',
                  'src/core/spectral_peaks.h',
                  'src/core/spectrum.h',
+                 'src/core/mono_mixer.h'
              ],
             #  extra_compile_args=[*relax_warnings()]
             #   extra_compile_args=extra_compile_args,

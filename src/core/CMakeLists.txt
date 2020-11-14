@@ -16,6 +16,8 @@ project_library(musher-core
         spectral_peaks.cpp
         spectrum.h
         spectrum.cpp
+        mono_mixer.h
+        mono_mixer.cpp
         musher_library.h
         musher_library.cpp
     DEPENDENCIES

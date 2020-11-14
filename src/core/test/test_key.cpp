@@ -9,6 +9,7 @@
 #include "src/core/spectrum.h"
 #include "src/core/musher_library.h"
 #include "src/core/windowing.h"
+#include "src/core/mono_mixer.h"
 
 using namespace musher::core;
 

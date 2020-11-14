@@ -4,16 +4,15 @@
 #define NOMINMAX
 #include <fplus/fplus.hpp>
 #include <sstream>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 
 #include "src/core/hpcp.h"
-// MonoMixer
-#include "src/core/utils.h"
 #include "src/core/framecutter.h"
 #include "src/core/spectral_peaks.h"
-#include "src/core/windowing.h"
 #include "src/core/spectrum.h"
+#include "src/core/mono_mixer.h"
+#include "src/core/windowing.h"
 
 namespace musher {
 namespace core {
@@ -261,6 +260,14 @@ double Correlation(const std::vector<double>& v1,
   r /= std1 * std2;
 
   return r;
+}
+
+double standard_deviation(double mean, const std::vector<double>& vec) {
+  return fplus::fwd::apply(
+      fplus::reduce([&mean](auto total, auto next_val) { return total + fplus::square(next_val - mean); },
+                    0,  // Start at 0
+                    vec),
+      [](auto std) { return std::sqrt(std); });
 }
 
 KeyOutput EstimateKey(const std::vector<double>& pcp,

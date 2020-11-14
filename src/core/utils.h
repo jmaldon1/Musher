@@ -97,23 +97,5 @@ double Median(std::vector<double> &inVec);
  */
 std::vector<double> OnePoleFilter(const std::vector<double> &vec);
 
-/**
- * @brief Downmixes the signal into a single channel given a stereo signal. If the signal was already a monoaural, it is
- * left unchanged.
- *
- * @param input Stereo or mono audio signal
- * @return std::vector<double> Downmixed audio signal
- */
-std::vector<double> MonoMixer(const std::vector<std::vector<double>> &input);
-
-/**
- * @brief Calculate the standard deviation of a vector.
- *
- * @param mean Mean (Average)
- * @param vec Vector
- * @return double Standard devation
- */
-double standard_deviation(double mean, const std::vector<double> &vec);
-
 }  // namespace core
 }  // namespace musher

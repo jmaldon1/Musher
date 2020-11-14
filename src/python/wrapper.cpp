@@ -4,6 +4,7 @@
 #include "src/core/windowing.h"
 #include "src/core/spectral_peaks.h"
 #include "src/core/spectrum.h"
+#include "src/core/mono_mixer.h"
 #include "src/python/utils.h"
 
 using namespace musher::core;

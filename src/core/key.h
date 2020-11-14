@@ -165,6 +165,15 @@ double Correlation(const std::vector<double>& v1,
                    const int shift);
 
 /**
+ * @brief Calculate the standard deviation of a vector.
+ *
+ * @param mean Mean (Average)
+ * @param vec Vector
+ * @return double Standard devation
+ */
+double standard_deviation(double mean, const std::vector<double> &vec);
+
+/**
  * @brief Computes key estimate given a pitch class profile (HPCP).
  *
  * @param pcp The input pitch class profile.

@@ -1,8 +1,12 @@
+#include <pybind11/functional.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/stl_bind.h>
+
 #include "src/core/framecutter.h"
-#include "src/python/utils.h"
 #include "src/python/wrapper.h"
-// #include "src/core/test/utils.h"
-// using namespace musher::core;
+
+namespace py = pybind11;
 
 PYBIND11_MAKE_OPAQUE(std::vector<std::tuple<double, double>>);
 using namespace musher::core;
@@ -12,7 +16,6 @@ PYBIND11_MODULE(musher_python, m) {
   m.doc() = "pybind11 musher_python plugin";  // optional module docstring
 
   py::bind_vector<std::vector<std::tuple<double, double>>>(m, "peaks");
-  m.def("add", &add, "A function which adds two numbers");
   m.def("load_audio_file", &_LoadAudioFile, "description");
   m.def("decode_wav_from_data", &_DecodeWavFromData, "description");
   m.def("decode_wav_from_file", &_DecodeWavFromFile, "description");

@@ -1,19 +1,20 @@
 #include "src/python/wrapper.h"
 
+#include <pybind11/numpy.h>
+
+#include "src/core/audio_decoders.h"
 #include "src/core/hpcp.h"
-#include "src/core/windowing.h"
+#include "src/core/mono_mixer.h"
 #include "src/core/spectral_peaks.h"
 #include "src/core/spectrum.h"
-#include "src/core/mono_mixer.h"
-#include "src/core/audio_decoders.h"
+#include "src/core/windowing.h"
 #include "src/python/utils.h"
 
 using namespace musher::core;
+namespace py = pybind11;
 
 namespace musher {
 namespace python {
-
-int add(int i, int j) { return i + j; }
 
 py::array_t<uint8_t> _LoadAudioFile(const std::string& file_path) {
   std::vector<uint8_t> fileData = LoadAudioFile(file_path);

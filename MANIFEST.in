@@ -1,5 +1,0 @@
-include CMakeLists.txt
-include tools/*
-include src/*
-include include/*
-include tests/*

@@ -7,6 +7,7 @@ import shutil
 import glob
 import codecs
 import signal
+import multiprocessing
 from setuptools import setup, find_packages, Extension, Command
 from setuptools.command.build_ext import build_ext
 from setuptools.command.test import test
@@ -246,6 +247,25 @@ class GTest(test):
             print("C++ Seg fault.")
 
 
+def extra_compile_args():
+    extra_compile_args = []
+    if platform.system() == 'Darwin':
+        # Something with OS X Mojave causes libstd not to be found
+        extra_compile_args += ['-mmacosx-version-min=10.12']
+
+    if os.name != 'nt':
+        extra_compile_args += ['-std=c++14']
+
+    return extra_compile_args
+
+def extra_link_args():
+    extra_link_args = []
+    if platform.system() == 'Darwin':
+        # Something with OS X Mojave causes libstd not to be found
+        extra_link_args += ['-stdlib=libc++', '-mmacosx-version-min=10.12']
+
+    return extra_link_args
+
 setup(
     name='musher',
     version='0.1',
@@ -293,8 +313,8 @@ setup(
                  'src/core/spectrum.h',
                  'src/core/mono_mixer.h'
              ],
-            #   extra_compile_args=extra_compile_args,
-            #   extra_link_args=extra_link_args,
+              extra_compile_args=extra_compile_args(),
+              extra_link_args=extra_link_args(),
          )
     ],
     setup_requires=['wheel', 'pybind11>=2.6.0', 'numpy>=1.19.3'],

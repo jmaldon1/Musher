@@ -6,6 +6,7 @@ import subprocess
 import shutil
 import glob
 import codecs
+import signal
 from setuptools import setup, find_packages, Extension, Command
 from setuptools.command.build_ext import build_ext
 from setuptools.command.test import test
@@ -70,7 +71,13 @@ class CleanBuildCommand(Command):
             os.path.join(ROOT_DIR, ".eggs"),
             os.path.join(ROOT_DIR, ".pytest_cache"),
             os.path.join(ROOT_DIR, ".tox"),
-            *glob.glob(os.path.join(ROOT_DIR, "musher", "*.so"))
+            *glob.glob(os.path.join(ROOT_DIR, "musher", "*.so")),
+            # Doxygen
+            os.path.join(ROOT_DIR, "docs", "html"),
+            os.path.join(ROOT_DIR, "docs", "latex"),
+            os.path.join(ROOT_DIR, "docs", "xml"),
+            # Sphinx
+            os.path.join(ROOT_DIR, "docs", "build")
         ]
 
         for item in cleanup_list:
@@ -87,29 +94,54 @@ class CleanBuildCommand(Command):
         print(u'\u2713', "cleaning done")
 
 
-class CMakeBuild(build_ext):
+class CMakeBuild(Command):
     """
     Debug (with tests): python setup.py cmake --debug
     Release (no tests): python setup.py cmake
+
+    Generate docs: python setup.py cmake --docs
     """
+    description = 'Build the C++ code with various options.'
+    user_options = [
+        ('debug', 'd', "Compile in debug mode."),
+        ('docs', 'r', "Generate documenation for C++ and Python."),
+    ]
+
+    def initialize_options(self):
+        """Initialize user options
+        """
+        self.debug = False
+        self.docs = False
+
+    def finalize_options(self):
+        """Finalize user options
+        """
+        pass
 
     def run(self):
+        """Build the C++ code.
+
+        Raises:
+            RuntimeError: Error if Cmake is not installed.
+        """
         try:
             subprocess.check_output(["cmake", "--version"])
         except OSError as err:
             raise RuntimeError(
-                "CMake must be installed to build the following extensions: " +
-                ", ".join(e.name for e in self.extensions)) from err
+                "CMake must be installed to build musher") from err
 
-        for ext in self.extensions:
-            self.build_extension(ext)
-
-    def build_extension(self, ext):
         build_dir = get_build_dir()
+        cmake_args = []
+
         if self.debug:
-            cmake_args = ["-DCMAKE_BUILD_TYPE=Debug", "-DENABLE_TESTS=On"]
+            cmake_args += ["-DCMAKE_BUILD_TYPE=Debug", "-DENABLE_TESTS=On"]
         else:
-            cmake_args = ["-DCMAKE_BUILD_TYPE=Release"]
+            cmake_args += ["-DCMAKE_BUILD_TYPE=Release"]
+
+        if self.docs:
+            cmake_args += ["-DGENERATE_DOCS=On"]
+        else:
+            cmake_args += ["-DGENERATE_DOCS=Off"]
 
         if not os.path.exists(build_dir):
             os.makedirs(build_dir)
@@ -117,9 +149,19 @@ class CMakeBuild(build_ext):
         subprocess.run(['cmake', ROOT_DIR] + cmake_args,
                        cwd=build_dir,
                        check=True)
-        subprocess.run(['cmake', '--build', '.'],
-                       cwd=build_dir,
-                       check=True)
+        result = subprocess.run(['cmake', '--build', '.'],
+                                cwd=build_dir,
+                                check=True,
+                                stderr=subprocess.PIPE)
+
+        if result.stderr:
+            err = result.stderr.decode("utf-8")
+            print(err)
+            if "No module named 'musher.musher_python'" in err:
+                print(("Error generating docs: "
+                       "You must install the musher python module "
+                       "before generating the docs."
+                       "\ntry: `pip install -e .`"))
 
 
 class CTest(test):
@@ -152,7 +194,8 @@ class CTest(test):
             print(result.stderr.decode("utf-8"))
             print("HINT: Did you compile the code in debug mode first? "
                   "(python setup.py cmake --debug)")
-        if result.returncode == 8:
+
+        if result.returncode == -signal.SIGSEGV:
             print("C++ Seg fault.")
 
 
@@ -201,6 +244,7 @@ class GTest(test):
 
         if result.returncode == -11:
             print("C++ Seg fault.")
+
 
 setup(
     name='musher',

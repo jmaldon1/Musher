@@ -13,3 +13,8 @@ include(conan)
 include(base)
 
 add_subdirectory(src)
+
+if(GENERATE_DOCS)
+    add_subdirectory(docs)
+endif()
+

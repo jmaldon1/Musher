@@ -28,6 +28,9 @@ Simple musical key detection.
     - [Required dependencies](#required-dependencies)
     - [Running tests](#running-tests)
   - [C++](#c-2)
+- [Documentation](#documentation)
+  - [Dependencies](#dependencies)
+  - [How to Generate](#how-to-generate)
 - [Cleanup](#cleanup)
 - [Useful links](#useful-links)
 - [Credits](#credits)
@@ -196,6 +199,22 @@ python setup.py ctest
 # Google test
 python setup.py gtest
 ```
+
+# Documentation
+
+Generate doxumentation using Doxygen, Breathe, and Sphinx.
+
+## Dependencies
+
+1. [Doxygen >1.5.1](https://www.doxygen.nl/index.html) - C++ Documentation
+2. [Breathe](https://github.com/michaeljones/breathe) - Translate Doxygen docs to Sphinx docs
+3. [Sphinx](https://github.com/sphinx-doc/sphinx) - Python Docs
+
+## How to Generate
+```sh
+python setp.py cmake --docs
+```
+
 
 # Cleanup
 

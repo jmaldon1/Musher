@@ -29,9 +29,9 @@ const char* decode_wav_from_data_description = R"(
  
   WavDecoded.normalized_samples contains:
 
-  samples[0] holds channel 1
+    samples[0] holds channel 1
 
-  samples[1] holds channel 2 (Will not exist if mono audio)
+    samples[1] holds channel 2 (Will not exist if mono audio)
 
   Args:
     file_data (List[int]): WAV file data.
@@ -274,7 +274,7 @@ const char* detect_key_description = R"(
 
   Args:
     normalized_samples (List[List[float]]): The input pitch class profile.
-    
+    sample_rate (float, optional): Sampling rate of the audio signal [Hz]. Defaults to 44100.0.
     profile_type (str, optional): The type of polyphic profile to use for correlation calculation. Defaults to 'Bgate'.
     use_polphony (bool, optional): Enables the use of polyphonic profiles to define key profiles (this includes the contributions
       from triads as well as pitch harmonics). Defaults to True.

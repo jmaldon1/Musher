@@ -11,14 +11,14 @@ macro(relaxed_compile_options target scope)
             -Wno-fatal-errors
             -Wno-ignored-qualifiers
             -Wno-missing-field-initializers
-            -Wno-parenthesis
+            -Wno-parentheses
             -Wno-reorder
             -Wno-return-type
             -Wno-shadow
             -Wno-sign-compare
             -Wno-switch
             -Wno-undef
-            -Wno-unused-but-set-variable
+            -Wno-unused-const-variable
             -Wno-unused-local-typedefs
             -Wno-unused-parameter
             -Wno-unused-result

@@ -202,7 +202,7 @@ python setup.py gtest
 
 # Documentation
 
-Generate doxumentation using Doxygen, Breathe, and Sphinx.
+Generate documentation using Doxygen, Breathe, and Sphinx.
 
 ## Dependencies
 

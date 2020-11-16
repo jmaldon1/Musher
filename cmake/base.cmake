@@ -82,7 +82,7 @@ include(GNUInstallDirs)
 
 include(compile-options)
 include(tests)
-include(python)
+# include(python)
 include(library)
 # include(module)
 include(executable)

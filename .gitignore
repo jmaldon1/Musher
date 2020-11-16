@@ -1,3 +1,8 @@
+# Doxygen
+docs/html
+docs/latex
+docs/xml
+
 .DS_Store
 *.dylib
 

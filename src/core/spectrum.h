@@ -35,6 +35,7 @@ size_t NextFastLen(size_t n);
 
 /**
  * @brief Computes the frequency spectrum of an array of Reals.
+ * 
  * The resulting spectrum has a size which is half the size of the input array plus one.
  * Bins contain raw (linear) magnitude values.
  *

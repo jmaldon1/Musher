@@ -43,6 +43,7 @@ std::vector<uint8_t> LoadAudioFile(const std::string& file_path);
 
 /**
  * @brief Decode a wav file.
+ * 
  * WavDecoded.normalized_samples contains:
  *  samples[0] holds channel 1
  *  samples[1] holds channel 2 (Will not exist if mono audio)

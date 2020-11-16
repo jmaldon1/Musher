@@ -8,6 +8,7 @@ namespace core {
 
 /**
  * @brief Extracts peaks from a spectrum.
+ * 
  * It is important to note that the peak algorithm is independent of an input that is linear or in dB, so one has to
  * adapt the threshold to fit with the type of data fed to it. The algorithm relies on PeakDetect algorithm which is
  * run with parabolic interpolation [1]. The exactness of the peak-searching depends heavily on the windowing type. It
@@ -23,9 +24,9 @@ namespace core {
  * @param sort_by Ordering type of the outputted peaks (ascending by frequency (position)
  * or descending by magnitude (height)).
  * @param max_num_peaks Maximum number of returned peaks (set to 0 to return all peaks).
- * @param sample_rate Sampling rate of the audio signal [Hz].
- * @param min_pos Maximum frequency (position) of the range to evaluate [Hz].
- * @param max_pos Minimum frequency (position) of the range to evaluate [Hz].
+ * @param sample_rate Sampling rate of the audio signal \[Hz\].
+ * @param min_pos Maximum frequency (position) of the range to evaluate \[Hz\].
+ * @param max_pos Minimum frequency (position) of the range to evaluate \[Hz\].
  * @return std::vector<std::tuple<double, double>> Vector of spectral peaks, each peak being a tuple (frequency,
  * magnitude).
  */

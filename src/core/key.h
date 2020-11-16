@@ -185,7 +185,7 @@ double standard_deviation(double mean, const std::vector<double> &vec);
  * @param slope Value of the slope of the exponential harmonic contribution to the polyphonic profile.
  * @param profile_type The type of polyphic profile to use for correlation calculation.
  * @param use_maj_min Use a third profile called 'majmin' for ambiguous tracks [4]. Only available for the edma, bgate
- * and braw profiles
+ * and braw profiles.
  * @return KeyOutput A struct containing the following:
  *      key: Estimated key, from A to G.
  *      scale: Scale of the key (major or minor).
@@ -205,11 +205,17 @@ KeyOutput EstimateKey(const std::vector<double>& pcp,
  * @brief Computes key estimate given normalized samples.
  *
  * @param normalized_samples Normalized samples, either stereo or mono.
- * @param sample_rate Sampling rate of the audio signal [Hz].
- * @param profile_type Key profile.
- * @param pcp_size Number of array elements used to represent a semitone times 12.
+ * @param sample_rate Sampling rate of the audio signal \[Hz\].
+ * @param profile_type The type of polyphic profile to use for correlation calculation.
+ * @param use_polphony Enables the use of polyphonic profiles to define key profiles (this includes the contributions
+ * from triads as well as pitch harmonics).
+ * @param use_three_chords Consider only the 3 main triad chords of the key (T, D, SD) to build the polyphonic profiles.
  * @param num_harmonics Number of harmonics that should contribute to the polyphonic profile (1 only considers the
  * fundamental harmonic).
+ * @param slope Value of the slope of the exponential harmonic contribution to the polyphonic profile.
+ * @param use_maj_min Use a third profile called 'majmin' for ambiguous tracks [4]. Only available for the edma, bgate
+ * and braw profiles.
+ * @param pcp_size Number of array elements used to represent a semitone times 12.
  * @param frame_size Output frame size.
  * @param hop_size Hop size between frames.
  * @param window_type_func The window type function. Examples: BlackmanHarris92dB, BlackmanHarris62dB...
@@ -226,12 +232,16 @@ KeyOutput DetectKey(
     const std::vector<std::vector<double>>& normalized_samples,
     double sample_rate = 44100.,
     const std::string profile_type = "Bgate",
-    const unsigned int pcp_size = 36,
+    const bool use_polphony = true,
+    const bool use_three_chords = true,
     const unsigned int num_harmonics = 4,
+    const double slope = 0.6,
+    const bool use_maj_min = false,
+    const unsigned int pcp_size = 36,
     const int frame_size = 4096,
     const int hop_size = 512,
     const std::function<std::vector<double>(const std::vector<double>&)>& window_type_func = BlackmanHarris62dB,
-    unsigned int max_num_peaks = 0,
+    unsigned int max_num_peaks = 100,
     double window_size = .5);
 
 }  // namespace core

@@ -235,6 +235,7 @@ setup(
                  'src/core/mono_mixer.cpp'
              ],
              depends=[
+                 'src/python/module.h',
                  'src/python/wrapper.h',
                  'src/python/utils.h',
                  'src/core/audio_decoders.h',

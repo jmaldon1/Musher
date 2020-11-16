@@ -9,6 +9,7 @@ namespace core {
 
 /**
  * @brief Interpolate the peak of a parabola given 3 points on the parabola.
+ * 
  * α(a) = left point value of parabola
  * β(b) = middle point value of parabola
  * γ(y) = right point value of parabola
@@ -35,6 +36,7 @@ std::tuple<double, double> QuadraticInterpolation(double a, double b, double y, 
 
 /**
  * @brief Detects local maxima (peaks) in a vector.
+ * 
  * The algorithm finds positive slopes and detects a peak when the slope changes sign and the peak is above the
  * threshold.
  *

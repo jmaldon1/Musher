@@ -8,6 +8,7 @@ namespace core {
 
 /**
  * @brief Blackmanharris windowing algorithm.
+ * 
  * Window functions help control spectral leakage when doing Fourier Analysis.
  *
  * @param window Audio signal window.
@@ -25,14 +26,15 @@ std::vector<double> BlackmanHarris92dB(const std::vector<double> &window);
  * @brief Normalize a vector (to have an area of 1) and then scale by a factor of 2.
  *
  * @param input Input vector.
- * @return std::vector<double> Normalized vector.
+ * @return std::vector<double> normalized vector.
  */
 std::vector<double> Normalize(const std::vector<double> &input);
 
 /**
  * @brief Applies windowing to an audio signal.
+ * 
  * It optionally applies zero-phase windowing and optionally adds zero-padding. The resulting windowed frame size is
- * equal to the incoming frame size plus the number of padded zeros. By default, the available windows are Normalized
+ * equal to the incoming frame size plus the number of padded zeros. By default, the available windows are normalized
  * (to have an area of 1) and then scaled by a factor of 2.
  *
  * References:
@@ -45,7 +47,7 @@ std::vector<double> Normalize(const std::vector<double> &input);
  * @param size Window size.
  * @param zero_padding_size Size of the zero-padding.
  * @param zero_phase Enables zero-phase windowing.
- * @param _Normalize Specify whether to Normalize windows (to have an area of 1) and then scale by a factor of 2.
+ * @param _normalize Specify whether to normalize windows (to have an area of 1) and then scale by a factor of 2.
  * @return std::vector<double> Windowed audio frame.
  */
 std::vector<double> Windowing(

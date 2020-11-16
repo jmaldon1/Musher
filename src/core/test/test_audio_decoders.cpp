@@ -16,12 +16,6 @@
 
 using namespace musher::core;
 
-// IndependentMethod is a test case - here, we have 2 tests for this 1 test case
-TEST(PrintFunctionalMessage, PrintsMessage) {
-  CPrintFunctionalMessage("This is a message for a functional program");
-  EXPECT_EQ(0, 0);
-}
-
 TEST(AudioFileDecoding, AudioFileNotFoundTest) {
   /* This tests that the expected exception is thrown */
   EXPECT_THROW(

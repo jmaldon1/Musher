@@ -138,15 +138,20 @@ py::dict _EstimateKey(const std::vector<double>& pcp,
 py::dict _DetectKey(const std::vector<std::vector<double>>& normalized_samples,
                     double sample_rate,
                     const std::string profile_type,
-                    const unsigned int pcp_size,
+                    const bool use_polphony,
+                    const bool use_three_chords,
                     const unsigned int num_harmonics,
+                    const double slope,
+                    const bool use_maj_min,
+                    const unsigned int pcp_size,
                     const int frame_size,
                     const int hop_size,
                     const std::function<std::vector<double>(const std::vector<double>&)>& window_type_func,
                     unsigned int max_num_peaks,
                     double window_size) {
-  KeyOutput key_output = DetectKey(normalized_samples, sample_rate, profile_type, pcp_size, num_harmonics, frame_size,
-                                   hop_size, window_type_func, max_num_peaks, window_size);
+  KeyOutput key_output =
+      DetectKey(normalized_samples, sample_rate, profile_type, use_polphony, use_three_chords, num_harmonics, slope,
+                use_maj_min, pcp_size, frame_size, hop_size, window_type_func, max_num_peaks, window_size);
   return ConvertKeyOutputToPyDict(key_output);
 }
 

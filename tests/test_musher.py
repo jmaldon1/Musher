@@ -76,8 +76,8 @@ def test_convert_to_frequency_spectrum():
 def test_spectral_peaks():
     inp = [1.0, 1.0, 1.0, 1.0, 2.0]
     peaks = musher.spectral_peaks(inp)
-    hp = musher.hpcp(peaks)
-    print(hp)
+    # hp = musher.hpcp(peaks)
+    # print(hp)
     # print(peaks)
     # print(list(peaks))
     # print(len(peaks))

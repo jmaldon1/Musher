@@ -76,9 +76,10 @@ class Framecutter {
   std::vector<double> operator*() const { return frame_; }
 
   /**
-   * @brief Computes the actual slicing of the frames, this function is run on each
-   * iteration to calculate the next frame. This function should not be called by the user,
-   * it will be called interally while iterating.
+   * @brief Computes the actual slicing of the frames, this function is run on each iteration to calculate the next
+   * frame.
+   *
+   * This function should not be called by the user, it will be called interally while iterating.
    *
    * Usage example:
    *   Framecutter framecutter(audio_signal);

@@ -7,11 +7,11 @@
 #include <stdexcept>
 #include <vector>
 
-#include "src/core/hpcp.h"
 #include "src/core/framecutter.h"
+#include "src/core/hpcp.h"
+#include "src/core/mono_mixer.h"
 #include "src/core/spectral_peaks.h"
 #include "src/core/spectrum.h"
-#include "src/core/mono_mixer.h"
 #include "src/core/windowing.h"
 
 namespace musher {
@@ -567,8 +567,12 @@ KeyOutput EstimateKey(const std::vector<double>& pcp,
 KeyOutput DetectKey(const std::vector<std::vector<double>>& normalized_samples,
                     double sample_rate,
                     const std::string profile_type,
-                    const unsigned int pcp_size,
+                    const bool use_polphony,
+                    const bool use_three_chords,
                     const unsigned int num_harmonics,
+                    const double slope,
+                    const bool use_maj_min,
+                    const unsigned int pcp_size,
                     const int frame_size,
                     const int hop_size,
                     const std::function<std::vector<double>(const std::vector<double>&)>& window_type_func,
@@ -576,19 +580,19 @@ KeyOutput DetectKey(const std::vector<std::vector<double>>& normalized_samples,
                     double window_size) {
   std::vector<double> mixed_audio = MonoMixer(normalized_samples);
 
-  Framecutter framecutter(mixed_audio, 4096, 512);
+  Framecutter framecutter(mixed_audio, frame_size, hop_size);
 
   int count = 0;
   std::vector<double> sums(static_cast<size_t>(pcp_size), 0.);
 
   for (const std::vector<double>& frame : framecutter) {
     // NOTE: Windowing and ConvertToFrequencySpectrum are slowest functions here.
-    std::vector<double> windowed_frame = Windowing(frame, BlackmanHarris62dB);
+    std::vector<double> windowed_frame = Windowing(frame, window_type_func);
     std::vector<double> spectrum = ConvertToFrequencySpectrum(windowed_frame);
     std::vector<std::tuple<double, double>> spectral_peaks =
-        SpectralPeaks(spectrum, -1000.0, "height", 100, sample_rate, 0, sample_rate / 2);
+        SpectralPeaks(spectrum, -1000.0, "height", max_num_peaks, sample_rate, 0, sample_rate / 2);
     std::vector<double> hpcp =
-        HPCP(spectral_peaks, pcp_size, 440.0, num_harmonics - 1, true, 500.0, 40.0, 5000.0, "squared cosine", .5);
+        HPCP(spectral_peaks, pcp_size, 440.0, num_harmonics - 1, true, 500.0, 40.0, 5000.0, "squared cosine", window_size);
 
     for (int i = 0; i < static_cast<int>(hpcp.size()); i++) {
       sums[i] += hpcp[i];
@@ -597,7 +601,7 @@ KeyOutput DetectKey(const std::vector<std::vector<double>>& normalized_samples,
   }
   std::vector<double> avgs(sums.size());
   std::transform(sums.begin(), sums.end(), avgs.begin(), [&count](auto const& sum) { return sum / count; });
-  return EstimateKey(avgs, true, true, 4, 0.6, profile_type);
+  return EstimateKey(avgs, use_polphony, use_three_chords, num_harmonics, slope, profile_type, use_maj_min);
 }
 
 }  // namespace core

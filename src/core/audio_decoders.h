@@ -45,7 +45,9 @@ std::vector<uint8_t> LoadAudioFile(const std::string& file_path);
  * @brief Decode a wav file.
  * 
  * WavDecoded.normalized_samples contains:
+ * 
  *  samples[0] holds channel 1
+ * 
  *  samples[1] holds channel 2 (Will not exist if mono audio)
  *
  * @param file_data WAV file data.
@@ -67,7 +69,7 @@ WavDecoded DecodeWav(const std::string& file_path);
  * @param file_path File path to a .mp3 file.
  * @return Mp3Decoded .mp3 file information.
  */
-Mp3Decoded CDecodeMp3(const std::string file_path);
+Mp3Decoded DecodeMp3(const std::string file_path);
 
 }  // namespace core
 }  // namespace musher

@@ -6,13 +6,13 @@ namespace core {
 /**
  * @brief This class should be treated like an iterator.
  *
- * Usage example:
+ * @code
  *   Framecutter framecutter(audio_signal);
  *
  *   for (const std::vector<double> &frame : framecutter) {
  *       perform_work_on_frame(frame);
  *   }
- *
+ * @endcode
  */
 class Framecutter {
  private:
@@ -81,12 +81,13 @@ class Framecutter {
    *
    * This function should not be called by the user, it will be called interally while iterating.
    *
-   * Usage example:
+   * @code
    *   Framecutter framecutter(audio_signal);
    *
    *   for (const std::vector<double> &frame : framecutter) {
    *       perform_work_on_frame(frame);
    *   }
+   * @endcode
    *
    * @return std::vector<double> Sliced frame.
    */

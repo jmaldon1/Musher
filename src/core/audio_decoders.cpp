@@ -194,7 +194,7 @@ WavDecoded DecodeWav(const std::string& file_path) {
   return DecodeWav(file_data);
 }
 
-Mp3Decoded CDecodeMp3(const std::string file_path) {
+Mp3Decoded DecodeMp3(const std::string file_path) {
   mp3dec_t mp3d;
   mp3dec_file_info_t info;
   if (mp3dec_load(&mp3d, file_path.c_str(), &info, NULL, NULL)) {

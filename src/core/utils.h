@@ -68,13 +68,14 @@ double NormalizeInt32_t(const int32_t sample);
 
 /**
  * @brief Deinterweave a vector in alternating order to form two vectors.
- * Example:
+ * @code
  *  interweaved_vector = {1, 9, 2, 8, 3, 7, 4, 6}
- *
+ *  
  *  deinterweaved_vector = {
  *      {1, 2, 3, 4},
  *      {9, 8, 7, 6}
  *  }
+ * @endcode
  *
  * @param interweaved_vector Interleaved vector.
  * @return std::vector<std::vector<double>> Deinterweaved vector.

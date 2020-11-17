@@ -230,7 +230,7 @@ std::tuple<std::vector<double>, double, double> ResizeProfileToPcpSize(const uns
   }
 
   double mean_profile = fplus::mean<double, std::vector<double>>(profile_do);
-  double std_profile = standard_deviation(mean_profile, profile_do);
+  double std_profile = StandardDeviation(mean_profile, profile_do);
 
   return std::tuple<std::vector<double>, double, double>{ profile_do, mean_profile, std_profile };
 }
@@ -261,7 +261,7 @@ double Correlation(const std::vector<double>& v1,
   return r;
 }
 
-double standard_deviation(double mean, const std::vector<double>& vec) {
+double StandardDeviation(double mean, const std::vector<double>& vec) {
   return fplus::fwd::apply(
       fplus::reduce([&mean](auto total, auto next_val) { return total + fplus::square(next_val - mean); },
                     0,  // Start at 0
@@ -441,7 +441,7 @@ KeyOutput EstimateKey(const std::vector<double>& pcp,
 
   // Compute correlation
   double mean_pcp = fplus::mean<double, std::vector<double>>(pcp);
-  double std_pcp = standard_deviation(mean_pcp, pcp);
+  double std_pcp = StandardDeviation(mean_pcp, pcp);
 
   // Compute correlation matrix
   int key_index = -1;            // index of the first maximum

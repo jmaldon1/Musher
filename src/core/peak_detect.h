@@ -11,13 +11,17 @@ namespace core {
  * @brief Interpolate the peak of a parabola given 3 points on the parabola.
  * 
  * α(a) = left point value of parabola
+ * 
  * β(b) = middle point value of parabola
+ * 
  * γ(y) = right point value of parabola
  *
  * Interpolated peak location is given in bins (spectral samples) by:
+ * 
  * p = 1/2 ((α - γ) / (α - 2β + γ))
  *
  * The peak magnitude estimate is:
+ * 
  * y(p) = β - 1/4(α - γ)p
  *
  * Smith, J.O. "Quadratic Interpolation of Spectral Peaks", in

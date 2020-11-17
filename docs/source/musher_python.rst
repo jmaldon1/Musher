@@ -21,25 +21,28 @@ Audio Decoders
 .. autofunction:: decode_wav_from_data
 .. autofunction:: decode_wav_from_file
 
-Mono Mixer
-----------------
-
-.. autofunction:: mono_mixer
-
 Framecutter
 ----------------
 
 .. autoclass:: Framecutter
    :special-members:
 
-Windowing
+HPCP
 ----------------
 
-.. autofunction:: windowing
-.. autofunction:: blackmanharris
-.. autofunction:: blackmanharris62dB
-.. autofunction:: blackmanharris92dB
+.. autofunction:: hpcp
+.. autofunction:: hpcp_from_peaks
 
+Mono Mixer
+----------------
+
+.. autofunction:: mono_mixer
+
+Key
+----------------
+
+.. autofunction:: estimate_key
+.. autofunction:: detect_key
 
 Spectrum
 ----------------
@@ -51,19 +54,13 @@ Spectral Peaks
 
 .. autofunction:: spectral_peaks
 
-
-HPCP
+Windowing
 ----------------
 
-.. autofunction:: hpcp
-.. autofunction:: hpcp_from_peaks
-
-Key
-----------------
-
-.. autofunction:: estimate_key
-.. autofunction:: detect_key
-
+.. autofunction:: windowing
+.. autofunction:: blackmanharris
+.. autofunction:: blackmanharris62dB
+.. autofunction:: blackmanharris92dB
 
 
 .. Musher module

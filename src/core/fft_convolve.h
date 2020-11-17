@@ -18,7 +18,7 @@ std::vector<double> CenterVector(const std::vector<double> &vec, size_t new_shap
  * @brief Perform 'same' convolve of two 1-dimensional arrays using FFT.
  * 
  * Convolve `vec1` and `vec2` using the fast Fourier transform method.
- * The output is the same size as `in1`, centered with respect to the
+ * The output is the same size as `vec1`, centered with respect to the
  * full discrete linear convolution of the inputs.
  *
  * This function was heavily inspired by:
@@ -28,7 +28,7 @@ std::vector<double> CenterVector(const std::vector<double> &vec, size_t new_shap
  * @param vec1 Vector 1
  * @param vec2 Vector 2
  * @return std::vector<double> A 1-dimensional array containing a subset of the discrete linear
- * convolution of `in1` with `in2`.
+ * convolution of `vec1` with `vec2`.
  */
 std::vector<double> FFTConvolve(const std::vector<double> &vec1, const std::vector<double> &vec2);
 

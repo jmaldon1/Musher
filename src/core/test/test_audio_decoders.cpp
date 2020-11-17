@@ -112,7 +112,7 @@ TEST(AudioFileDecoding, DecodeMp3) {
   std::vector<double> NormalizedSamples;
   const std::string filePathMp3 = TEST_DATA_DIR + std::string("audio_files/mozart_c_major_30sec.mp3");
 
-  Mp3Decoded mp3_decoded = CDecodeMp3(filePathMp3);
+  Mp3Decoded mp3_decoded = DecodeMp3(filePathMp3);
 
   uint32_t expected_sample_rate = 44100;
   uint32_t actual_sample_rate = mp3_decoded.sample_rate;

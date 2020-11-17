@@ -171,7 +171,7 @@ double Correlation(const std::vector<double>& v1,
  * @param vec Vector
  * @return double Standard devation
  */
-double standard_deviation(double mean, const std::vector<double>& vec);
+double StandardDeviation(double mean, const std::vector<double>& vec);
 
 /**
  * @brief Computes key estimate given a pitch class profile (HPCP).

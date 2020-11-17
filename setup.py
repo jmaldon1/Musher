@@ -11,7 +11,6 @@ from setuptools import setup, find_packages, Extension, Command
 from setuptools.command.test import test
 
 import pybind11
-# import numpy as np
 
 
 README_NOTE = """\
@@ -247,6 +246,7 @@ def extra_compile_args() -> list:
         args += ['-mmacosx-version-min=10.12']
 
     if os.name != 'nt':
+        # Compile using C++14 standards
         args += ['-std=c++14']
 
     return args

@@ -81,7 +81,7 @@ WavDecoded DecodeWav(const std::vector<uint8_t>& file_data) {
   // int32_t formatChunkSize = FourBytesToInt (file_data, f + 4);
   int16_t audio_format = TwoBytesToInt(file_data, f + 8);
   int16_t num_channels = TwoBytesToInt(file_data, f + 10);
-  uint32_t sample_rate = (uint32_t)FourBytesToInt(file_data, f + 12);
+  uint32_t sample_rate = static_cast<uint32_t>(FourBytesToInt(file_data, f + 12));
   int32_t num_bytes_per_second = FourBytesToInt(file_data, f + 16);
   int16_t num_bytes_per_block = TwoBytesToInt(file_data, f + 20);
   int bit_depth = static_cast<int>(TwoBytesToInt(file_data, f + 22));
@@ -178,14 +178,6 @@ WavDecoded DecodeWav(const std::vector<uint8_t>& file_data) {
   wav_decoded.avg_bitrate_kbps = avg_bitrate_kbps;
   wav_decoded.normalized_samples = samples;
 
-  if (stereo) {
-    const std::vector<double> channel_one = samples[0];
-    const std::vector<double> channel_two = samples[1];
-    wav_decoded.interleaved_normalized_samples = fplus::interweave(channel_one, channel_two);
-  } else {
-    wav_decoded.interleaved_normalized_samples = samples[0];
-  }
-
   return wav_decoded;
 }
 
@@ -230,7 +222,6 @@ Mp3Decoded DecodeMp3(const std::string file_path) {
   mp3_decoded.length_in_seconds = length_in_seconds;
   mp3_decoded.file_type = file_type;
   mp3_decoded.avg_bitrate_kbps = info.avg_bitrate_kbps;
-  mp3_decoded.interleaved_normalized_samples = interleaved_normalized_samples;
   mp3_decoded.normalized_samples = Deinterweave(interleaved_normalized_samples);
 
   return mp3_decoded;

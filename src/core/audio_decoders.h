@@ -17,7 +17,6 @@ struct WavDecoded {
   std::string file_type;
   int avg_bitrate_kbps;
   std::vector<std::vector<double>> normalized_samples;
-  std::vector<double> interleaved_normalized_samples;
 };
 
 struct Mp3Decoded {
@@ -30,7 +29,6 @@ struct Mp3Decoded {
   std::string file_type;
   int avg_bitrate_kbps;
   std::vector<std::vector<double>> normalized_samples;
-  std::vector<double> interleaved_normalized_samples;
 };
 
 /**

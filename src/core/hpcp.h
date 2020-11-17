@@ -1,8 +1,9 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
 #include <algorithm>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace musher {
 namespace core {
@@ -20,7 +21,7 @@ struct HarmonicPeak {
 
 /**
  * @brief Get the arg max of a vector.
- * 
+ *
  * Checks if the vector is empty first.
  *
  * @param vec Vector
@@ -30,7 +31,7 @@ int ArgMax(const std::vector<double> &input);
 
 /**
  * @brief Normalize a vector so its largest value gets mapped to 1.
- * 
+ *
  * If zero, the vector isn't touched.
  *
  * @tparam T
@@ -52,7 +53,7 @@ void NormalizeInPlace(std::vector<T> &vec) {
 
 /**
  * @brief Normalize a vector so it's sum is equal to 1.
- * 
+ *
  * The vector is not touched if it contains negative elements or the sum is zero.
  *
  * @tparam T
@@ -112,7 +113,7 @@ void AddContributionWithoutWeight(double freq,
 
 /**
  * @brief Adds the magnitude contribution of the given frequency as the tonic semitone.
- * 
+ *
  * As well as its possible contribution as a harmonic of another pitch.
  *
  * @param freq Frequency \[Hz\]
@@ -133,7 +134,7 @@ void AddContribution(double freq,
 
 /**
  * @brief Builds a weighting table of harmonic contribution.
- * 
+ *
  * Higher harmonics contribute less and the fundamental frequency has a full harmonic strength of 1.0.
  *
  * @param harmonics Number of harmonics for frequency contribution, 0 indicates exclusive fundamental frequency
@@ -144,7 +145,7 @@ std::vector<HarmonicPeak> InitHarmonicContributionTable(int harmonics);
 
 /**
  * @brief Computes a Harmonic Pitch Class Profile (HPCP) from the spectral peaks of a signal.
- * 
+ *
  * HPCP is a k*12 dimensional vector which represents the intensities of the twelve (k==1) semitone pitch classes
  * (corresponsing to notes from A to G#), or subdivisions of these (k>1).
  *
@@ -163,8 +164,8 @@ std::vector<HarmonicPeak> InitHarmonicContributionTable(int harmonics);
  * @param _weight_type Type of weighting function for determining frequency contribution.
  * @param window_size Size, in semitones, of the window used for the weighting.
  * @param max_shifted Whether to shift the HPCP vector so that the maximum peak is at index 0.
- * @param non_linear Apply non-linear post-processing to the output (use with _normalized='unit max'). Boosts values close
- * to 1, decreases values close to 0.
+ * @param non_linear Apply non-linear post-processing to the output (use with _normalized='unit max'). Boosts values
+ * close to 1, decreases values close to 0.
  * @param _normalized Whether to normalize the HPCP vector.
  * @return std::vector<double> Resulting harmonic pitch class profile.
  */
@@ -185,7 +186,7 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
 
 /**
  * @brief Overloaded function for HPCP that accepts a vector of peaks.
- * 
+ *
  * Refer to original HPCP function for more details.
  *
  * @param peaks Vector of spectral peaks, each peak being a tuple (frequency, magnitude).
@@ -202,8 +203,8 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
  * @param _weight_type Type of weighting function for determining frequency contribution.
  * @param window_size Size, in semitones, of the window used for the weighting.
  * @param max_shifted Whether to shift the HPCP vector so that the maximum peak is at index 0.
- * @param non_linear Apply non-linear post-processing to the output (use with _normalized='unit max'). Boosts values close
- * to 1, decreases values close to 0.
+ * @param non_linear Apply non-linear post-processing to the output (use with _normalized='unit max'). Boosts values
+ * close to 1, decreases values close to 0.
  * @param _normalized Whether to normalize the HPCP vector.
  * @return std::vector<double> Resulting harmonic pitch class profile.
  */

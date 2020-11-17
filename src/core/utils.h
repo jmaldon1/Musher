@@ -1,11 +1,11 @@
 #pragma once
 
 #define _USE_MATH_DEFINES
+
 #include <math.h>
 #include <pocketfft/pocketfft.h>
 
 #include <complex>
-#define NOMINMAX
 #include <fplus/fplus.hpp>
 #include <fstream>
 #include <functional>

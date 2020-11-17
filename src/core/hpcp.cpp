@@ -1,11 +1,9 @@
 #include "src/core/hpcp.h"
-#define NOMINMAX
-#include <fplus/fplus.hpp>
 
-#define _USE_MATH_DEFINES
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <fplus/fplus.hpp>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -310,8 +308,7 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>> &peaks,
   std::transform(peaks.begin(), peaks.end(), magnitudes.begin(), [](auto const &pair) { return std::get<1>(pair); });
 
   return HPCP(frequencies, magnitudes, size, reference_frequency, harmonics, band_preset, band_split_frequency,
-              min_frequency, max_frequency, _weight_type, window_size, max_shifted, non_linear,
-              _normalized);
+              min_frequency, max_frequency, _weight_type, window_size, max_shifted, non_linear, _normalized);
 }
 
 }  // namespace core

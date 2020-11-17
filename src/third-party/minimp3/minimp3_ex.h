@@ -266,6 +266,9 @@ retry_mmap:
     return 0;
 }
 #elif defined(_WIN32)
+#ifndef NOMINMAX
+# define NOMINMAX
+#endif
 #include <windows.h>
 
 static void mp3dec_close_file(mp3dec_map_info_t *map_info)

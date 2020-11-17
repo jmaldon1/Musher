@@ -248,6 +248,8 @@ def extra_compile_args() -> list:
 
     if os.name != 'nt':
         args += ['-std=c++14']
+    
+    args += ["/std:c++14"]
 
     return args
 

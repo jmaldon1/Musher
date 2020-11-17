@@ -1,6 +1,5 @@
 #include "src/core/windowing.h"
 
-#define _USE_MATH_DEFINES
 #include <cmath>
 #include <functional>
 #include <vector>

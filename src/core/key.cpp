@@ -1,7 +1,6 @@
 #include "src/core/key.h"
 
 #include <cmath>
-#define NOMINMAX
 #include <fplus/fplus.hpp>
 #include <sstream>
 #include <stdexcept>
@@ -591,8 +590,8 @@ KeyOutput DetectKey(const std::vector<std::vector<double>>& normalized_samples,
     std::vector<double> spectrum = ConvertToFrequencySpectrum(windowed_frame);
     std::vector<std::tuple<double, double>> spectral_peaks =
         SpectralPeaks(spectrum, -1000.0, "height", max_num_peaks, sample_rate, 0, sample_rate / 2);
-    std::vector<double> hpcp =
-        HPCP(spectral_peaks, pcp_size, 440.0, num_harmonics - 1, true, 500.0, 40.0, 5000.0, "squared cosine", window_size);
+    std::vector<double> hpcp = HPCP(spectral_peaks, pcp_size, 440.0, num_harmonics - 1, true, 500.0, 40.0, 5000.0,
+                                    "squared cosine", window_size);
 
     for (int i = 0; i < static_cast<int>(hpcp.size()); i++) {
       sums[i] += hpcp[i];

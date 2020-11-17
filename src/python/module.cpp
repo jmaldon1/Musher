@@ -37,8 +37,8 @@ PYBIND11_MODULE(musher_python, m) {
           py::keep_alive<0, 1>());
 
   m.def("windowing", &_Windowing, windowing_description, py::arg("audio_frame"),
-        py::arg("window_type_func") = py::cpp_function(BlackmanHarris92dB), py::arg("size") = 1024,
-        py::arg("zero_padding_size") = 0, py::arg("zero_phase") = true, py::arg("_normalize") = true);
+        py::arg("window_type_func") = py::cpp_function(BlackmanHarris92dB), py::arg("zero_padding_size") = 0,
+        py::arg("zero_phase") = true, py::arg("_normalize") = true);
 
   m.def("blackmanharris", &_BlackmanHarris, blackmanharris_description, py::arg("window"), py::arg("a0"), py::arg("a1"),
         py::arg("a2"), py::arg("a3"));
@@ -57,14 +57,14 @@ PYBIND11_MODULE(musher_python, m) {
   m.def("hpcp", &_HPCP, hpcp_description, py::arg("frequencies"), py::arg("magnitudes"), py::arg("size") = 12,
         py::arg("reference_frequency") = 440.0, py::arg("harmonics") = 0, py::arg("band_preset") = true,
         py::arg("band_split_frequency") = 500.0, py::arg("min_frequency") = 40.0, py::arg("max_frequency") = 5000.0,
-        py::arg("_weight_type") = "squared cosine", py::arg("window_size") = 1.0, py::arg("sample_rate") = 44100.,
-        py::arg("max_shifted") = false, py::arg("non_linear") = false, py::arg("_normalized") = "unit max");
+        py::arg("_weight_type") = "squared cosine", py::arg("window_size") = 1.0, py::arg("max_shifted") = false,
+        py::arg("non_linear") = false, py::arg("_normalized") = "unit max");
 
   m.def("hpcp_from_peaks", &_HPCPFromPeaks, hpcp_from_peaks_description, py::arg("peaks"), py::arg("size") = 12,
         py::arg("reference_frequency") = 440.0, py::arg("harmonics") = 0, py::arg("band_preset") = true,
         py::arg("band_split_frequency") = 500.0, py::arg("min_frequency") = 40.0, py::arg("max_frequency") = 5000.0,
-        py::arg("_weight_type") = "squared cosine", py::arg("window_size") = 1.0, py::arg("sample_rate") = 44100.,
-        py::arg("max_shifted") = false, py::arg("non_linear") = false, py::arg("_normalized") = "unit max");
+        py::arg("_weight_type") = "squared cosine", py::arg("window_size") = 1.0, py::arg("max_shifted") = false,
+        py::arg("non_linear") = false, py::arg("_normalized") = "unit max");
 
   m.def("estimate_key", &_EstimateKey, estimate_key_description, py::arg("pcp"), py::arg("use_polphony") = true,
         py::arg("use_three_chords") = true, py::arg("num_harmonics") = 4, py::arg("slope") = .6,

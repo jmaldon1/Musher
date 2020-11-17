@@ -149,7 +149,6 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
                          double max_frequency,
                          std::string _weight_type,
                          double window_size,
-                         double sample_rate,
                          bool max_shifted,
                          bool non_linear,
                          std::string _normalized) {
@@ -300,7 +299,6 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>> &peaks,
                          double max_frequency,
                          std::string _weight_type,
                          double window_size,
-                         double sample_rate,
                          bool max_shifted,
                          bool non_linear,
                          std::string _normalized) {
@@ -312,7 +310,7 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>> &peaks,
   std::transform(peaks.begin(), peaks.end(), magnitudes.begin(), [](auto const &pair) { return std::get<1>(pair); });
 
   return HPCP(frequencies, magnitudes, size, reference_frequency, harmonics, band_preset, band_split_frequency,
-              min_frequency, max_frequency, _weight_type, window_size, sample_rate, max_shifted, non_linear,
+              min_frequency, max_frequency, _weight_type, window_size, max_shifted, non_linear,
               _normalized);
 }
 

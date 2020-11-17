@@ -7,9 +7,7 @@ import shutil
 import glob
 import codecs
 import signal
-import multiprocessing
 from setuptools import setup, find_packages, Extension, Command
-from setuptools.command.build_ext import build_ext
 from setuptools.command.test import test
 
 import pybind11
@@ -150,19 +148,9 @@ class CMakeBuild(Command):
         subprocess.run(['cmake', ROOT_DIR] + cmake_args,
                        cwd=build_dir,
                        check=True)
-        result = subprocess.run(['cmake', '--build', '.'],
-                                cwd=build_dir,
-                                check=True,
-                                stderr=subprocess.PIPE)
-
-        if result.stderr:
-            err = result.stderr.decode("utf-8")
-            print(err)
-            if "No module named 'musher.musher_python'" in err:
-                print(("Error generating docs: "
-                       "You must install the musher python module "
-                       "before generating the docs."
-                       "\ntry: `pip install -e .`"))
+        subprocess.run(['cmake', '--build', '.'],
+                       cwd=build_dir,
+                       check=True)
 
 
 class CTest(test):
@@ -247,24 +235,35 @@ class GTest(test):
             print("C++ Seg fault.")
 
 
-def extra_compile_args():
-    extra_compile_args = []
+def extra_compile_args() -> list:
+    """Platform dependent extras
+
+    Returns:
+        list: Extra compile arguments
+    """
+    args = []
     if platform.system() == 'Darwin':
         # Something with OS X Mojave causes libstd not to be found
-        extra_compile_args += ['-mmacosx-version-min=10.12']
+        args += ['-mmacosx-version-min=10.12']
 
     if os.name != 'nt':
-        extra_compile_args += ['-std=c++14']
+        args += ['-std=c++14']
 
-    return extra_compile_args
+    return args
 
-def extra_link_args():
-    extra_link_args = []
+
+def extra_link_args() -> list:
+    """Platform dependent extras
+
+    Returns:
+        list: Extra link arguments
+    """
+    args = []
     if platform.system() == 'Darwin':
         # Something with OS X Mojave causes libstd not to be found
-        extra_link_args += ['-stdlib=libc++', '-mmacosx-version-min=10.12']
+        args += ['-stdlib=libc++', '-mmacosx-version-min=10.12']
 
-    return extra_link_args
+    return args
 
 setup(
     name='musher',
@@ -313,8 +312,8 @@ setup(
                  'src/core/spectrum.h',
                  'src/core/mono_mixer.h'
              ],
-              extra_compile_args=extra_compile_args(),
-              extra_link_args=extra_link_args(),
+             extra_compile_args=extra_compile_args(),
+             extra_link_args=extra_link_args(),
          )
     ],
     setup_requires=['wheel', 'pybind11>=2.6.0', 'numpy>=1.19.3'],

@@ -22,6 +22,7 @@ macro(relaxed_compile_options target scope)
             -Wno-unused-local-typedefs
             -Wno-unused-parameter
             -Wno-unused-result
-            -Wno-unused-variable)
+            -Wno-unused-variable
+            )
     endif()
 endmacro()

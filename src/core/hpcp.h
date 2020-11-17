@@ -162,7 +162,6 @@ std::vector<HarmonicPeak> InitHarmonicContributionTable(int harmonics);
  * frequencies must not be less than 200.0 Hz).
  * @param _weight_type Type of weighting function for determining frequency contribution.
  * @param window_size Size, in semitones, of the window used for the weighting.
- * @param sample_rate Sampling rate of the audio signal \[Hz\].
  * @param max_shifted Whether to shift the HPCP vector so that the maximum peak is at index 0.
  * @param non_linear Apply non-linear post-processing to the output (use with _normalized='unit max'). Boosts values close
  * to 1, decreases values close to 0.
@@ -180,7 +179,6 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
                          double max_frequency = 5000.0,
                          std::string _weight_type = "squared cosine",
                          double window_size = 1.0,
-                         double sample_rate = 44100.,
                          bool max_shifted = false,
                          bool non_linear = false,
                          std::string _normalized = "unit max");
@@ -203,7 +201,6 @@ std::vector<double> HPCP(const std::vector<double> &frequencies,
  * frequencies must not be less than 200.0 Hz).
  * @param _weight_type Type of weighting function for determining frequency contribution.
  * @param window_size Size, in semitones, of the window used for the weighting.
- * @param sample_rate Sampling rate of the audio signal \[Hz\].
  * @param max_shifted Whether to shift the HPCP vector so that the maximum peak is at index 0.
  * @param non_linear Apply non-linear post-processing to the output (use with _normalized='unit max'). Boosts values close
  * to 1, decreases values close to 0.
@@ -220,7 +217,6 @@ std::vector<double> HPCP(const std::vector<std::tuple<double, double>> &peaks,
                          double max_frequency = 5000.0,
                          std::string _weight_type = "squared cosine",
                          double window_size = 1.0,
-                         double sample_rate = 44100.,
                          bool max_shifted = false,
                          bool non_linear = false,
                          std::string _normalized = "unit max");

@@ -1,11 +1,11 @@
 #pragma once
 
-#define NOMINMAX
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <pocketfft/pocketfft.h>
 
 #include <complex>
+#define NOMINMAX
 #include <fplus/fplus.hpp>
 #include <fstream>
 #include <functional>
@@ -29,7 +29,7 @@ std::string Uint8VectorToHexString(const std::vector<uint8_t> &v);
 
 /**
  * @brief Get string between two single quotes.
- * 
+ *
  * NOTE: There must only be 2 quotes in the entire string.
  *
  * @param s String that contains 2 single quotes

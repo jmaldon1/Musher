@@ -61,7 +61,6 @@ std::vector<double> Normalize(const std::vector<double> &input) {
 
 std::vector<double> Windowing(const std::vector<double> &audio_frame,
                               const std::function<std::vector<double>(const std::vector<double> &)> &window_type_func,
-                              unsigned int size,
                               unsigned int zero_padding_size,
                               bool zero_phase,
                               bool _normalize) {

@@ -22,7 +22,6 @@ py::array_t<double> _MonoMixer(const std::vector<std::vector<double>>& normalize
 
 py::array_t<double> _Windowing(const std::vector<double>& audio_frame,
                                const std::function<std::vector<double>(const std::vector<double>&)>& window_type_func,
-                               unsigned size,
                                unsigned zero_padding_size,
                                bool zero_phase,
                                bool _normalize);
@@ -49,7 +48,6 @@ py::array_t<double> _HPCPFromPeaks(const std::vector<std::tuple<double, double>>
                                    double max_frequency,
                                    std::string _weight_type,
                                    double window_size,
-                                   double sample_rate,
                                    bool max_shifted,
                                    bool non_linear,
                                    std::string _normalized);
@@ -65,7 +63,6 @@ py::array_t<double> _HPCP(const std::vector<double>& frequencies,
                           double max_frequency,
                           std::string _weight_type,
                           double window_size,
-                          double sample_rate,
                           bool max_shifted,
                           bool non_linear,
                           std::string _normalized);

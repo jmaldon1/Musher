@@ -116,7 +116,6 @@ const char* windowing_description = R"(
     audio_frame (List[float]): Input audio frame.
     window_type_func (Callable[[List[float]], List[float]], optional): The window type function. Examples: BlackmanHarris92dB, BlackmanHarris62dB...
       Defaults to BlackmanHarris92dB.
-    size (int, optional): Window size. Defaults to 1024.
     zero_padding_size (int, optional): Size of the zero-padding. Defaults to 0.
     zero_phase (bool, optional): Enables zero-phase windowing. Defaults to True.
     _normalize (bool, optional): Specify whether to normalize windows (to have an area of 1) and then scale by a factor of 2. Defaults to True.
@@ -211,7 +210,6 @@ const char* hpcp_description = R"(
       frequencies must not be less than 200.0 Hz). Defaults to 5000.0.
     _weight_type (str, optional): Type of weighting function for determining frequency contribution. Defaults to 'squared cosine'.
     window_size (float, optional): Size, in semitones, of the window used for the weighting. Defaults to 1.0.
-    sample_rate (float, optional): Sampling rate of the audio signal [Hz]. Defaults to 44100.0.
     max_shifted (bool, optional): Whether to shift the HPCP list so that the maximum peak is at index 0. Defaults to False.
     non_linear (bool, optional): Apply non-linear post-processing to the output (use with _normalized='unit max'). Boosts values close
       to 1, decreases values close to 0. Defaults to False.
@@ -240,7 +238,6 @@ const char* hpcp_from_peaks_description = R"(
       frequencies must not be less than 200.0 Hz). Defaults to 5000.0.
     _weight_type (str, optional): Type of weighting function for determining frequency contribution. Defaults to 'squared cosine'.
     window_size (float, optional): Size, in semitones, of the window used for the weighting. Defaults to 1.0.
-    sample_rate (float, optional): Sampling rate of the audio signal [Hz]. Defaults to 44100.0.
     max_shifted (bool, optional): Whether to shift the HPCP list so that the maximum peak is at index 0. Defaults to False.
     non_linear (bool, optional): Apply non-linear post-processing to the output (use with _normalized='unit max'). Boosts values close
       to 1, decreases values close to 0. Defaults to False.

@@ -38,12 +38,11 @@ py::array_t<double> _MonoMixer(const std::vector<std::vector<double>>& normalize
 
 py::array_t<double> _Windowing(const std::vector<double>& audio_frame,
                                const std::function<std::vector<double>(const std::vector<double>&)>& window_type_func,
-                               unsigned int size,
                                unsigned int zero_padding_size,
                                bool zero_phase,
                                bool _normalize) {
   const std::vector<double> vec =
-      Windowing(audio_frame, window_type_func, size, zero_padding_size, zero_phase, _normalize);
+      Windowing(audio_frame, window_type_func, zero_padding_size, zero_phase, _normalize);
   return ConvertSequenceToPyarray(vec);
 }
 
@@ -92,13 +91,12 @@ py::array_t<double> _HPCPFromPeaks(const std::vector<std::tuple<double, double>>
                                    double max_frequency,
                                    std::string _weight_type,
                                    double window_size,
-                                   double sample_rate,
                                    bool max_shifted,
                                    bool non_linear,
                                    std::string _normalized) {
   const std::vector<double> vec =
       HPCP(peaks, size, reference_frequency, harmonics, band_preset, band_split_frequency, min_frequency, max_frequency,
-           _weight_type, window_size, sample_rate, max_shifted, non_linear, _normalized);
+           _weight_type, window_size, max_shifted, non_linear, _normalized);
   return ConvertSequenceToPyarray(vec);
 }
 
@@ -113,13 +111,12 @@ py::array_t<double> _HPCP(const std::vector<double>& frequencies,
                           double max_frequency,
                           std::string _weight_type,
                           double window_size,
-                          double sample_rate,
                           bool max_shifted,
                           bool non_linear,
                           std::string _normalized) {
   const std::vector<double> vec =
       HPCP(frequencies, magnitudes, size, reference_frequency, harmonics, band_preset, band_split_frequency,
-           min_frequency, max_frequency, _weight_type, window_size, sample_rate, max_shifted, non_linear, _normalized);
+           min_frequency, max_frequency, _weight_type, window_size, max_shifted, non_linear, _normalized);
   return ConvertSequenceToPyarray(vec);
 }
 

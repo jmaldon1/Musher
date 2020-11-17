@@ -1,7 +1,7 @@
 #include <cmath>
 
-#include "src/core/test/gtest_extras.h"
 #include "src/core/hpcp.h"
+#include "src/core/test/gtest_extras.h"
 
 using namespace musher::core;
 
@@ -28,11 +28,11 @@ TEST(HPCP, SubmediantPosition) {
   std::vector<double> actual_hpcp;
   int tonic = 440;
   double submediant = tonic * std::pow(2, (9. / 12.));
-  std::vector<double> submediant_freqs = {submediant};
-  std::vector<double> magnitudes = {1};
+  std::vector<double> submediant_freqs = { submediant };
+  std::vector<double> magnitudes = { 1 };
   actual_hpcp = HPCP(submediant_freqs, magnitudes);
 
-  std::vector<double> expected_hpcp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 1., 0., 0.};
+  std::vector<double> expected_hpcp = { 0., 0., 0., 0., 0., 0., 0., 0., 0., 1., 0., 0. };
   EXPECT_VEC_EQ(actual_hpcp, expected_hpcp);
 }
 
@@ -43,7 +43,7 @@ TEST(HPCP, SubmediantPosition) {
 TEST(HPCP, Harmonics) {
   std::vector<double> actual_hpcp;
   double tone = 100.;
-  std::vector<double> frequencies = {tone, tone * 2, tone * 3, tone * 4};
+  std::vector<double> frequencies = { tone, tone * 2, tone * 3, tone * 4 };
   std::vector<double> magnitudes(4, 1.);
   int harmonics = 3;
   bool band_preset = false;
@@ -51,9 +51,9 @@ TEST(HPCP, Harmonics) {
   double max_frequency = 500.0;
 
   actual_hpcp = HPCP(frequencies, magnitudes, 12, 440.0, harmonics, band_preset, 500.0, min_frequency, max_frequency,
-                     "squared cosine", 1.0, 44100., false);
+                     "squared cosine", 1.0, false);
 
-  std::vector<double> expected_hpcp = {0., 0., 0., 0.1340538263, 0., 0.2476127148, 0., 0., 0., 0., 1., 0.};
+  std::vector<double> expected_hpcp = { 0., 0., 0., 0.1340538263, 0., 0.2476127148, 0., 0., 0., 0., 1., 0. };
   EXPECT_VEC_NEAR(actual_hpcp, expected_hpcp, 1e-4);
 }
 
@@ -67,13 +67,13 @@ TEST(HPCP, MaxShifted) {
   std::vector<double> actual_hpcp;
   int tonic = 440;
   double dominant = tonic * std::pow(2, (7. / 12.));
-  std::vector<double> dominant_freqs = {dominant};
-  std::vector<double> magnitudes = {1};
+  std::vector<double> dominant_freqs = { dominant };
+  std::vector<double> magnitudes = { 1 };
   bool max_shifted = true;
-  actual_hpcp = HPCP(dominant_freqs, magnitudes, 12, 440.0, 0, true, 500.0, 40.0, 5000.0, "squared cosine", 1.0, 44100.,
-                     max_shifted);
+  actual_hpcp =
+      HPCP(dominant_freqs, magnitudes, 12, 440.0, 0, true, 500.0, 40.0, 5000.0, "squared cosine", 1.0, max_shifted);
 
-  std::vector<double> expected_hpcp = {1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
+  std::vector<double> expected_hpcp = { 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0. };
   EXPECT_VEC_EQ(actual_hpcp, expected_hpcp);
 }
 
@@ -83,14 +83,14 @@ TEST(HPCP, MaxShifted) {
  */
 TEST(HPCP, LowFrequency) {
   std::vector<double> actual_hpcp;
-  std::vector<double> frequencies = {99};
-  std::vector<double> magnitudes = {1};
+  std::vector<double> frequencies = { 99 };
+  std::vector<double> magnitudes = { 1 };
   double min_frequency = 100.0;
   double max_frequency = 1000.0;
   actual_hpcp = HPCP(frequencies, magnitudes, 12, 440.0, 0, true, 500.0, min_frequency, max_frequency, "squared cosine",
-                     1.0, 44100., false);
+                     1.0, false);
 
-  std::vector<double> expected_hpcp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
+  std::vector<double> expected_hpcp = { 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0. };
   EXPECT_VEC_EQ(actual_hpcp, expected_hpcp);
 }
 
@@ -100,14 +100,14 @@ TEST(HPCP, LowFrequency) {
  */
 TEST(HPCP, HighFrequency) {
   std::vector<double> actual_hpcp;
-  std::vector<double> frequencies = {1001};
-  std::vector<double> magnitudes = {1};
+  std::vector<double> frequencies = { 1001 };
+  std::vector<double> magnitudes = { 1 };
   double min_frequency = 100.0;
   double max_frequency = 1000.0;
   actual_hpcp = HPCP(frequencies, magnitudes, 12, 440.0, 0, true, 500.0, min_frequency, max_frequency, "squared cosine",
-                     1.0, 44100., false);
+                     1.0, false);
 
-  std::vector<double> expected_hpcp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
+  std::vector<double> expected_hpcp = { 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0. };
   EXPECT_VEC_EQ(actual_hpcp, expected_hpcp);
 }
 
@@ -125,7 +125,7 @@ TEST(HPCP, TooSmallMinRangeError) {
       {
         try {
           actual_hpcp = HPCP(frequencies, magnitudes, 12, 440.0, 0, true, band_split_frequency, min_frequency, 1000.0,
-                             "squared cosine", 1.0, 44100., false);
+                             "squared cosine", 1.0, false);
         } catch (const std::runtime_error& e) {
           /* This tests if the error message is equal */
           EXPECT_STREQ("HPCP: Low band frequency range too small", e.what());
@@ -149,7 +149,7 @@ TEST(HPCP, TooSmallMaxRangeError) {
       {
         try {
           actual_hpcp = HPCP(frequencies, magnitudes, 12, 440.0, 0, true, band_split_frequency, 40.0, max_frequency,
-                             "squared cosine", 1.0, 44100., false);
+                             "squared cosine", 1.0, false);
         } catch (const std::runtime_error& e) {
           /* This tests if the error message is equal */
           EXPECT_STREQ("HPCP: High band frequency range too small", e.what());
@@ -174,7 +174,7 @@ TEST(HPCP, TooCloseMinMaxRange) {
       {
         try {
           actual_hpcp = HPCP(frequencies, magnitudes, 12, 440.0, 0, band_present, 1000.0, min_frequency, max_frequency,
-                             "squared cosine", 1.0, 44100., false);
+                             "squared cosine", 1.0, false);
         } catch (const std::runtime_error& e) {
           /* This tests if the error message is equal */
           EXPECT_STREQ("HPCP: Minimum and maximum frequencies are too close", e.what());
@@ -196,8 +196,8 @@ TEST(HPCP, SizeNotMultipleOf12) {
   EXPECT_THROW(
       {
         try {
-          actual_hpcp = HPCP(frequencies, magnitudes, size, 440.0, 0, true, 500.0, 40.0, 5000.0, "squared cosine", 1.0,
-                             44100., false);
+          actual_hpcp =
+              HPCP(frequencies, magnitudes, size, 440.0, 0, true, 500.0, 40.0, 5000.0, "squared cosine", 1.0, false);
         } catch (const std::runtime_error& e) {
           /* This tests if the error message is equal */
           EXPECT_STREQ("HPCP: The size parameter is not a multiple of 12.", e.what());

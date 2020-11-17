@@ -81,14 +81,6 @@ class Framecutter {
    *
    * This function should not be called by the user, it will be called interally while iterating.
    *
-   * @code
-   *   Framecutter framecutter(audio_signal);
-   *
-   *   for (const std::vector<double> &frame : framecutter) {
-   *       perform_work_on_frame(frame);
-   *   }
-   * @endcode
-   *
    * @return std::vector<double> Sliced frame.
    */
   std::vector<double> compute();

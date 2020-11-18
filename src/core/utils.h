@@ -70,7 +70,7 @@ double NormalizeInt32_t(const int32_t sample);
  * @brief Deinterweave a vector in alternating order to form two vectors.
  * @code
  *  interweaved_vector = {1, 9, 2, 8, 3, 7, 4, 6}
- *  
+ *
  *  deinterweaved_vector = {
  *      {1, 2, 3, 4},
  *      {9, 8, 7, 6}
@@ -80,7 +80,27 @@ double NormalizeInt32_t(const int32_t sample);
  * @param interweaved_vector Interleaved vector.
  * @return std::vector<std::vector<double>> Deinterweaved vector.
  */
-std::vector<std::vector<double>> Deinterweave(const std::vector<double> &interweaved_vector);
+template <typename T>
+std::vector<std::vector<T>> Deinterweave(const std::vector<T> &interweaved_vector) {
+  size_t interweaved_vec_size = interweaved_vector.size();
+  std::vector<T> channel1;
+  std::vector<T> channel2;
+
+  for (size_t i = 0; i < interweaved_vec_size; ++i) {
+    if (i % 2 == 0) {
+      channel1.push_back(interweaved_vector[i]);
+    } else {
+      channel2.push_back(interweaved_vector[i]);
+    }
+  };
+
+  std::vector<std::vector<T>> deinterweaved_vectors({
+      channel1,
+      channel2,
+  });
+
+  return deinterweaved_vectors;
+}
 
 /**
  * @brief Compute the median of a vector.

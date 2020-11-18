@@ -79,27 +79,6 @@ bool IsBigEndian(void) {
   return bint.c[0] == 1;
 }
 
-std::vector<std::vector<double>> Deinterweave(const std::vector<double> &interweaved_vector) {
-  size_t interweaved_vec_size = interweaved_vector.size();
-  std::vector<double> channel1;
-  std::vector<double> channel2;
-
-  for (size_t i = 0; i < interweaved_vec_size; ++i) {
-    if (i % 2 == 0) {
-      channel1.push_back(interweaved_vector[i]);
-    } else {
-      channel2.push_back(interweaved_vector[i]);
-    }
-  };
-
-  std::vector<std::vector<double>> deinterweaved_vectors({
-      channel1,
-      channel2,
-  });
-
-  return deinterweaved_vectors;
-}
-
 double Median(std::vector<double> &inVec) {
   std::vector<double> vec(inVec);
   std::sort(vec.begin(), vec.end());

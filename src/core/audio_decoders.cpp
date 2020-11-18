@@ -147,7 +147,8 @@ WavDecoded DecodeWav(const std::vector<uint8_t>& file_data) {
           sample_as_int = sample_as_int | ~0xFFFFFF;  // so make sure sign is extended to the 32 bit float
 
         // Normalize samples to between -1 and 1
-        double sample = NormalizeInt32_t(sample_as_int);
+        // double sample = NormalizeInt32_t(sample_as_int);
+        double sample = static_cast<double>(sample_as_int);
         samples[channel].push_back(sample);
       } else {
         std::string err_message =
@@ -195,6 +196,7 @@ Mp3Decoded DecodeMp3(const std::string file_path) {
   }
 
   std::vector<int32_t> interleaved_samples(info.buffer, info.buffer + info.samples);
+  free(info.buffer);
   int num_samples = static_cast<int>(info.samples);
   bool mono = info.channels == 1;
   bool stereo = info.channels == 2;
@@ -211,7 +213,7 @@ Mp3Decoded DecodeMp3(const std::string file_path) {
 
   std::vector<double> interleaved_normalized_samples(interleaved_samples.size());
   std::transform(interleaved_samples.begin(), interleaved_samples.end(), interleaved_normalized_samples.begin(),
-                 [](const int32_t x) { return NormalizeInt32_t(x); });
+                 [](const int32_t x) { return static_cast<double>(x); });
 
   Mp3Decoded mp3_decoded;
   mp3_decoded.sample_rate = sample_rate;

@@ -92,14 +92,12 @@ print(wav_decoded)
  'bit_depth': 16,
  'channels': 2,
  'file_type': 'wav',
- 'interleaved_normalized_samples': array([ 0.        ,  0.        ,  0.        , ..., -0.27130127,
-       -0.32745361, -0.25457764]),
  'length_in_seconds': 30.0,
  'mono': False,
- 'normalized_samples': array([[ 0.        ,  0.        ,  0.        , ..., -0.33203125,
-        -0.32833862, -0.3274536 ],
-       [ 0.        ,  0.        ,  0.        , ..., -0.29162598,
-        -0.27130127, -0.25457764]], dtype=float32),
+ 'normalized_samples': array([
+       [ 0.        ,  0.        ,  0.        , ..., -0.33203125, -0.32833862, -0.3274536 ],
+       [ 0.        ,  0.        ,  0.        , ..., -0.29162598, -0.27130127, -0.25457764]
+    ], dtype=float32),
  'sample_rate': 44100,
  'samples_per_channel': 1323000,
  'stereo': True}

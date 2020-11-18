@@ -10,6 +10,7 @@
 #include "gtest/gtest.h"
 #include "src/core/audio_decoders.h"
 #include "src/core/utils.h"
+#include "src/core/test/utils.h"
 
 /* TEST INCLUDES */
 // #include "test_load_audio_file.h"
@@ -46,7 +47,14 @@ TEST(AudioFileDecoding, LoadsAudioFileTest) {
 TEST(AudioFileDecoding, DecodeWav) {
   const std::string filePath = TEST_DATA_DIR + std::string("audio_files/mozart_c_major_30sec.wav");
   WavDecoded wav_decoded = DecodeWav(filePath);
+  
+  // musher::core::test::printMatrix(wav_decoded.normalized_samples);
+  std::vector<double> y(wav_decoded.normalized_samples[0].end() - 1000, wav_decoded.normalized_samples[0].end());
+  std::vector<double> x(wav_decoded.normalized_samples[1].end() - 1000, wav_decoded.normalized_samples[1].end());
 
+  musher::core::test::printVector(x);
+  musher::core::test::printVector(y);
+  
   uint32_t expected_sample_rate = 44100;
   uint32_t actual_sample_rate = wav_decoded.sample_rate;
   EXPECT_EQ(expected_sample_rate, actual_sample_rate);
@@ -84,6 +92,54 @@ TEST(AudioFileDecoding, DecodeWav) {
   EXPECT_EQ(expected_avg_bitrate_kbps, actual_avg_bitrate_kbps);
 }
 
+TEST(AudioFileDecoding, DecodeMp3) {
+  std::vector<double> NormalizedSamples;
+  const std::string filePathMp3 = TEST_DATA_DIR + std::string("audio_files/mozart_c_major_30sec.mp3");
+
+  Mp3Decoded mp3_decoded = DecodeMp3(filePathMp3);
+
+  // musher::core::test::printMatrix(mp3_decoded.normalized_samples);
+  std::vector<double> y(mp3_decoded.normalized_samples[0].end() - 1000, mp3_decoded.normalized_samples[0].end());
+  std::vector<double> x(mp3_decoded.normalized_samples[1].end() - 1000, mp3_decoded.normalized_samples[1].end());
+
+  musher::core::test::printVector(x);
+  musher::core::test::printVector(y);
+
+  uint32_t expected_sample_rate = 44100;
+  uint32_t actual_sample_rate = mp3_decoded.sample_rate;
+  EXPECT_EQ(expected_sample_rate, actual_sample_rate);
+
+  int expectedChannels = 2;
+  int actual_channels = mp3_decoded.channels;
+  EXPECT_EQ(expectedChannels, actual_channels);
+
+  bool expected_mono = false;
+  bool actual_mono = mp3_decoded.mono;
+  EXPECT_EQ(expected_mono, actual_mono);
+
+  bool expected_stereo = true;
+  bool actual_stereo = mp3_decoded.stereo;
+  EXPECT_EQ(expected_stereo, actual_stereo);
+
+  double expected_length_in_seconds = 30.;
+  double actual_length_in_seconds = mp3_decoded.length_in_seconds;
+  EXPECT_NEAR(expected_length_in_seconds, actual_length_in_seconds, 0.1);
+
+  // TODO: This is POSSIBLY wrong! 1323000
+  int expected_samples_per_channel = 1325952;
+  int actual_samples_per_channel = mp3_decoded.samples_per_channel;
+  EXPECT_EQ(expected_samples_per_channel, actual_samples_per_channel);
+
+  std::string expected_file_type = "mp3";
+  std::string actual_file_type = mp3_decoded.file_type;
+  EXPECT_EQ(expected_file_type, actual_file_type);
+
+  int expected_avg_bitrate_kbps = 320;
+  int actual_avg_bitrate_kbps = mp3_decoded.avg_bitrate_kbps;
+  EXPECT_EQ(expected_avg_bitrate_kbps, actual_avg_bitrate_kbps);
+  
+}
+
 // TEST(AudioFileDecoding, BeatDetection) {
 //   const std::string filePath = TEST_DATA_DIR + std::string("audio_files/CantinaBand3sec.wav");
 
@@ -107,44 +163,3 @@ TEST(AudioFileDecoding, DecodeWav) {
 //   // std::cout << bpm << std::endl;
 //   EXPECT_DOUBLE_EQ(bpm, 125.);
 // }
-
-TEST(AudioFileDecoding, DecodeMp3) {
-  std::vector<double> NormalizedSamples;
-  const std::string filePathMp3 = TEST_DATA_DIR + std::string("audio_files/mozart_c_major_30sec.mp3");
-
-  Mp3Decoded mp3_decoded = DecodeMp3(filePathMp3);
-
-  uint32_t expected_sample_rate = 44100;
-  uint32_t actual_sample_rate = mp3_decoded.sample_rate;
-  EXPECT_EQ(expected_sample_rate, actual_sample_rate);
-
-  int expectedChannels = 2;
-  int actual_channels = mp3_decoded.channels;
-  EXPECT_EQ(expectedChannels, actual_channels);
-
-  bool expected_mono = false;
-  bool actual_mono = mp3_decoded.mono;
-  EXPECT_EQ(expected_mono, actual_mono);
-
-  bool expected_stereo = true;
-  bool actual_stereo = mp3_decoded.stereo;
-  EXPECT_EQ(expected_stereo, actual_stereo);
-
-  double expected_length_in_seconds = 30.;
-  double actual_length_in_seconds = mp3_decoded.length_in_seconds;
-  EXPECT_NEAR(expected_length_in_seconds, actual_length_in_seconds, 0.1);
-
-  // TODO: This is POSSIBLY wrong!
-  int expected_samples_per_channel = 1325952;
-  int actual_samples_per_channel = mp3_decoded.samples_per_channel;
-  EXPECT_EQ(expected_samples_per_channel, actual_samples_per_channel);
-
-  std::string expected_file_type = "mp3";
-  std::string actual_file_type = mp3_decoded.file_type;
-  EXPECT_EQ(expected_file_type, actual_file_type);
-
-  int expected_avg_bitrate_kbps = 320;
-  int actual_avg_bitrate_kbps = mp3_decoded.avg_bitrate_kbps;
-  EXPECT_EQ(expected_avg_bitrate_kbps, actual_avg_bitrate_kbps);
-  
-}

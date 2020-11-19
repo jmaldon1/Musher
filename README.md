@@ -21,8 +21,8 @@ Simple musical key detection.
     - [Install normally](#install-normally)
     - [Install in debug mode](#install-in-debug-mode)
   - [C++](#c-1)
-    - [Install normally](#install-normally-1)
-    - [Install in debug mode](#install-in-debug-mode-1)
+    - [Build normally](#build-normally)
+    - [Build in debug mode](#build-in-debug-mode)
 - [Tests](#tests)
   - [Python](#python-1)
     - [Required dependencies](#required-dependencies)
@@ -137,7 +137,7 @@ _NOTE_: This package has 2 dependencies: **Pybind11** and **Numpy**. You may nee
 
 ## C++
 
-### Install normally
+### Build normally
 
 ```sh
 python setup.py cmake
@@ -150,7 +150,7 @@ cmake --build .
 
 ```
 
-### Install in debug mode
+### Build in debug mode
 
 ```sh
 python setup.py cmake --debug

@@ -50,6 +50,16 @@ const char* decode_wav_from_file_description = R"(
     dict: .wav file information.
 )";
 
+const char* decode_mp3_from_file_description = R"(
+  Decode an mp3 file.
+
+  Args:
+    file_path (str): File path to a .mp3 file.
+
+  Returns:
+    dict: .mp3 file information.
+)";
+
 const char* mono_mixer_description = R"(
   Downmixes the signal into a single channel given a stereo signal.
 

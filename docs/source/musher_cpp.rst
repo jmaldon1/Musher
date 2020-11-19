@@ -1,13 +1,21 @@
 Audio Decoders
 ==============
 
+.. doxygenstruct:: musher::core::AudioDecoded
+   :project: musher
+   :members:
+.. doxygenstruct:: musher::core::WavDecoded
+   :project: musher
+   :members:
+.. doxygenstruct:: musher::core::Mp3Decoded
+   :project: musher
+   :members:
 .. doxygenfunction:: LoadAudioFile
    :project: musher
 .. doxygenfunction:: DecodeWav(const std::vector<uint8_t> &file_data)
    :project: musher
 .. doxygenfunction:: DecodeWav(const std::string &file_path)
    :project: musher
-
 .. doxygenfunction:: DecodeMp3
    :project: musher
 

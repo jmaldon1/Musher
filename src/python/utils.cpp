@@ -19,15 +19,39 @@ py::dict ConvertWavDecodedToPyDict(WavDecoded wav_decoded) {
   output_dict["length_in_seconds"] = wav_decoded.length_in_seconds;
   output_dict["file_type"] = wav_decoded.file_type;
   output_dict["avg_bitrate_kbps"] = wav_decoded.avg_bitrate_kbps;
-  // Convert vector to numpy array without copying.
-  std::vector<double> interleaved_normalized_samples = wav_decoded.interleaved_normalized_samples;
-  output_dict["interleaved_normalized_samples"] = ConvertSequenceToPyarray(interleaved_normalized_samples);
 
   // Convert 2D vector to 2D numpy array with copy.
   std::vector<std::vector<double>> normalized_samples = wav_decoded.normalized_samples;
   size_t rows = normalized_samples.size();
   size_t cols = normalized_samples[0].size();
-  py::array_t<float, py::array::c_style> numpy_arr({ rows, cols });
+  py::array_t<double, py::array::c_style> numpy_arr({ rows, cols });
+  auto ra = numpy_arr.mutable_unchecked();
+  for (size_t i = 0; i < rows; i++) {
+    for (size_t j = 0; j < cols; j++) {
+      ra(i, j) = normalized_samples[i][j];
+    };
+  };
+  output_dict["normalized_samples"] = numpy_arr;
+
+  return output_dict;
+}
+
+py::dict ConvertMp3DecodedToPyDict(Mp3Decoded mp3_decoded) {
+  py::dict output_dict;
+  output_dict["sample_rate"] = mp3_decoded.sample_rate;
+  output_dict["channels"] = mp3_decoded.channels;
+  output_dict["mono"] = mp3_decoded.mono;
+  output_dict["stereo"] = mp3_decoded.stereo;
+  output_dict["samples_per_channel"] = mp3_decoded.samples_per_channel;
+  output_dict["length_in_seconds"] = mp3_decoded.length_in_seconds;
+  output_dict["file_type"] = mp3_decoded.file_type;
+  output_dict["avg_bitrate_kbps"] = mp3_decoded.avg_bitrate_kbps;
+
+  // Convert 2D vector to 2D numpy array with copy.
+  std::vector<std::vector<double>> normalized_samples = mp3_decoded.normalized_samples;
+  size_t rows = normalized_samples.size();
+  size_t cols = normalized_samples[0].size();
+  py::array_t<double, py::array::c_style> numpy_arr({ rows, cols });
   auto ra = numpy_arr.mutable_unchecked();
   for (size_t i = 0; i < rows; i++) {
     for (size_t j = 0; j < cols; j++) {

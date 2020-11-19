@@ -24,6 +24,8 @@ PYBIND11_MODULE(musher_python, m) {
 
   m.def("decode_wav_from_file", &_DecodeWavFromFile, decode_wav_from_file_description, py::arg("file_path"));
 
+  m.def("decode_mp3_from_file", &_DecodeMp3FromFile, decode_mp3_from_file_description, py::arg("file_path"));
+
   m.def("mono_mixer", &_MonoMixer, mono_mixer_description, py::arg("input"));
 
   // Framecutter will be treated like an iterator in python.

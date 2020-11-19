@@ -30,6 +30,7 @@ py::array_t<typename Sequence::value_type> ConvertSequenceToPyarray(Sequence& se
 }
 
 py::dict ConvertWavDecodedToPyDict(WavDecoded wav_decoded);
+py::dict ConvertMp3DecodedToPyDict(Mp3Decoded mp3_decoded);
 py::dict ConvertKeyOutputToPyDict(KeyOutput key_output);
 
 }  // namespace python

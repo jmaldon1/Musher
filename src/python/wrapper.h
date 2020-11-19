@@ -18,6 +18,8 @@ py::dict _DecodeWavFromData(std::vector<uint8_t>& file_data);
 
 py::dict _DecodeWavFromFile(const std::string file_path);
 
+py::dict _DecodeMp3FromFile(const std::string file_path);
+
 py::array_t<double> _MonoMixer(const std::vector<std::vector<double>>& normalized_samples);
 
 py::array_t<double> _Windowing(const std::vector<double>& audio_frame,

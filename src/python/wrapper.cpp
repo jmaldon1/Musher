@@ -31,6 +31,11 @@ py::dict _DecodeWavFromFile(const std::string file_path) {
   return ConvertWavDecodedToPyDict(wav_decoded);
 }
 
+py::dict _DecodeMp3FromFile(const std::string file_path) {
+  Mp3Decoded mp3_decoded = DecodeMp3(file_path);
+  return ConvertMp3DecodedToPyDict(mp3_decoded);
+}
+
 py::array_t<double> _MonoMixer(const std::vector<std::vector<double>>& normalized_samples) {
   std::vector<double> mixed_audio = MonoMixer(normalized_samples);
   return ConvertSequenceToPyarray(mixed_audio);
@@ -41,8 +46,7 @@ py::array_t<double> _Windowing(const std::vector<double>& audio_frame,
                                unsigned int zero_padding_size,
                                bool zero_phase,
                                bool _normalize) {
-  const std::vector<double> vec =
-      Windowing(audio_frame, window_type_func, zero_padding_size, zero_phase, _normalize);
+  const std::vector<double> vec = Windowing(audio_frame, window_type_func, zero_padding_size, zero_phase, _normalize);
   return ConvertSequenceToPyarray(vec);
 }
 

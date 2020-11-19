@@ -37,7 +37,7 @@ class Framecutter {
    * if false the first frame at time 0 (centered at frameSize/2).
    * @param last_frame_to_end_of_file Whether the beginning of the last frame should reach the end of file. Only
    * applicable if start_from_center is false.
-   * @param valid_frame_threshold_ratio frames smaller than this ratio will be discarded, those larger will be
+   * @param valid_frame_threshold_ratio Frames smaller than this ratio will be discarded, those larger will be
    * zero-padded to a full frame. (i.e. a value of 0 will never discard frames and a value of 1 will only keep frames
    * that are of length 'frameSize')
    */
@@ -79,7 +79,7 @@ class Framecutter {
    * @brief Computes the actual slicing of the frames, this function is run on each iteration to calculate the next
    * frame.
    *
-   * This function should not be called by the user, it will be called interally while iterating.
+   * This function should not be called by the user, it will be called internally while iterating.
    *
    * @return std::vector<double> Sliced frame.
    */

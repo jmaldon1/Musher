@@ -1,5 +1,6 @@
 .DS_Store
 *.dylib
+temp_gh_pages
 
 # VSCODE
 .vscode/

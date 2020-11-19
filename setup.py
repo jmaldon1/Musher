@@ -8,6 +8,7 @@ import glob
 import codecs
 import signal
 import shutil
+from subprocess import STDOUT
 from setuptools import setup, find_packages, Extension, Command
 from setuptools.command.test import test
 
@@ -119,11 +120,23 @@ class DeployDocs(Command):
             except OSError as err:
                 print(f'Failed to delete {file_path}. Reason: {err}')
 
+    def copytree(self, src: str, dst: str, symlinks: bool=False, ignore: bool=None):
+        """copytree for older python versions that don't have the latest
+        version of shutil.copytree(dirs_exist_ok=True)
+        """
+        for item in os.listdir(src):
+            src_item = os.path.join(src, item)
+            dst_item = os.path.join(dst, item)
+            if os.path.isdir(src_item):
+                shutil.copytree(src_item, dst_item, symlinks, ignore)
+            else:
+                shutil.copy2(src_item, dst_item)
+
     def run(self):
         """Run the clean
         """
 
-        # sphinx_build_dir = os.path.join(ROOT_DIR, 'build', 'docs', 'sphinx')
+        sphinx_build_dir = os.path.join(ROOT_DIR, 'build', 'docs', 'sphinx')
         temp_gh_pages_dir = os.path.join(ROOT_DIR, 'temp_gh_pages')
         git_dir = os.path.join(ROOT_DIR, '.git')
         try:
@@ -142,9 +155,19 @@ class DeployDocs(Command):
                         'temp_gh_pages', 'origin/gh-pages'], cwd=ROOT_DIR, check=True)
         self.delete_folder_contents(temp_gh_pages_dir)
 
-        subprocess.run(['git', 'add', '--all'], cwd=ROOT_DIR, check=True)
-        subprocess.run(['git', 'commit', '-m', 'Updated Docs'],
-                       cwd=ROOT_DIR, check=True)
+        # Copy newly generated docs
+        shutil.copytree(sphinx_build_dir, temp_gh_pages_dir, dirs_exist_ok=True)
+
+        subprocess.run(['git', 'add', '--all'], cwd=temp_gh_pages_dir, check=True)
+        try:
+            subprocess.run(['git', 'commit', '-m', 'Updated Docs'],
+                        cwd=temp_gh_pages_dir, check=True)
+        except subprocess.CalledProcessError as err:
+            print(err)
+
+        shutil.rmtree(temp_gh_pages_dir)
+
+        subprocess.run(['git', 'worktree', 'prune'], cwd=ROOT_DIR, check=True)
 
 
 class CMakeBuild(Command):

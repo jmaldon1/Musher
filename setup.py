@@ -145,29 +145,36 @@ class DeployDocs(Command):
             pass
 
         os.mkdir(temp_gh_pages_dir)
-        subprocess.run(['git', 'worktree', 'prune'], cwd=ROOT_DIR, check=True)
-        try:
-            shutil.rmtree(os.path.join(git_dir, 'worktrees', "temp_gh_pages"))
-        except OSError:
-            pass
+        # subprocess.run(['git', 'worktree', 'prune'], cwd=ROOT_DIR, check=True)
+        # try:
+        #     shutil.rmtree(os.path.join(git_dir, 'worktrees', "temp_gh_pages"))
+        # except OSError:
+        #     pass
 
-        subprocess.run(['git', 'worktree', 'add', '-B', 'gh-pages',
-                        'temp_gh_pages', 'origin/gh-pages'], cwd=ROOT_DIR, check=True)
-        self.delete_folder_contents(temp_gh_pages_dir)
+        # subprocess.run(['git', 'worktree', 'add', '-B', 'gh-pages',
+        #                 'temp_gh_pages', 'origin/gh-pages'], cwd=ROOT_DIR, check=True)
+        subprocess.run(['git', 'clone', '.git', '--branch', 'gh-pages',
+                        'temp_gh_pages'], cwd=ROOT_DIR, check=True)
+        # print("Deleting old docs...")
+        # self.delete_folder_contents(temp_gh_pages_dir)
 
         # Copy newly generated docs
+        print("Copying newly generated docs to git branch...")
         shutil.copytree(sphinx_build_dir, temp_gh_pages_dir, dirs_exist_ok=True)
 
         subprocess.run(['git', 'add', '--all'], cwd=temp_gh_pages_dir, check=True)
         try:
             subprocess.run(['git', 'commit', '-m', 'Updated Docs'],
                         cwd=temp_gh_pages_dir, check=True)
+            subprocess.run(['git', 'push'], cwd=temp_gh_pages_dir, check=True)
         except subprocess.CalledProcessError as err:
-            print(err)
+            if err.returncode != 1:
+                # returncode == 1 means there was no updates to push
+                print(err)
 
         shutil.rmtree(temp_gh_pages_dir)
 
-        subprocess.run(['git', 'worktree', 'prune'], cwd=ROOT_DIR, check=True)
+        # subprocess.run(['git', 'worktree', 'prune'], cwd=ROOT_DIR, check=True)
 
 
 class CMakeBuild(Command):

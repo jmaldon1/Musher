@@ -34,7 +34,7 @@ const char* decode_wav_from_data_description = R"(
     samples[1] holds channel 2 (Will not exist if mono audio)
 
   Args:
-    file_data (List[int]): WAV file data
+    file_data (List[int]): WAV file data.
 
   Returns:
     dict: .wav file information.

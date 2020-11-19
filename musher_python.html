@@ -1,0 +1,628 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Musher Module &mdash; Musher 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Audio Decoders" href="musher_cpp.html" />
+    <link rel="prev" title="Python Documentation" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Musher
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Musher Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#audio-decoders">Audio Decoders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#framecutter">Framecutter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hpcp">HPCP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mono-mixer">Mono Mixer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#key">Key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spectrum">Spectrum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spectral-peaks">Spectral Peaks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#windowing">Windowing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#c-documentation">C++ Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Musher</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">Python Documentation</a> &raquo;</li>
+        
+      <li>Musher Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/musher_python.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-musher.musher_python">
+<span id="musher-module"></span><h1>Musher Module<a class="headerlink" href="#module-musher.musher_python" title="Permalink to this headline">¶</a></h1>
+<p>pybind11 musher_python plugin</p>
+<div class="section" id="audio-decoders">
+<h2>Audio Decoders<a class="headerlink" href="#audio-decoders" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="musher.load_audio_file">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">load_audio_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.uint8<span class="p">]</span><a class="headerlink" href="#musher.load_audio_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load an the data from an audio file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – File path to a .wav file.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Audio file data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray[numpy.uint8]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="musher.decode_wav_from_data">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">decode_wav_from_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_data</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.decode_wav_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decode a wav file.</p>
+<p>WavDecoded.normalized_samples contains:</p>
+<blockquote>
+<div><p>samples[0] holds channel 1</p>
+<p>samples[1] holds channel 2 (Will not exist if mono audio)</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_data</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – WAV file data.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>.wav file information.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="musher.decode_wav_from_file">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">decode_wav_from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.decode_wav_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overloaded wrapper around DecodeWav that accepts a file path to a .wav file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – File path to a .wav file.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>.wav file information.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="framecutter">
+<h2>Framecutter<a class="headerlink" href="#framecutter" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="musher.Framecutter">
+<em class="property">class </em><code class="sig-prename descclassname">musher.</code><code class="sig-name descname">Framecutter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n">musher.musher_python.Framecutter</span></em>, <em class="sig-param"><span class="n">buffer</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">frame_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1024</span></em>, <em class="sig-param"><span class="n">hop_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">512</span></em>, <em class="sig-param"><span class="n">start_from_center</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">last_frame_to_end_of_file</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">valid_frame_threshold_ratio</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#musher.Framecutter" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is an iterator.</p>
+<p class="rubric">Examples</p>
+<p>Iterate over the class like so:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">buffer</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">framecutter</span> <span class="o">=</span> <span class="n">musher</span><span class="o">.</span><span class="n">Framecutter</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">framecutter</span><span class="p">:</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">[0.0, 0.0, 1.0]</span>
+<span class="go">[1.0, 2.0, 3.0]</span>
+<span class="go">[3.0, 4.0, 5.0]</span>
+<span class="go">[5.0, 0.0, 0.0]</span>
+</pre></div>
+</div>
+<p>Construct a new Framecutter object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Buffer from which to read data.</p></li>
+<li><p><strong>frame_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Output frame size. Defaults to 1024.</p></li>
+<li><p><strong>hop_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Hop size between frames. Defaults to 512.</p></li>
+<li><p><strong>start_from_center</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true start from the center of the buffer (zero-centered at -frameSize/2) or
+if false the first frame at time 0 (centered at frameSize/2). Defaults to True.</p></li>
+<li><p><strong>last_frame_to_end_of_file</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the beginning of the last frame should reach the end of file. Only
+applicable if start_from_center is false. Defaults to False.</p></li>
+<li><p><strong>valid_frame_threshold_ratio</strong> (<em>List</em><em>[</em><em>float</em><em>]</em><em>, </em><em>optional</em>) – frames smaller than this ratio will be discarded, those larger will be
+zero-padded to a full frame. (i.e. a value of 0 will never discard frames and a value of 1 will only keep frames
+that are of length ‘frameSize’). Defaults to 0.0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Cut frame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="hpcp">
+<h2>HPCP<a class="headerlink" href="#hpcp" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="musher.hpcp">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">hpcp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frequencies</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">magnitudes</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">12</span></em>, <em class="sig-param"><span class="n">reference_frequency</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">440.0</span></em>, <em class="sig-param"><span class="n">harmonics</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">band_preset</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">band_split_frequency</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">500.0</span></em>, <em class="sig-param"><span class="n">min_frequency</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">40.0</span></em>, <em class="sig-param"><span class="n">max_frequency</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">5000.0</span></em>, <em class="sig-param"><span class="n">_weight_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'squared cosine'</span></em>, <em class="sig-param"><span class="n">window_size</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">max_shifted</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">non_linear</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">_normalized</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'unit max'</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.hpcp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a Harmonic Pitch Class Profile (HPCP) from the spectral peaks of a signal.</p>
+<p>HPCP is a k*12 dimensional list which represents the intensities of the twelve (k==1) semitone pitch classes
+(corresponsing to notes from A to G#), or subdivisions of these (k&gt;1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frequencies</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Frequencies (positions) of the spectral peaks [Hz].</p></li>
+<li><p><strong>magnitudes</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Magnitudes (heights) of the spectral peaks.</p></li>
+<li><p><strong>size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of the output HPCP (must be a positive nonzero multiple of 12). Defaults to 12.</p></li>
+<li><p><strong>reference_frequency</strong> (<em>float</em><em>, </em><em>optional</em>) – Reference frequency for semitone index calculation, corresponding to A3 [Hz]. Defaults to 440.0.</p></li>
+<li><p><strong>harmonics</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of harmonics for frequency contribution, 0 indicates exclusive fundamental frequency
+contribution. Defaults to 0.</p></li>
+<li><p><strong>band_preset</strong> (<em>bool</em><em>, </em><em>optional</em>) – Enables whether to use a band preset. Defaults to True.</p></li>
+<li><p><strong>band_split_frequency</strong> (<em>float</em><em>, </em><em>optional</em>) – Split frequency for low and high bands, not used if bandPreset is false [Hz]. Defaults to 500.0.</p></li>
+<li><p><strong>min_frequency</strong> (<em>float</em><em>, </em><em>optional</em>) – Minimum frequency that contributes to the HPCP [Hz] (the difference between the min and split
+frequencies must not be less than 200.0 Hz). Defaults to 40.0.</p></li>
+<li><p><strong>max_frequency</strong> (<em>float</em><em>, </em><em>optional</em>) – Maximum frequency that contributes to the HPCP [Hz] (the difference between the max and split
+frequencies must not be less than 200.0 Hz). Defaults to 5000.0.</p></li>
+<li><p><strong>_weight_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Type of weighting function for determining frequency contribution. Defaults to ‘squared cosine’.</p></li>
+<li><p><strong>window_size</strong> (<em>float</em><em>, </em><em>optional</em>) – Size, in semitones, of the window used for the weighting. Defaults to 1.0.</p></li>
+<li><p><strong>max_shifted</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to shift the HPCP list so that the maximum peak is at index 0. Defaults to False.</p></li>
+<li><p><strong>non_linear</strong> (<em>bool</em><em>, </em><em>optional</em>) – Apply non-linear post-processing to the output (use with _normalized=’unit max’). Boosts values close
+to 1, decreases values close to 0. Defaults to False.</p></li>
+<li><p><strong>_normalized</strong> (<em>str</em><em>, </em><em>optional</em>) – Whether to normalize the HPCP list. Defaults to ‘unit max’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Resulting harmonic pitch class profile.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray[numpy.float64]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="musher.hpcp_from_peaks">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">hpcp_from_peaks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">peaks</span><span class="p">:</span> <span class="n">musher.musher_python.peaks</span></em>, <em class="sig-param"><span class="n">size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">12</span></em>, <em class="sig-param"><span class="n">reference_frequency</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">440.0</span></em>, <em class="sig-param"><span class="n">harmonics</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">band_preset</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">band_split_frequency</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">500.0</span></em>, <em class="sig-param"><span class="n">min_frequency</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">40.0</span></em>, <em class="sig-param"><span class="n">max_frequency</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">5000.0</span></em>, <em class="sig-param"><span class="n">_weight_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'squared cosine'</span></em>, <em class="sig-param"><span class="n">window_size</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">max_shifted</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">non_linear</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">_normalized</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'unit max'</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.hpcp_from_peaks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overloaded function for HPCP that accepts a list of peaks.</p>
+<p>Refer to original HPCP function for more details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>peaks</strong> (<em>musher.peaks</em>) – list of spectral peaks, each peak being a tuple (frequency, magnitude).</p></li>
+<li><p><strong>size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of the output HPCP (must be a positive nonzero multiple of 12). Defaults to 12.</p></li>
+<li><p><strong>reference_frequency</strong> (<em>float</em><em>, </em><em>optional</em>) – Reference frequency for semitone index calculation, corresponding to A3 [Hz]. Defaults to 440.0.</p></li>
+<li><p><strong>harmonics</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of harmonics for frequency contribution, 0 indicates exclusive fundamental frequency
+contribution. Defaults to 0.</p></li>
+<li><p><strong>band_preset</strong> (<em>bool</em><em>, </em><em>optional</em>) – Enables whether to use a band preset. Defaults to True.</p></li>
+<li><p><strong>band_split_frequency</strong> (<em>float</em><em>, </em><em>optional</em>) – Split frequency for low and high bands, not used if bandPreset is false [Hz]. Defaults to 500.0.</p></li>
+<li><p><strong>min_frequency</strong> (<em>float</em><em>, </em><em>optional</em>) – Minimum frequency that contributes to the HPCP [Hz] (the difference between the min and split
+frequencies must not be less than 200.0 Hz). Defaults to 40.0.</p></li>
+<li><p><strong>max_frequency</strong> (<em>float</em><em>, </em><em>optional</em>) – Maximum frequency that contributes to the HPCP [Hz] (the difference between the max and split
+frequencies must not be less than 200.0 Hz). Defaults to 5000.0.</p></li>
+<li><p><strong>_weight_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Type of weighting function for determining frequency contribution. Defaults to ‘squared cosine’.</p></li>
+<li><p><strong>window_size</strong> (<em>float</em><em>, </em><em>optional</em>) – Size, in semitones, of the window used for the weighting. Defaults to 1.0.</p></li>
+<li><p><strong>max_shifted</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to shift the HPCP list so that the maximum peak is at index 0. Defaults to False.</p></li>
+<li><p><strong>non_linear</strong> (<em>bool</em><em>, </em><em>optional</em>) – Apply non-linear post-processing to the output (use with _normalized=’unit max’). Boosts values close
+to 1, decreases values close to 0. Defaults to False.</p></li>
+<li><p><strong>_normalized</strong> (<em>str</em><em>, </em><em>optional</em>) – Whether to normalize the HPCP list. Defaults to ‘unit max’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Resulting harmonic pitch class profile.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray[numpy.float64]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="mono-mixer">
+<h2>Mono Mixer<a class="headerlink" href="#mono-mixer" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="musher.mono_mixer">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">mono_mixer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input</span><span class="p">:</span> <span class="n">List<span class="p">[</span>List<span class="p">[</span>float<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.mono_mixer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downmixes the signal into a single channel given a stereo signal.</p>
+<p>If the signal was already a monoaural, it is left unchanged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em>) – Stereo or mono audio signal</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Downmixed audio signal</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray[numpy.float64]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="key">
+<h2>Key<a class="headerlink" href="#key" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="musher.estimate_key">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">estimate_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pcp</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">use_polphony</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_three_chords</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">num_harmonics</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">4</span></em>, <em class="sig-param"><span class="n">slope</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.6</span></em>, <em class="sig-param"><span class="n">profile_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'Bgate'</span></em>, <em class="sig-param"><span class="n">use_maj_min</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.estimate_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes key estimate given a pitch class profile (HPCP).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pcp</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – The input pitch class profile.</p></li>
+<li><p><strong>use_polphony</strong> (<em>bool</em><em>, </em><em>optional</em>) – Enables the use of polyphonic profiles to define key profiles (this includes the contributions
+from triads as well as pitch harmonics). Defaults to True.</p></li>
+<li><p><strong>use_three_chords</strong> (<em>bool</em><em>, </em><em>optional</em>) – Consider only the 3 main triad chords of the key (T, D, SD) to build the polyphonic profiles. Defaults to True.</p></li>
+<li><p><strong>num_harmonics</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of harmonics that should contribute to the polyphonic profile (1 only considers the
+fundamental harmonic). Defaults to 4.</p></li>
+<li><p><strong>slope</strong> (<em>float</em><em>, </em><em>optional</em>) – Value of the slope of the exponential harmonic contribution to the polyphonic profile. Defaults to 0.6.</p></li>
+<li><p><strong>profile_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of polyphic profile to use for correlation calculation. Defaults to ‘Bgate’.</p></li>
+<li><p><strong>use_maj_min</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use a third profile called ‘majmin’ for ambiguous tracks. Only available for the edma, bgate
+and braw profiles. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Details of key estimate.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>KeyOutput</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="musher.detect_key">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">detect_key</code><span class="sig-paren">(</span><em class="sig-param">normalized_samples: List[List[float]], sample_rate: float = 44100.0, profile_type: str = 'Bgate', use_polphony: bool = True, use_three_chords: bool = True, num_harmonics: int = 4, slope: float = 0.6, use_maj_min: bool = False, pcp_size: int = 36, frame_size: int = 4096, hop_size: int = 512, window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7f185832ce70&gt;, max_num_peaks: int = 0, window_size: float = 0.5</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.detect_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes key estimate given normalized samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>normalized_samples</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em>) – The input pitch class profile.</p></li>
+<li><p><strong>sample_rate</strong> (<em>float</em><em>, </em><em>optional</em>) – Sampling rate of the audio signal [Hz]. Defaults to 44100.0.</p></li>
+<li><p><strong>profile_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of polyphic profile to use for correlation calculation. Defaults to ‘Bgate’.</p></li>
+<li><p><strong>use_polphony</strong> (<em>bool</em><em>, </em><em>optional</em>) – Enables the use of polyphonic profiles to define key profiles (this includes the contributions
+from triads as well as pitch harmonics). Defaults to True.</p></li>
+<li><p><strong>use_three_chords</strong> (<em>bool</em><em>, </em><em>optional</em>) – Consider only the 3 main triad chords of the key (T, D, SD) to build the polyphonic profiles. Defaults to True.</p></li>
+<li><p><strong>num_harmonics</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of harmonics that should contribute to the polyphonic profile (1 only considers the
+fundamental harmonic). Defaults to 4.</p></li>
+<li><p><strong>slope</strong> (<em>float</em><em>, </em><em>optional</em>) – Value of the slope of the exponential harmonic contribution to the polyphonic profile. Defaults to 0.6.</p></li>
+<li><p><strong>use_maj_min</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use a third profile called ‘majmin’ for ambiguous tracks. Only available for the edma, bgate
+and braw profiles. Defaults to False.</p></li>
+<li><p><strong>pcp_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of array elements used to represent a semitone times 12. Defaults to 36.</p></li>
+<li><p><strong>frame_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Output frame size of framecutter. Defaults to 4096.</p></li>
+<li><p><strong>hop_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Hop size between frames of framecutter. Defaults to 512.</p></li>
+<li><p><strong>window_type_func</strong> (<em>Callable</em><em>[</em><em>[</em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>, </em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – The window type function.
+Examples: BlackmanHarris92dB, BlackmanHarris62dB… Defaults to BlackmanHarris62dB.</p></li>
+<li><p><strong>max_num_peaks</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of returned peaks (set to 0 to return all peaks) for spectral peaks. Defaults to 0.</p></li>
+<li><p><strong>window_size</strong> (<em>float</em><em>, </em><em>optional</em>) – Size, in semitones, of the window used for the weighting for HPCP. Defaults to 0.5.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Details of key estimate.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>KeyOutput</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="spectrum">
+<h2>Spectrum<a class="headerlink" href="#spectrum" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="musher.convert_to_frequency_spectrum">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">convert_to_frequency_spectrum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">audio_frame</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.convert_to_frequency_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the frequency spectrum of an array of Reals.</p>
+<p>The resulting spectrum has a size which is half the size of the input array plus one.
+Bins contain raw (linear) magnitude values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>frame</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Input audio frame.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Frequency spectrum of the input audio signal.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray[numpy.float64]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="spectral-peaks">
+<h2>Spectral Peaks<a class="headerlink" href="#spectral-peaks" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="musher.spectral_peaks">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">spectral_peaks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_spectrum</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">- 1000.0</span></em>, <em class="sig-param"><span class="n">sort_by</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'position'</span></em>, <em class="sig-param"><span class="n">max_num_peaks</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">100</span></em>, <em class="sig-param"><span class="n">sample_rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">44100.0</span></em>, <em class="sig-param"><span class="n">min_pos</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">max_pos</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em><span class="sig-paren">)</span> &#x2192; musher.musher_python.peaks<a class="headerlink" href="#musher.spectral_peaks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts peaks from a spectrum.</p>
+<p>It is important to note that the peak algorithm is independent of an input that is linear or in dB, so one has to
+adapt the threshold to fit with the type of data fed to it. The algorithm relies on PeakDetect algorithm which is
+run with parabolic interpolation [1]. The exactness of the peak-searching depends heavily on the windowing type. It
+gives best results with dB input, a blackman-harris 92dB window and interpolation set to true. According to [1],
+spectral peak frequencies tend to be about twice as accurate when dB magnitude is used rather than just linear
+magnitude. For further information about the peak detection, see the description of the PeakDetection algorithm.</p>
+<p>References:</p>
+<p>[1] Peak Detection, <a class="reference external" href="http://ccrma.stanford.edu/~jos/parshl/Peak_Detection_Steps_3.html">http://ccrma.stanford.edu/~jos/parshl/Peak_Detection_Steps_3.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_spectrum</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Input spectrum.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Peaks below this given threshold are not outputted. Defaults to -1000.0.</p></li>
+<li><p><strong>sort_by</strong> (<em>str</em><em>, </em><em>optional</em>) – Ordering type of the outputted peaks (ascending by frequency (position)
+or descending by magnitude (height)). Defaults to ‘position’.</p></li>
+<li><p><strong>max_num_peaks</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of returned peaks (set to 0 to return all peaks). Defaults to 100.</p></li>
+<li><p><strong>sample_rate</strong> (<em>float</em><em>, </em><em>optional</em>) – Sampling rate of the audio signal [Hz]. Defaults to 44100.0.</p></li>
+<li><p><strong>min_pos</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum frequency (position) of the range to evaluate [Hz]. Defaults to 0.</p></li>
+<li><p><strong>max_pos</strong> (<em>int</em><em>, </em><em>optional</em>) – Minimum frequency (position) of the range to evaluate [Hz]. Defaults to 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of spectral peaks, each peak being a tuple (frequency, magnitude).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>musher.peaks</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="windowing">
+<h2>Windowing<a class="headerlink" href="#windowing" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="musher.windowing">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">windowing</code><span class="sig-paren">(</span><em class="sig-param">audio_frame: List[float], window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7f185832cb70&gt;, zero_padding_size: int = 0, zero_phase: bool = True, _normalize: bool = True</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.windowing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies windowing to an audio signal.</p>
+<p>It optionally applies zero-phase windowing and optionally adds zero-padding. The resulting windowed frame size is
+equal to the incoming frame size plus the number of padded zeros. By default, the available windows are normalized
+(to have an area of 1) and then scaled by a factor of 2.</p>
+<p>References:</p>
+<p>[1] F. J. Harris, On the use of windows for harmonic analysis with the discrete Fourier transform,
+Proceedings of the IEEE, vol. 66, no. 1, pp. 51-83, Jan. 1978</p>
+<p>[2] Window function - Wikipedia, the free encyclopedia, <a class="reference external" href="http://en.wikipedia.org/wiki/Window_function">http://en.wikipedia.org/wiki/Window_function</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>audio_frame</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Input audio frame.</p></li>
+<li><p><strong>window_type_func</strong> (<em>Callable</em><em>[</em><em>[</em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>, </em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – The window type function. Examples: BlackmanHarris92dB, BlackmanHarris62dB…
+Defaults to BlackmanHarris92dB.</p></li>
+<li><p><strong>zero_padding_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of the zero-padding. Defaults to 0.</p></li>
+<li><p><strong>zero_phase</strong> (<em>bool</em><em>, </em><em>optional</em>) – Enables zero-phase windowing. Defaults to True.</p></li>
+<li><p><strong>_normalize</strong> (<em>bool</em><em>, </em><em>optional</em>) – Specify whether to normalize windows (to have an area of 1) and then scale by a factor of 2. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Windowed audio frame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray[numpy.float64]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="musher.blackmanharris">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">blackmanharris</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">a0</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">a1</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">a2</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">a3</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.blackmanharris" title="Permalink to this definition">¶</a></dt>
+<dd><p>Blackmanharris windowing algorithm.</p>
+<p>Window functions help control spectral leakage when doing Fourier Analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>window</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Audio signal window.</p></li>
+<li><p><strong>a0</strong> (<em>float</em>) – Constant a0.</p></li>
+<li><p><strong>a1</strong> (<em>float</em>) – Constant a1.</p></li>
+<li><p><strong>a2</strong> (<em>float</em>) – Constant a2.</p></li>
+<li><p><strong>a3</strong> (<em>float</em>) – Constant a3.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>BlackmanHarris window.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray[numpy.float64]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="musher.blackmanharris62dB">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">blackmanharris62dB</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.blackmanharris62dB" title="Permalink to this definition">¶</a></dt>
+<dd><p>blackmanharris62dB description.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="musher.blackmanharris92dB">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">blackmanharris92dB</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.blackmanharris92dB" title="Permalink to this definition">¶</a></dt>
+<dd><p>blackmanharris92dB description.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="musher_cpp.html" class="btn btn-neutral float-right" title="Audio Decoders" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="modules.html" class="btn btn-neutral float-left" title="Python Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Joshua Maldonado
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

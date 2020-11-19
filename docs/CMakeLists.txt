@@ -66,3 +66,6 @@ add_custom_target(Sphinx ALL DEPENDS ${SPHINX_INDEX_FILE})
 # Add an install target to install the docs
 install(DIRECTORY ${SPHINX_BUILD}
 DESTINATION ${CMAKE_INSTALL_DOCDIR})
+
+# Add a .nojekyll file so github pages will take the index.html as the root.
+file(TOUCH ${SPHINX_BUILD}/.nojekyll)

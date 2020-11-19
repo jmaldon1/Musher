@@ -7,6 +7,7 @@ import shutil
 import glob
 import codecs
 import signal
+import shutil
 from setuptools import setup, find_packages, Extension, Command
 from setuptools.command.test import test
 
@@ -90,6 +91,60 @@ class CleanBuildCommand(Command):
                     pass
 
         print(u'\u2713', "cleaning done")
+
+
+class DeployDocs(Command):
+    """Deploy the generated documentation to Github pages
+    """
+    user_options = []
+
+    def initialize_options(self):
+        """Initialize user options
+        """
+        pass
+
+    def finalize_options(self):
+        """Finalize user options
+        """
+        pass
+
+    def delete_folder_contents(self, directory: str):
+        for file_name in os.listdir(directory):
+            file_path = os.path.join(directory, file_name)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except OSError as err:
+                print(f'Failed to delete {file_path}. Reason: {err}')
+
+    def run(self):
+        """Run the clean
+        """
+
+        # sphinx_build_dir = os.path.join(ROOT_DIR, 'build', 'docs', 'sphinx')
+        temp_gh_pages_dir = os.path.join(ROOT_DIR, 'temp_gh_pages')
+        git_dir = os.path.join(ROOT_DIR, '.git')
+        try:
+            shutil.rmtree(temp_gh_pages_dir)
+        except OSError:
+            pass
+
+        os.mkdir(temp_gh_pages_dir)
+        subprocess.run(['git', 'worktree', 'prune'], cwd=ROOT_DIR, check=True)
+        try:
+            shutil.rmtree(os.path.join(git_dir, 'worktrees', "temp_gh_pages"))
+        except OSError:
+            pass
+
+        subprocess.run(['git', 'worktree', 'add', '-B', 'gh-pages',
+                        'temp_gh_pages', 'origin/gh-pages'], cwd=ROOT_DIR, check=True)
+        self.delete_folder_contents(temp_gh_pages_dir)
+
+        subprocess.run(['git', 'add', '--all'], cwd=ROOT_DIR, check=True)
+        subprocess.run(['git', 'commit', '-m', 'Updated Docs'],
+                       cwd=ROOT_DIR, check=True)
 
 
 class CMakeBuild(Command):
@@ -265,6 +320,7 @@ def extra_link_args() -> list:
 
     return args
 
+
 setup(
     name='musher',
     version='0.1',
@@ -322,6 +378,7 @@ setup(
         "ctest": CTest,
         "gtest": GTest,
         "clean": CleanBuildCommand,
+        "deploy": DeployDocs
     },
     zip_safe=False,
     long_description=long_description,

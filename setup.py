@@ -95,15 +95,18 @@ class CleanBuildCommand(Command):
 
 class PublishDocs(Command):
     """Publish the generated documentation to Github pages
+
+        Example usage:
+            python setup.py publish_docs -m "Added docs for new function"
     """
     user_options = [
-        ('commit-message', 'm', "Commit message when publishing docs."),
+        ('message=', 'm', "Commit message when publishing docs."),
     ]
 
     def initialize_options(self):
         """Initialize user options
         """
-        self.commit_message = "Updated docs"
+        self.message = "Updated docs"
 
     def finalize_options(self):
         """Finalize user options
@@ -171,10 +174,10 @@ class PublishDocs(Command):
 
         subprocess.run(['git', 'add', '--all'],
                        cwd=temp_gh_pages_dir, check=True)
-        print("\nCommitting changes...")
-        subprocess.run(['git', 'commit', '-m', self.commit_message],
-                       cwd=temp_gh_pages_dir, check=True)
         try:
+            print("\nCommitting changes...")
+            subprocess.run(['git', 'commit', '-m', self.message],
+                           cwd=temp_gh_pages_dir, check=True)
             print("\nPushing to github...")
             subprocess.run(['git', 'push', 'origin', 'gh-pages'],
                            cwd=temp_gh_pages_dir, check=True)

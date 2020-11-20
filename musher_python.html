@@ -227,6 +227,23 @@
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt id="musher.decode_mp3_from_file">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">decode_mp3_from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.decode_mp3_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decode an mp3 file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – File path to a .mp3 file.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>.mp3 file information.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="framecutter">
 <h2>Framecutter<a class="headerlink" href="#framecutter" title="Permalink to this headline">¶</a></h2>
@@ -403,7 +420,7 @@ and braw profiles. Defaults to False.</p></li>
 
 <dl class="py function">
 <dt id="musher.detect_key">
-<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">detect_key</code><span class="sig-paren">(</span><em class="sig-param">normalized_samples: List[List[float]], sample_rate: float = 44100.0, profile_type: str = 'Bgate', use_polphony: bool = True, use_three_chords: bool = True, num_harmonics: int = 4, slope: float = 0.6, use_maj_min: bool = False, pcp_size: int = 36, frame_size: int = 4096, hop_size: int = 512, window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7fd5d271ba80&gt;, max_num_peaks: int = 0, window_size: float = 0.5</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.detect_key" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">detect_key</code><span class="sig-paren">(</span><em class="sig-param">normalized_samples: List[List[float]], sample_rate: float = 44100.0, profile_type: str = 'Bgate', use_polphony: bool = True, use_three_chords: bool = True, num_harmonics: int = 4, slope: float = 0.6, use_maj_min: bool = False, pcp_size: int = 36, frame_size: int = 4096, hop_size: int = 512, window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7f9d6fc01b40&gt;, max_num_peaks: int = 0, window_size: float = 0.5</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.detect_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes key estimate given normalized samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -501,7 +518,7 @@ or descending by magnitude (height)). Defaults to ‘position’.</p></li>
 <h2>Windowing<a class="headerlink" href="#windowing" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="musher.windowing">
-<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">windowing</code><span class="sig-paren">(</span><em class="sig-param">audio_frame: List[float], window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7fd5d2218180&gt;, zero_padding_size: int = 0, zero_phase: bool = True, _normalize: bool = True</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.windowing" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">windowing</code><span class="sig-paren">(</span><em class="sig-param">audio_frame: List[float], window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7f9d6fc01780&gt;, zero_padding_size: int = 0, zero_phase: bool = True, _normalize: bool = True</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.windowing" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies windowing to an audio signal.</p>
 <p>It optionally applies zero-phase windowing and optionally adds zero-padding. The resulting windowed frame size is
 equal to the incoming frame size plus the number of padded zeros. By default, the available windows are normalized

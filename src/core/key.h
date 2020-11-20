@@ -30,23 +30,23 @@ struct KeyOutput {
  * @brief Select a key profile given the type.
  *
  * About the Key Profiles:
- * - 'Diatonic' - binary profile with diatonic notes of both modes. Could be useful for ambient music or diatonic music
+ * - **Diatonic** - Binary profile with diatonic notes of both modes. Could be useful for ambient music or diatonic music
  *      which is not strictly 'tonal functional'
- * - 'Tonic Triad' - just the notes of the major and minor chords. Exclusively for testing.
- * - 'Krumhansl' - reference key profiles after cognitive experiments with users. They should work generally fine for
+ * - **Tonic Triad** - Just the notes of the major and minor chords. Exclusively for testing.
+ * - **Krumhansl** - Reference key profiles after cognitive experiments with users. They should work generally fine for
  *      pop music.
- * - 'Temperley' - key profiles extracted from corpus analysis of euroclassical music. Therefore, they perform best on
+ * - **Temperley** - Key profiles extracted from corpus analysis of euroclassical music. Therefore, they perform best on
  *      this repertoire (especially in minor).
- * - 'Shaath' -  profiles based on Krumhansl's specifically tuned to popular and electronic music.
- * - 'Noland' - profiles from Bach's 'Well Tempered Klavier'.
- * - 'edma' - automatic profiles extracted from corpus analysis of electronic dance music [3]. They normally perform
+ * - **Shaath** -  Profiles based on Krumhansl's specifically tuned to popular and electronic music.
+ * - **Noland** - Profiles from Bach's 'Well Tempered Klavier'.
+ * - **Edma** - Automatic profiles extracted from corpus analysis of electronic dance music [3]. They normally perform
  *      better that Shaath's
- * - 'edmm' - automatic profiles extracted from corpus analysis of electronic dance music and manually tweaked according
+ * - **Edmm** - Automatic profiles extracted from corpus analysis of electronic dance music and manually tweaked according
  *      to heuristic observation. It will report major modes (which are poorly represented in EDM) as minor, but improve
  *      performance otherwise [3].
- * - 'braw' - profiles obtained by calculating the median profile for each mode from a subset of BeatPort dataset. There
+ * - **Braw** - Profiles obtained by calculating the median profile for each mode from a subset of BeatPort dataset. There
  *      is an extra profile obtained from ambiguous tracks that are reported as minor[4]
- * - 'bgate' - same as braw but zeroing the 4 less relevant elements of each profile[4]
+ * - **Bgate** - Same as braw but zeroing the 4 less relevant elements of each profile[4]
  *
  * References:
  *  [1] E. Gómez, "Tonal Description of Polyphonic Audio for Music Content

@@ -15,7 +15,7 @@ Simple musical key detection.
 - [Installation](#installation)
   - [Python (WIP)](#python-wip)
   - [C++](#c)
-    - [Dependencies:](#dependencies)
+    - [Dependencies](#dependencies)
       - [Cmake](#cmake)
       - [Conan](#conan)
     - [Install (WIP)](#install-wip)
@@ -70,7 +70,7 @@ pip install musher
 
 ## C++
 
-### Dependencies:
+### Dependencies
 
 #### Cmake
 

@@ -12,6 +12,7 @@ Simple musical key detection.
   - [Install](#install)
   - [Documentation](#documentation)
   - [Sample Usage](#sample-usage)
+  - [What key profile should I use?](#what-key-profile-should-i-use)
 - [Installation](#installation)
   - [Python (WIP)](#python-wip)
   - [C++](#c)
@@ -20,6 +21,7 @@ Simple musical key detection.
       - [Conan](#conan)
     - [Install (WIP)](#install-wip)
 - [Usage](#usage)
+  - [Key Profiles](#key-profiles)
 - [Development](#development)
   - [Python](#python)
     - [Install normally](#install-normally)
@@ -55,6 +57,8 @@ pip install musher
 ## [Documentation](https://jmaldon1.github.io/Musher/index.html)
 
 ## [Sample Usage](#usage)
+
+## [What key profile should I use?](#key-profiles)
 
 
 # Installation
@@ -131,6 +135,10 @@ print(key_output)
  'scale': 'major',
  'strength': 0.7603224296919142}
 ```
+
+## Key Profiles
+
+[Description of all available key profiles](https://jmaldon1.github.io/Musher/musher_cpp.html#key)
 
 # Development
 

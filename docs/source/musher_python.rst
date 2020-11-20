@@ -20,6 +20,7 @@ Audio Decoders
 .. autofunction:: load_audio_file
 .. autofunction:: decode_wav_from_data
 .. autofunction:: decode_wav_from_file
+.. autofunction:: decode_mp3_from_file
 
 Framecutter
 ----------------

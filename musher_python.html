@@ -86,7 +86,10 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python Documentation</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Musher Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#audio-decoders">Audio Decoders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#audio-decoders">Audio Decoders</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#notes">NOTES</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#framecutter">Framecutter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#hpcp">HPCP</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#mono-mixer">Mono Mixer</a></li>
@@ -174,7 +177,7 @@
 <dl class="py function">
 <dt id="musher.load_audio_file">
 <code class="sig-prename descclassname">musher.</code><code class="sig-name descname">load_audio_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.uint8<span class="p">]</span><a class="headerlink" href="#musher.load_audio_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load an the data from an audio file.</p>
+<dd><p>Load the data from an audio file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – File path to a .wav file.</p>
@@ -192,11 +195,27 @@
 <dt id="musher.decode_wav_from_data">
 <code class="sig-prename descclassname">musher.</code><code class="sig-name descname">decode_wav_from_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_data</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.decode_wav_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decode a wav file.</p>
-<p>WavDecoded.normalized_samples contains:</p>
-<blockquote>
-<div><p>samples[0] holds channel 1</p>
-<p>samples[1] holds channel 2 (Will not exist if mono audio)</p>
-</div></blockquote>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wav_decoded</span> <span class="o">=</span> <span class="n">musher</span><span class="o">.</span><span class="n">decode_wav_from_file</span><span class="p">(</span><span class="n">path_to_mp3_file</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">wav_decoded</span><span class="p">)</span>
+<span class="go">{</span>
+<span class="go">  &#39;avg_bitrate_kbps&#39;: 1411,</span>
+<span class="go">  &#39;bit_depth&#39;: 16,</span>
+<span class="go">  &#39;channels&#39;: 2,</span>
+<span class="go">  &#39;file_type&#39;: &#39;wav&#39;,</span>
+<span class="go">  &#39;length_in_seconds&#39;: 30.0,</span>
+<span class="go">  &#39;mono&#39;: False,</span>
+<span class="go">  &#39;normalized_samples&#39;: array([</span>
+<span class="go">        [ 0., 0., 0., ..., -0.33203125, -0.32833862, -0.3274536 ],</span>
+<span class="go">        [ 0., 0., 0., ..., -0.29162598, -0.27130127, -0.25457764]</span>
+<span class="go">      ], dtype=float32),</span>
+<span class="go">  &#39;sample_rate&#39;: 44100,</span>
+<span class="go">  &#39;samples_per_channel&#39;: 1323000,</span>
+<span class="go">  &#39;stereo&#39;: True</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="#notes-label"><span class="std std-ref">notes</span></a> for extra details.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>file_data</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – WAV file data.</p>
@@ -214,6 +233,8 @@
 <dt id="musher.decode_wav_from_file">
 <code class="sig-prename descclassname">musher.</code><code class="sig-name descname">decode_wav_from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.decode_wav_from_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overloaded wrapper around DecodeWav that accepts a file path to a .wav file.</p>
+<p>See <a class="reference internal" href="#musher.decode_wav_from_data" title="musher.decode_wav_from_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">musher.decode_wav_from_data()</span></code></a> for an example.</p>
+<p>See <a class="reference internal" href="#notes-label"><span class="std std-ref">notes</span></a> for extra details.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – File path to a .wav file.</p>
@@ -231,6 +252,26 @@
 <dt id="musher.decode_mp3_from_file">
 <code class="sig-prename descclassname">musher.</code><code class="sig-name descname">decode_mp3_from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.decode_mp3_from_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decode an mp3 file.</p>
+<p>Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mp3_decoded</span> <span class="o">=</span> <span class="n">musher</span><span class="o">.</span><span class="n">decode_mp3_from_file</span><span class="p">(</span><span class="n">audio_file_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">mp3_decoded</span><span class="p">)</span>
+<span class="go">{</span>
+<span class="go">  &#39;avg_bitrate_kbps&#39;: 1411,</span>
+<span class="go">  &#39;channels&#39;: 2,</span>
+<span class="go">  &#39;file_type&#39;: &#39;wav&#39;,</span>
+<span class="go">  &#39;length_in_seconds&#39;: 30.0,</span>
+<span class="go">  &#39;mono&#39;: False,</span>
+<span class="go">  &#39;normalized_samples&#39;: array([</span>
+<span class="go">        [ 0., 0., 0., ..., -0.33203125, -0.32833862, -0.3274536 ],</span>
+<span class="go">        [ 0., 0., 0., ..., -0.29162598, -0.27130127, -0.25457764]</span>
+<span class="go">      ], dtype=float32),</span>
+<span class="go">  &#39;sample_rate&#39;: 44100,</span>
+<span class="go">  &#39;samples_per_channel&#39;: 1323000,</span>
+<span class="go">  &#39;stereo&#39;: True</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="#notes-label"><span class="std std-ref">notes</span></a> for extra details.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – File path to a .mp3 file.</p>
@@ -244,6 +285,18 @@
 </dl>
 </dd></dl>
 
+<div class="section" id="notes">
+<span id="notes-label"></span><h3>NOTES<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">audio_decoded</span> <span class="o">=</span> <span class="n">musher</span><span class="o">.</span><span class="n">decode_wav_from_file</span><span class="p">(</span><span class="n">abs_audio_file_path</span><span class="p">)</span>
+
+<span class="c1"># Will be audio channel 1.</span>
+<span class="n">channel_one</span> <span class="o">=</span> <span class="n">audio_decoded</span><span class="p">[</span><span class="s2">&quot;normalized_samples&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Will be audio channel 2 OR will not exist if mono audio (audio_decoded[&quot;mono&quot;]==False).</span>
+<span class="n">channel_two_maybe</span> <span class="o">=</span> <span class="n">audio_decoded</span><span class="p">[</span><span class="s2">&quot;normalized_samples&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="framecutter">
 <h2>Framecutter<a class="headerlink" href="#framecutter" title="Permalink to this headline">¶</a></h2>
@@ -420,7 +473,7 @@ and braw profiles. Defaults to False.</p></li>
 
 <dl class="py function">
 <dt id="musher.detect_key">
-<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">detect_key</code><span class="sig-paren">(</span><em class="sig-param">normalized_samples: List[List[float]], sample_rate: float = 44100.0, profile_type: str = 'Bgate', use_polphony: bool = True, use_three_chords: bool = True, num_harmonics: int = 4, slope: float = 0.6, use_maj_min: bool = False, pcp_size: int = 36, frame_size: int = 4096, hop_size: int = 512, window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7f9d6fc01b40&gt;, max_num_peaks: int = 0, window_size: float = 0.5</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.detect_key" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">detect_key</code><span class="sig-paren">(</span><em class="sig-param">normalized_samples: List[List[float]], sample_rate: float = 44100.0, profile_type: str = 'Bgate', use_polphony: bool = True, use_three_chords: bool = True, num_harmonics: int = 4, slope: float = 0.6, use_maj_min: bool = False, pcp_size: int = 36, frame_size: int = 4096, hop_size: int = 512, window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7f7a1848dea0&gt;, max_num_peaks: int = 0, window_size: float = 0.5</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.detect_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes key estimate given normalized samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -518,7 +571,7 @@ or descending by magnitude (height)). Defaults to ‘position’.</p></li>
 <h2>Windowing<a class="headerlink" href="#windowing" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="musher.windowing">
-<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">windowing</code><span class="sig-paren">(</span><em class="sig-param">audio_frame: List[float], window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7f9d6fc01780&gt;, zero_padding_size: int = 0, zero_phase: bool = True, _normalize: bool = True</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.windowing" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">windowing</code><span class="sig-paren">(</span><em class="sig-param">audio_frame: List[float], window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7f7a1848d510&gt;, zero_padding_size: int = 0, zero_phase: bool = True, _normalize: bool = True</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.windowing" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies windowing to an audio signal.</p>
 <p>It optionally applies zero-phase windowing and optionally adds zero-padding. The resulting windowed frame size is
 equal to the incoming frame size plus the number of padded zeros. By default, the available windows are normalized

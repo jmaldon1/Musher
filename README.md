@@ -8,14 +8,18 @@ Simple musical key detection.
 
 - [Musher](#musher)
 - [Table of Contents](#table-of-contents)
+- [Quick Start](#quick-start)
+  - [Install](#install)
+  - [Documentation](#documentation)
+  - [Sample Usage](#sample-usage)
 - [Installation](#installation)
   - [Python (WIP)](#python-wip)
   - [C++](#c)
-    - [Required General Dependencies:](#required-general-dependencies)
-      - [CMAKE](#cmake)
+    - [Dependencies:](#dependencies)
+      - [Cmake](#cmake)
       - [Conan](#conan)
     - [Install (WIP)](#install-wip)
-- [Usage (WIP)](#usage-wip)
+- [Usage](#usage)
 - [Development](#development)
   - [Python](#python)
     - [Install normally](#install-normally)
@@ -28,14 +32,29 @@ Simple musical key detection.
     - [Required dependencies](#required-dependencies)
     - [Running tests](#running-tests)
   - [C++](#c-2)
-- [Documentation](#documentation)
-  - [Dependencies](#dependencies)
+- [Documentation](#documentation-1)
+  - [Link to documentation](#link-to-documentation)
+  - [Dependencies](#dependencies-1)
   - [How to Generate](#how-to-generate)
+  - [Publish to Github Pages](#publish-to-github-pages)
 - [Cleanup](#cleanup)
 - [Useful links](#useful-links)
 - [Credits](#credits)
 
 <!-- /MarkdownTOC -->
+
+
+# Quick Start
+
+## Install
+
+```bash
+pip install musher 
+```
+
+## [Documentation](https://jmaldon1.github.io/Musher/index.html)
+
+## [Sample Usage](#usage)
 
 
 # Installation
@@ -51,9 +70,9 @@ pip install musher
 
 ## C++
 
-### Required General Dependencies:
+### Dependencies:
 
-#### CMAKE
+#### Cmake
 
 ```
 -- MacOS --
@@ -79,7 +98,7 @@ conan install musher
 ```
 
 
-# Usage (WIP)
+# Usage
 
 ```python
 import os
@@ -202,17 +221,31 @@ python setup.py gtest
 
 Generate documentation using Doxygen, Breathe, and Sphinx.
 
+## [Link to documentation](https://jmaldon1.github.io/Musher/index.html)
+
 ## Dependencies
 
-1. [Doxygen >1.5.1](https://www.doxygen.nl/index.html) - C++ Documentation
+1. [Doxygen >1.5.1](https://www.doxygen.nl/index.html) - Generates C++ documentation
 2. [Breathe](https://github.com/michaeljones/breathe) - Translate Doxygen docs to Sphinx docs
-3. [Sphinx](https://github.com/sphinx-doc/sphinx) - Python Docs
+3. [Sphinx](https://github.com/sphinx-doc/sphinx) - Generates python documentation
+4. [C++ dependencies](#dependencies) - Required to build the project
 
 ## How to Generate
+
 ```sh
-python setp.py cmake --docs
+python setup.py cmake --docs
 ```
 
+## Publish to Github Pages
+
+You must install the python module and generate the docs BEFORE running this command.
+
+   1. `pip install -e .`
+   2. [Generate docs](#how-to-generate)
+
+```sh
+python setup.py publish_docs -m "Added docs for new function"
+```
 
 # Cleanup
 
@@ -230,4 +263,4 @@ Python audio libraries:
 
 # Credits
 
-[Essentia](https://github.com/MTG/essentia) - C++ library for audio and music analysis, description and synthesis, including Python bindings
+[Essentia](https://github.com/MTG/essentia) - C++ library for audio and music analysis, description and synthesis, including Python bindings.

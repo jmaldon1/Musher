@@ -48,7 +48,7 @@ struct WavDecoded : AudioDecoded {
 struct Mp3Decoded : AudioDecoded {};
 
 /**
- * @brief Load an the data from an audio file.
+ * @brief Load the data from an audio file.
  *
  * @param file_path File path to a .wav file.
  * @return std::vector<uint8_t> Audio file data.

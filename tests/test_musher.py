@@ -22,7 +22,7 @@ def test_decode_wav_from_data():
         TESTS_DIR_PATH, "..", "data", "audio_files", "mozart_c_major_30sec.wav")
     file_data = musher.load_audio_file(abs_audio_file_path)
     d = musher.decode_wav_from_data(file_data)
-    # print(d)
+    print(d)
 
 
 def test_decode_wav_from_file():

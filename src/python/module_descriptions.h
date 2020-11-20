@@ -15,7 +15,7 @@
 #pragma once
 
 const char* load_audio_file_description = R"(
-  Load an the data from an audio file.
+  Load the data from an audio file.
 
   Args:
     file_path (str): File path to a .wav file.
@@ -27,11 +27,28 @@ const char* load_audio_file_description = R"(
 const char* decode_wav_from_data_description = R"(
   Decode a wav file.
  
-  WavDecoded.normalized_samples contains:
+  Example:
 
-    samples[0] holds channel 1
+    >>> wav_decoded = musher.decode_wav_from_file(path_to_mp3_file)
+    >>> print(wav_decoded)
+    {
+      'avg_bitrate_kbps': 1411,
+      'bit_depth': 16,
+      'channels': 2,
+      'file_type': 'wav',
+      'length_in_seconds': 30.0,
+      'mono': False,
+      'normalized_samples': array([
+            [ 0., 0., 0., ..., -0.33203125, -0.32833862, -0.3274536 ],
+            [ 0., 0., 0., ..., -0.29162598, -0.27130127, -0.25457764]
+          ], dtype=float32),
+      'sample_rate': 44100,
+      'samples_per_channel': 1323000,
+      'stereo': True
+    }
 
-    samples[1] holds channel 2 (Will not exist if mono audio)
+
+  See :ref:`notes<notes_label>` for extra details.
 
   Args:
     file_data (List[int]): WAV file data.
@@ -43,6 +60,10 @@ const char* decode_wav_from_data_description = R"(
 const char* decode_wav_from_file_description = R"(
   Overloaded wrapper around DecodeWav that accepts a file path to a .wav file.
 
+  See :func:`musher.decode_wav_from_data` for an example.
+
+  See :ref:`notes<notes_label>` for extra details.
+
   Args:
     file_path (str): File path to a .wav file.
 
@@ -52,6 +73,27 @@ const char* decode_wav_from_file_description = R"(
 
 const char* decode_mp3_from_file_description = R"(
   Decode an mp3 file.
+
+  Example
+
+    >>> mp3_decoded = musher.decode_mp3_from_file(audio_file_data)
+    >>> print(mp3_decoded)
+    {
+      'avg_bitrate_kbps': 1411,
+      'channels': 2,
+      'file_type': 'wav',
+      'length_in_seconds': 30.0,
+      'mono': False,
+      'normalized_samples': array([
+            [ 0., 0., 0., ..., -0.33203125, -0.32833862, -0.3274536 ],
+            [ 0., 0., 0., ..., -0.29162598, -0.27130127, -0.25457764]
+          ], dtype=float32),
+      'sample_rate': 44100,
+      'samples_per_channel': 1323000,
+      'stereo': True
+    }
+
+  See :ref:`notes<notes_label>` for extra details.
 
   Args:
     file_path (str): File path to a .mp3 file.

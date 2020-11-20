@@ -96,8 +96,15 @@ class CleanBuildCommand(Command):
 class PublishDocs(Command):
     """Publish the generated documentation to Github pages
 
+        You must install the python module and generate the docs BEFORE running this command.
+            1. pip install -e .
+            2. python setup.py cmake --docs
+
         Example usage:
             python setup.py publish_docs -m "Added docs for new function"
+
+        Helpful reads:
+            https://discourse.gohugo.io/t/simple-deployment-to-gh-pages/5003
     """
     user_options = [
         ('message=', 'm', "Commit message when publishing docs."),

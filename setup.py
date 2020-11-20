@@ -7,8 +7,7 @@ import shutil
 import glob
 import codecs
 import signal
-import shutil
-from subprocess import STDOUT
+from typing import Callable
 from setuptools import setup, find_packages, Extension, Command
 from setuptools.command.test import test
 
@@ -94,87 +93,99 @@ class CleanBuildCommand(Command):
         print(u'\u2713', "cleaning done")
 
 
-class DeployDocs(Command):
-    """Deploy the generated documentation to Github pages
+class PublishDocs(Command):
+    """Publish the generated documentation to Github pages
     """
-    user_options = []
+    user_options = [
+        ('commit-message', 'm', "Commit message when publishing docs."),
+    ]
 
     def initialize_options(self):
         """Initialize user options
         """
-        pass
+        self.commit_message = "Updated docs"
 
     def finalize_options(self):
         """Finalize user options
         """
         pass
 
-    def delete_folder_contents(self, directory: str):
-        for file_name in os.listdir(directory):
-            file_path = os.path.join(directory, file_name)
-            try:
-                if os.path.isfile(file_path) or os.path.islink(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
-            except OSError as err:
-                print(f'Failed to delete {file_path}. Reason: {err}')
-
-    def copytree(self, src: str, dst: str, symlinks: bool=False, ignore: bool=None):
+    def copytree(self, src: str, dst: str, ignore: Callable = None):
         """copytree for older python versions that don't have the latest
         version of shutil.copytree(dirs_exist_ok=True)
         """
-        for item in os.listdir(src):
-            src_item = os.path.join(src, item)
-            dst_item = os.path.join(dst, item)
-            if os.path.isdir(src_item):
-                shutil.copytree(src_item, dst_item, symlinks, ignore)
+        if os.path.isdir(src):
+            if not os.path.isdir(dst):
+                os.makedirs(dst)
+            files = os.listdir(src)
+            if ignore is not None:
+                ignored = ignore(src, files)
             else:
-                shutil.copy2(src_item, dst_item)
+                ignored = set()
+            for _file in files:
+                if _file not in ignored:
+                    self.copytree(os.path.join(src, _file),
+                                  os.path.join(dst, _file),
+                                  ignore)
+        else:
+            shutil.copyfile(src, dst)
 
     def run(self):
-        """Run the clean
+        """Publish to github pages
         """
 
         sphinx_build_dir = os.path.join(ROOT_DIR, 'build', 'docs', 'sphinx')
         temp_gh_pages_dir = os.path.join(ROOT_DIR, 'temp_gh_pages')
-        git_dir = os.path.join(ROOT_DIR, '.git')
+        git_worktree = os.path.join(
+            ROOT_DIR, '.git', 'worktrees', "temp_gh_pages")
+        nojekyll = os.path.join(temp_gh_pages_dir, ".nojekyll")
+
+        # Cleanup to ensure we are starting fresh.
         try:
             shutil.rmtree(temp_gh_pages_dir)
         except OSError:
             pass
+        subprocess.run(['git', 'worktree', 'prune'], cwd=ROOT_DIR, check=True)
+        try:
+            shutil.rmtree(git_worktree)
+        except OSError:
+            pass
 
-        os.mkdir(temp_gh_pages_dir)
-        # subprocess.run(['git', 'worktree', 'prune'], cwd=ROOT_DIR, check=True)
-        # try:
-        #     shutil.rmtree(os.path.join(git_dir, 'worktrees', "temp_gh_pages"))
-        # except OSError:
-        #     pass
-
-        # subprocess.run(['git', 'worktree', 'add', '-B', 'gh-pages',
-        #                 'temp_gh_pages', 'origin/gh-pages'], cwd=ROOT_DIR, check=True)
-        subprocess.run(['git', 'clone', '.git', '--branch', 'gh-pages',
-                        'temp_gh_pages'], cwd=ROOT_DIR, check=True)
-        # print("Deleting old docs...")
-        # self.delete_folder_contents(temp_gh_pages_dir)
+        print("\nAdding gh-pages branch as a worktree...")
+        subprocess.run(['git', 'worktree', 'add', '-B', 'gh-pages',
+                        temp_gh_pages_dir, 'origin/gh-pages'], cwd=ROOT_DIR, check=True)
+        # Pull to ensure we are up to date.
+        subprocess.run(['git', 'pull'], cwd=temp_gh_pages_dir, check=True)
 
         # Copy newly generated docs
-        print("Copying newly generated docs to git branch...")
-        shutil.copytree(sphinx_build_dir, temp_gh_pages_dir, dirs_exist_ok=True)
-
-        subprocess.run(['git', 'add', '--all'], cwd=temp_gh_pages_dir, check=True)
+        print("\nCopying newly generated docs to git branch...")
         try:
-            subprocess.run(['git', 'commit', '-m', 'Updated Docs'],
-                        cwd=temp_gh_pages_dir, check=True)
-            subprocess.run(['git', 'push'], cwd=temp_gh_pages_dir, check=True)
+            shutil.copytree(sphinx_build_dir, temp_gh_pages_dir,
+                            dirs_exist_ok=True)
+        except TypeError:
+            # Not using python3.8+
+            self.copytree(sphinx_build_dir, temp_gh_pages_dir)
+
+        # Add a .nojekyll files to ensure gh-pages uses index.html as the root of the site.
+        open(nojekyll, 'w').close()
+
+        subprocess.run(['git', 'add', '--all'],
+                       cwd=temp_gh_pages_dir, check=True)
+        print("\nCommitting changes...")
+        subprocess.run(['git', 'commit', '-m', self.commit_message],
+                       cwd=temp_gh_pages_dir, check=True)
+        try:
+            print("\nPushing to github...")
+            subprocess.run(['git', 'push', 'origin', 'gh-pages'],
+                           cwd=temp_gh_pages_dir, check=True)
         except subprocess.CalledProcessError as err:
             if err.returncode != 1:
-                # returncode == 1 means there was no updates to push
-                print(err)
+                # returncode == 1 means the branch is up to date.
+                raise err
 
         shutil.rmtree(temp_gh_pages_dir)
 
-        # subprocess.run(['git', 'worktree', 'prune'], cwd=ROOT_DIR, check=True)
+        subprocess.run(['git', 'worktree', 'prune'], cwd=ROOT_DIR, check=True)
 
 
 class CMakeBuild(Command):
@@ -408,7 +419,7 @@ setup(
         "ctest": CTest,
         "gtest": GTest,
         "clean": CleanBuildCommand,
-        "deploy": DeployDocs
+        "publish_docs": PublishDocs
     },
     zip_safe=False,
     long_description=long_description,

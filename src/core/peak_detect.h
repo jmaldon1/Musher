@@ -61,7 +61,7 @@ std::vector<std::tuple<double, double>> PeakDetect(const std::vector<double> &in
                                                    bool interpolate = true,
                                                    std::string sort_by = "position",
                                                    int max_num_peaks = 0,
-                                                   double range = 0,
+                                                   double range = 0.,
                                                    int min_pos = 0,
                                                    int max_pos = 0);
 

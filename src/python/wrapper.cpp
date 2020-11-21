@@ -5,6 +5,7 @@
 #include "src/core/audio_decoders.h"
 #include "src/core/hpcp.h"
 #include "src/core/mono_mixer.h"
+#include "src/core/peak_detect.h"
 #include "src/core/spectral_peaks.h"
 #include "src/core/spectrum.h"
 #include "src/core/windowing.h"
@@ -70,6 +71,20 @@ py::array_t<double> _ConvertToFrequencySpectrum(const std::vector<double>& audio
   return ConvertSequenceToPyarray(vec);
 }
 
+std::vector<std::tuple<double, double>> _PeakDetect(const std::vector<double>& inp,
+                                                    double threshold,
+                                                    bool interpolate,
+                                                    std::string sort_by,
+                                                    int max_num_peaks,
+                                                    double range,
+                                                    int min_pos,
+                                                    int max_pos) {
+  // Figure out how to pass vector of tuples back without copy.
+  std::vector<std::tuple<double, double>> vec =
+      PeakDetect(inp, threshold, interpolate, sort_by, max_num_peaks, range, min_pos, max_pos);
+  return vec;
+}
+
 std::vector<std::tuple<double, double>> _SpectralPeaks(const std::vector<double>& input_spectrum,
                                                        double threshold,
                                                        std::string sort_by,
@@ -81,8 +96,6 @@ std::vector<std::tuple<double, double>> _SpectralPeaks(const std::vector<double>
   std::vector<std::tuple<double, double>> vec =
       SpectralPeaks(input_spectrum, threshold, sort_by, max_num_peaks, sample_rate, min_pos, max_pos);
   return vec;
-  // py::array_t<std::tuple<double, double>> numpy_arr = py::cast(vec);
-  // return numpy_arr;
 }
 
 py::array_t<double> _HPCPFromPeaks(const std::vector<std::tuple<double, double>>& peaks,

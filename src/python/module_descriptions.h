@@ -1,6 +1,6 @@
 /**
  * @file module_descriptions.h
- * @author your name (you@domain.com)
+ * @author Joshua Maldonado
  * @brief Python module doc strings.
  *
  * Block strings in C++:
@@ -81,7 +81,7 @@ const char* decode_mp3_from_file_description = R"(
     {
       'avg_bitrate_kbps': 1411,
       'channels': 2,
-      'file_type': 'wav',
+      'file_type': 'mp3',
       'length_in_seconds': 30.0,
       'mono': False,
       'normalized_samples': array([
@@ -213,6 +213,27 @@ const char* convert_to_frequency_spectrum_description = R"(
     numpy.ndarray[numpy.float64]: Frequency spectrum of the input audio signal.
 )";
 
+const char* peak_detect_description = R"(
+  Computes the frequency spectrum of an array of Reals.
+
+  The resulting spectrum has a size which is half the size of the input array plus one.
+  Bins contain raw (linear) magnitude values.
+
+  Args:
+    inp (List[float]): Input vector.
+    threshold (float, optional): Peaks below this given threshold are not outputted. Defaults to -1000.0.
+    interpolate (bool, optional): Enables interpolation. Defaults to True.
+    sort_by (str, optional): Ordering type of the outputted peaks (ascending by position
+      or descending by height). Defaults to 'position'.
+    max_num_peaks (int, optional): Maximum number of returned peaks (set to 0 to return all peaks). Defaults to 0.
+    range (float, optional): Input range. Defaults to 0.0.
+    min_pos (int, optional): Maximum frequency (position) of the range to evaluate [Hz]. Defaults to 0.
+    max_pos (int, optional): Minimum frequency (position) of the range to evaluate [Hz]. Defaults to 0.
+
+  Returns:
+    musher.peaks: List of peaks, each peak being a tuple (positions, heights).
+)";
+
 const char* spectral_peaks_description = R"(
   Extracts peaks from a spectrum.
 
@@ -238,7 +259,7 @@ const char* spectral_peaks_description = R"(
     max_pos (int, optional): Minimum frequency (position) of the range to evaluate [Hz]. Defaults to 0.
 
   Returns:
-    musher.peaks: list of spectral peaks, each peak being a tuple (frequency, magnitude).
+    musher.peaks: List of spectral peaks, each peak being a tuple (frequency, magnitude).
 )";
 
 const char* hpcp_description = R"(
@@ -338,7 +359,7 @@ const char* detect_key_description = R"(
     hop_size (int, optional): Hop size between frames of framecutter. Defaults to 512.
     window_type_func (Callable[[List[float]], List[float]], optional): The window type function.
       Examples: BlackmanHarris92dB, BlackmanHarris62dB... Defaults to BlackmanHarris62dB.
-    max_num_peaks (int, optional): Maximum number of returned peaks (set to 0 to return all peaks) for spectral peaks. Defaults to 0.
+    max_num_peaks (int, optional): Maximum number of returned peaks (set to 0 to return all peaks) for spectral peaks. Defaults to 100.
     window_size (float, optional): Size, in semitones, of the window used for the weighting for HPCP. Defaults to 0.5.
 
   Returns:

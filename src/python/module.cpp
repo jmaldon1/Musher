@@ -52,6 +52,10 @@ PYBIND11_MODULE(musher_python, m) {
   m.def("convert_to_frequency_spectrum", &_ConvertToFrequencySpectrum, convert_to_frequency_spectrum_description,
         py::arg("audio_frame"));
 
+  m.def("peak_detect", &_PeakDetect, peak_detect_description, py::arg("inp"), py::arg("threshold") = -1000.0,
+        py::arg("interpolate") = true, py::arg("sort_by") = "position", py::arg("max_num_peaks") = 0,
+        py::arg("range") = 0., py::arg("min_pos") = 0, py::arg("max_pos") = 0);
+
   m.def("spectral_peaks", &_SpectralPeaks, spectral_peaks_description, py::arg("input_spectrum"),
         py::arg("threshold") = -1000.0, py::arg("sort_by") = "position", py::arg("max_num_peaks") = 100,
         py::arg("sample_rate") = 44100., py::arg("min_pos") = 0, py::arg("max_pos") = 0);
@@ -77,5 +81,5 @@ PYBIND11_MODULE(musher_python, m) {
         py::arg("use_three_chords") = true, py::arg("num_harmonics") = 4, py::arg("slope") = .6,
         py::arg("use_maj_min") = false, py::arg("pcp_size") = 36, py::arg("frame_size") = 4096,
         py::arg("hop_size") = 512, py::arg("window_type_func") = py::cpp_function(BlackmanHarris62dB),
-        py::arg("max_num_peaks") = 0, py::arg("window_size") = .5);
+        py::arg("max_num_peaks") = 100, py::arg("window_size") = .5);
 }

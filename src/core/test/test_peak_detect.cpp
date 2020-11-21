@@ -262,3 +262,29 @@ TEST(PeakDetection, RangeWithMinAndMaxPositions) {
   std::vector<double> expected_height = { 2, 1 };
   EXPECT_VEC_EQ(actual_height, expected_height);
 }
+
+/**
+ * @brief Basic quadratic interpolation
+ * 
+ * This test was based off the image on this page:
+ *
+ * https://ccrma.stanford.edu/~jos/sasp/Quadratic_Interpolation_Spectral_Peaks.html
+ * 
+ */
+TEST(PeakDetection, QuadraticInterpolation) {
+  double left_point_val = 2;
+  double middle_point_val = 4;
+  double right_point_val = 3;
+  int middle_point_index = 0;
+
+  double expected_peak_location = 0.166667;        // Just over 0
+  double expected_peak_height_estimate = 4.04167;  // Just over 4
+
+  double actual_peak_location;
+  double actual_peak_height_estimate;
+  std::tie(actual_peak_location, actual_peak_height_estimate) =
+      QuadraticInterpolation(left_point_val, middle_point_val, right_point_val, middle_point_index);
+
+  EXPECT_NEAR(expected_peak_location, actual_peak_location, 0.00001);
+  EXPECT_NEAR(expected_peak_height_estimate, actual_peak_height_estimate, 0.00001);
+}

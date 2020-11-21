@@ -33,7 +33,7 @@ void printMatrix(T matrix, const char spacing = ' ') {
   }
 }
 
-const std::vector<std::vector<double>> allCutFrames(const std::vector<double> buffer,
+const std::vector<std::vector<double>> AllCutFrames(const std::vector<double> buffer,
                                                     int frame_size,
                                                     int hop_size,
                                                     bool start_from_center,

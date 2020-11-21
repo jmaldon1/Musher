@@ -34,6 +34,8 @@ Simple musical key detection.
     - [Required dependencies](#required-dependencies)
     - [Running tests](#running-tests)
   - [C++](#c-2)
+    - [Required dependencies](#required-dependencies-1)
+    - [Running tests](#running-tests-1)
 - [Documentation](#documentation-1)
   - [Link to documentation](#link-to-documentation)
   - [Dependencies](#dependencies-1)
@@ -216,6 +218,12 @@ pytest ./tests -v
 ```
 
 ## C++
+
+### Required dependencies
+
+1. [Google Test](https://github.com/google/googletest) (Conan should install this for you when the project is built in debug mode.)
+
+### Running tests
 
 ```sh
 # Ctest

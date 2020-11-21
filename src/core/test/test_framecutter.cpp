@@ -19,7 +19,7 @@ TEST(Framecutter, TestEmptyBuffer) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<std::vector<double>> expected_frames({ {} });
@@ -38,7 +38,7 @@ TEST(Framecutter, TestEmptyCentered) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<std::vector<double>> expected_frames({ {} });
@@ -57,7 +57,7 @@ TEST(Framecutter, TestOne) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame(100, 0.);
@@ -80,7 +80,7 @@ TEST(Framecutter, TestOneCentered) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame(100, 0.);
@@ -105,7 +105,7 @@ TEST(Framecutter, TestLastFrame) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame(100);
@@ -130,7 +130,7 @@ TEST(Framecutter, TestLastFrame2) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame(101);
@@ -155,7 +155,7 @@ TEST(Framecutter, TestLastFrameCentered) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size);
@@ -190,7 +190,7 @@ TEST(Framecutter, TestLastFrameCentered2) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size);
@@ -225,7 +225,7 @@ TEST(Framecutter, TestLastFrameCentered3) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size);
@@ -260,7 +260,7 @@ TEST(Framecutter, TestBigHopSize) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size);
@@ -285,7 +285,7 @@ TEST(Framecutter, TestBigHopSize2) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size);
@@ -320,7 +320,7 @@ TEST(Framecutter, TestBigHopSizeCentered) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size);
@@ -351,7 +351,7 @@ TEST(Framecutter, TestBigHopSizeCentered2) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size);
@@ -385,7 +385,7 @@ TEST(Framecutter, TestComplex) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<std::vector<double>> expected_frames({
@@ -409,7 +409,7 @@ TEST(Framecutter, TestComplex2) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<std::vector<double>> expected_frames({
@@ -433,7 +433,7 @@ TEST(Framecutter, TestComplexCentered) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<std::vector<double>> expected_frames({
@@ -459,7 +459,7 @@ TEST(Framecutter, TestComplexCentered2) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<std::vector<double>> expected_frames({
@@ -485,7 +485,7 @@ TEST(Framecutter, TestEOF) {
   bool last_frame_to_end_of_file = true;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<std::vector<double>> expected_frames({
@@ -510,7 +510,7 @@ TEST(Framecutter, TestEOF2) {
   bool last_frame_to_end_of_file = true;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<std::vector<double>> expected_frames({
@@ -535,7 +535,7 @@ TEST(Framecutter, TestEOF3) {
   bool last_frame_to_end_of_file = true;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<std::vector<double>> expected_frames({
@@ -559,7 +559,7 @@ TEST(Framecutter, TestEOF4) {
   bool last_frame_to_end_of_file = true;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<std::vector<double>> expected_frames({
@@ -584,7 +584,7 @@ TEST(Framecutter, TestEOF5) {
   bool last_frame_to_end_of_file = true;
   double valid_frame_threshold_ratio = 0.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<std::vector<double>> expected_frames({
@@ -639,7 +639,7 @@ TEST_P(TestDropLastFrameStartFromZeroEvenFrameSizeMultipleParameters, TestDropLa
   std::vector<double> buffer(buffer_size);
   std::iota(std::begin(buffer), std::end(buffer), 1.);
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   EXPECT_MATRIX_EQ(actual_frames, expected_frames);
@@ -662,7 +662,7 @@ TEST(Framecutter, TestDontDropLastFrameStartFromZeroEvenFrameSize) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 1.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size);
@@ -708,7 +708,7 @@ TEST(Framecutter, TestDontDropLastFrameStartFromZeroEvenFrameSize2) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = .9;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size);
@@ -754,7 +754,7 @@ TEST(Framecutter, TestDontDropLastFrameStartFromZeroEvenFrameSize3) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = .2;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size);
@@ -829,7 +829,7 @@ TEST_P(TestDropLastFrameStartFromZeroOddFrameSizeMultipleParameters, TestDropLas
   std::vector<double> buffer(buffer_size);
   std::iota(std::begin(buffer), std::end(buffer), 1.);
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   EXPECT_MATRIX_EQ(actual_frames, expected_frames);
@@ -852,7 +852,7 @@ TEST(Framecutter, TestDontDropLastFrameStartFromZeroOddFrameSize) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = 1.;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size);
@@ -898,7 +898,7 @@ TEST(Framecutter, TestDontDropLastFrameStartFromZeroOddFrameSize2) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = .9;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size);
@@ -944,7 +944,7 @@ TEST(Framecutter, TestDontDropLastFrameStartFromZeroOddFrameSize3) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = .2;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size);
@@ -1023,7 +1023,7 @@ TEST_P(TestDropLastFrameStartFromCenterEvenFrameSizeMultipleParameters, TestDrop
   std::vector<double> buffer(buffer_size);
   std::iota(std::begin(buffer), std::end(buffer), 1.);
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   EXPECT_MATRIX_EQ(actual_frames, expected_frames);
@@ -1046,7 +1046,7 @@ TEST(Framecutter, TestDontDropLastFrameStartFromCenterEvenFrameSize) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = .5;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size, 0.);
@@ -1096,7 +1096,7 @@ TEST(Framecutter, TestDontDropLastFrameStartFromCenterEvenFrameSize2) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = .2;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size, 0.);
@@ -1175,7 +1175,7 @@ TEST_P(TestDropLastFrameStartFromCenterOddFrameSizeMultipleParameters, TestDropL
   std::vector<double> buffer(buffer_size);
   std::iota(std::begin(buffer), std::end(buffer), 1.);
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   EXPECT_MATRIX_EQ(actual_frames, expected_frames);
@@ -1198,7 +1198,7 @@ TEST(Framecutter, TestDontDropLastFrameStartFromCenterOddFrameSize) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = .5;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size, 0.);
@@ -1244,7 +1244,7 @@ TEST(Framecutter, TestDontDropLastFrameStartFromCenterOddFrameSize2) {
   bool last_frame_to_end_of_file = false;
   double valid_frame_threshold_ratio = .2;
   std::vector<std::vector<double>> actual_frames;
-  actual_frames = allCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
+  actual_frames = AllCutFrames(buffer, frame_size, hop_size, start_from_center, last_frame_to_end_of_file,
                                valid_frame_threshold_ratio);
 
   std::vector<double> expected_frame1(frame_size, 0.);

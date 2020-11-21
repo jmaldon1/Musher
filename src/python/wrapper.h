@@ -33,6 +33,16 @@ py::array_t<double> _BlackmanHarris62dB(const std::vector<double>& window);
 py::array_t<double> _BlackmanHarris92dB(const std::vector<double>& window);
 
 py::array_t<double> _ConvertToFrequencySpectrum(const std::vector<double>& audio_frame);
+
+std::vector<std::tuple<double, double>> _PeakDetect(const std::vector<double>& inp,
+                                                    double threshold,
+                                                    bool interpolate,
+                                                    std::string sort_by,
+                                                    int max_num_peaks,
+                                                    double range,
+                                                    int min_pos,
+                                                    int max_pos);
+
 std::vector<std::tuple<double, double>> _SpectralPeaks(const std::vector<double>& input_spectrum,
                                                        double threshold,
                                                        std::string sort_by,

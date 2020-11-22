@@ -1,6 +1,12 @@
 import os
 
 import musher
+try:
+    from math import isclose
+except AttributeError:
+    # Python <3.5
+    def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+        return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
 
 def test_detect_key(test_data_dir: str):
@@ -18,11 +24,16 @@ def test_detect_key(test_data_dir: str):
     expected_key_output = {
         'key': 'C',
         'scale': 'major',
-        'strength': 0.7603224296919142,
-        'first_to_second_relative_strength': 0.6078072169442225
+        'strength': 0.760322,
+        'first_to_second_relative_strength': 0.607807
     }
 
-    assert actual_key_output == expected_key_output
+    assert actual_key_output['key'] == expected_key_output['key']
+    assert actual_key_output['scale'] == expected_key_output['scale']
+    assert isclose(actual_key_output['strength'],
+                   expected_key_output['strength'], rel_tol=1e-6)
+    assert isclose(actual_key_output['first_to_second_relative_strength'],
+                   expected_key_output['first_to_second_relative_strength'], rel_tol=1e-6)
 
 
 def test_estimate_key(test_data_dir: str):
@@ -66,4 +77,9 @@ def test_estimate_key(test_data_dir: str):
         'first_to_second_relative_strength': 0.6078072169442225
     }
 
-    assert actual_key_output == expected_key_output
+    assert actual_key_output['key'] == expected_key_output['key']
+    assert actual_key_output['scale'] == expected_key_output['scale']
+    assert isclose(actual_key_output['strength'],
+                   expected_key_output['strength'], rel_tol=1e-6)
+    assert isclose(actual_key_output['first_to_second_relative_strength'],
+                   expected_key_output['first_to_second_relative_strength'], rel_tol=1e-6)

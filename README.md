@@ -110,8 +110,8 @@ conan install musher
 import os
 import musher
 
-abs_audio_file_path = os.path.join("data", "audio_files", "mozart_c_major_30sec.wav")
-wav_decoded = musher.decode_wav_from_file(abs_audio_file_path)
+audio_file_path = os.path.join("data", "audio_files", "mozart_c_major_30sec.wav")
+wav_decoded = musher.decode_wav_from_file(audio_file_path)
 print(wav_decoded)
 {'avg_bitrate_kbps': 1411,
  'bit_depth': 16,

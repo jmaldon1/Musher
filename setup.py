@@ -423,7 +423,7 @@ setup(
              extra_link_args=extra_link_args(),
          )
     ],
-    setup_requires=['wheel', 'pybind11>=2.6.0', 'numpy>=1.19.3'],
+    setup_requires=['wheel', 'pybind11>=2.6.0', 'numpy>=1.19.4'],
     cmdclass={
         "cmake": CMakeBuild,
         "ctest": CTest,

@@ -1,5 +1,5 @@
 # PEP 518 requirements (Pip 10+ required)
 # Install required packages before building this package.
 [build-system]
-requires = ["setuptools", "wheel", "pybind11>=2.6.0", "numpy>=1.19.3"]
+requires = ["setuptools", "wheel", "pybind11>=2.6.0", "numpy>=1.19.4"]
 build-backend = "setuptools.build_meta"

@@ -4,7 +4,11 @@
 
 using namespace musher::core;
 
-TEST(TestSpectrum, FrequencySpectrum) {
+/**
+ * @brief Basic conversion to frequency spectrum.
+ * 
+ */
+TEST(Spectrum, FrequencySpectrum) {
   size_t inp_size = 100;
   // inp = [1, 1, 1, 1, 1, 1 ...]
   std::vector<double> inp(inp_size, 1.0);
@@ -19,7 +23,12 @@ TEST(TestSpectrum, FrequencySpectrum) {
   EXPECT_VEC_EQ(expected_out, actual_out);
 }
 
-TEST(TestSpectrum, Magnitude) {
+
+/**
+ * @brief Calculate magnitude of complex pair.
+ * 
+ */
+TEST(Spectrum, Magnitude) {
   std::complex<double> complex_pair(3, -4);
   double expected_magnitude = 5;
   double actual_magnitude = Magnitude(complex_pair);

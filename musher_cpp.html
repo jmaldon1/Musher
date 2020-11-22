@@ -826,7 +826,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N6musher4core10PeakDetectERKNSt6vectorIdEEdbNSt6stringEidii">
-<span id="_CPPv3N6musher4core10PeakDetectERKNSt6vectorIdEEdbNSt6stringEidii"></span><span id="_CPPv2N6musher4core10PeakDetectERKNSt6vectorIdEEdbNSt6stringEidii"></span><span id="musher::core::PeakDetect__std::vector:double:CR.double.b.ss.i.double.i.i"></span><span class="target" id="namespacemusher_1_1core_1a5cfd4f6c17123e902cd0497fbf291227"></span>std::vector&lt;std::tuple&lt;double, double&gt;&gt; <code class="sig-prename descclassname">musher::core<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">PeakDetect</code><span class="sig-paren">(</span><em class="property">const</em> std::vector&lt;double&gt; &amp;<em>inp</em>, double <em>threshold</em> = -1000.0, bool <em>interpolate</em> = true, std::string <em>sort_by</em> = &quot;position&quot;, int <em>max_num_peaks</em> = 0, double <em>range</em> = 0, int <em>min_pos</em> = 0, int <em>max_pos</em> = 0<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6musher4core10PeakDetectERKNSt6vectorIdEEdbNSt6stringEidii" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N6musher4core10PeakDetectERKNSt6vectorIdEEdbNSt6stringEidii"></span><span id="_CPPv2N6musher4core10PeakDetectERKNSt6vectorIdEEdbNSt6stringEidii"></span><span id="musher::core::PeakDetect__std::vector:double:CR.double.b.ss.i.double.i.i"></span><span class="target" id="namespacemusher_1_1core_1a9fd3010b29de0c2ca143647fee72001c"></span>std::vector&lt;std::tuple&lt;double, double&gt;&gt; <code class="sig-prename descclassname">musher::core<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">PeakDetect</code><span class="sig-paren">(</span><em class="property">const</em> std::vector&lt;double&gt; &amp;<em>inp</em>, double <em>threshold</em> = -1000.0, bool <em>interpolate</em> = true, std::string <em>sort_by</em> = &quot;position&quot;, int <em>max_num_peaks</em> = 0, double <em>range</em> = 0., int <em>min_pos</em> = 0, int <em>max_pos</em> = 0<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6musher4core10PeakDetectERKNSt6vectorIdEEdbNSt6stringEidii" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Detects local maxima (peaks) in a vector. </p>
 <p>The algorithm finds positive slopes and detects a peak when the slope changes sign and the peak is above the threshold.</p>
 <p><dl class="simple">
@@ -1038,6 +1038,21 @@
 <div class="section" id="windowing">
 <h1>Windowing<a class="headerlink" href="#windowing" title="Permalink to this headline">¶</a></h1>
 <dl class="cpp function">
+<dt id="_CPPv4N6musher4core6SquareERKNSt6vectorIdEE">
+<span id="_CPPv3N6musher4core6SquareERKNSt6vectorIdEE"></span><span id="_CPPv2N6musher4core6SquareERKNSt6vectorIdEE"></span><span id="musher::core::Square__std::vector:double:CR"></span><span class="target" id="namespacemusher_1_1core_1a6258561813c5fa54c5cab0a963652f57"></span>std::vector&lt;double&gt; <code class="sig-prename descclassname">musher::core<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">Square</code><span class="sig-paren">(</span><em class="property">const</em> std::vector&lt;double&gt; &amp;<em>window</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6musher4core6SquareERKNSt6vectorIdEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Square windowing function. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>std::vector&lt;double&gt; Square window. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">window</span></code>: Audio signal window. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
 <dt id="_CPPv4N6musher4core14BlackmanHarrisERKNSt6vectorIdEEdddd">
 <span id="_CPPv3N6musher4core14BlackmanHarrisERKNSt6vectorIdEEdddd"></span><span id="_CPPv2N6musher4core14BlackmanHarrisERKNSt6vectorIdEEdddd"></span><span id="musher::core::BlackmanHarris__std::vector:double:CR.double.double.double.double"></span><span class="target" id="namespacemusher_1_1core_1ada28fc07cf353ae1accc21da8100658c"></span>std::vector&lt;double&gt; <code class="sig-prename descclassname">musher::core<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">BlackmanHarris</code><span class="sig-paren">(</span><em class="property">const</em> std::vector&lt;double&gt; &amp;<em>window</em>, double <em>a0</em>, double <em>a1</em>, double <em>a2</em>, double <em>a3</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6musher4core14BlackmanHarrisERKNSt6vectorIdEEdddd" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Blackmanharris windowing algorithm. </p>
@@ -1060,12 +1075,32 @@
 <dl class="cpp function">
 <dt id="_CPPv4N6musher4core18BlackmanHarris62dBERKNSt6vectorIdEE">
 <span id="_CPPv3N6musher4core18BlackmanHarris62dBERKNSt6vectorIdEE"></span><span id="_CPPv2N6musher4core18BlackmanHarris62dBERKNSt6vectorIdEE"></span><span id="musher::core::BlackmanHarris62dB__std::vector:double:CR"></span><span class="target" id="namespacemusher_1_1core_1a3321ce5169bb3ec7778016cbdb02300d"></span>std::vector&lt;double&gt; <code class="sig-prename descclassname">musher::core<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">BlackmanHarris62dB</code><span class="sig-paren">(</span><em class="property">const</em> std::vector&lt;double&gt; &amp;<em>window</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6musher4core18BlackmanHarris62dBERKNSt6vectorIdEE" title="Permalink to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p>Blackmanharris62db windowing algorithm. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>std::vector&lt;double&gt; Blackmanharris62db window. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">window</span></code>: Audio signal window. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N6musher4core18BlackmanHarris92dBERKNSt6vectorIdEE">
 <span id="_CPPv3N6musher4core18BlackmanHarris92dBERKNSt6vectorIdEE"></span><span id="_CPPv2N6musher4core18BlackmanHarris92dBERKNSt6vectorIdEE"></span><span id="musher::core::BlackmanHarris92dB__std::vector:double:CR"></span><span class="target" id="namespacemusher_1_1core_1aecbe02c8b82e5ca3bb4b0d91be1f4e32"></span>std::vector&lt;double&gt; <code class="sig-prename descclassname">musher::core<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">BlackmanHarris92dB</code><span class="sig-paren">(</span><em class="property">const</em> std::vector&lt;double&gt; &amp;<em>window</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6musher4core18BlackmanHarris92dBERKNSt6vectorIdEE" title="Permalink to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p>Blackmanharris92db windowing algorithm. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>std::vector&lt;double&gt; Blackmanharris92db window. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">window</span></code>: Audio signal window. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N6musher4core9NormalizeERKNSt6vectorIdEE">

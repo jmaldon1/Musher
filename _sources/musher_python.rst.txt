@@ -75,10 +75,11 @@ Spectral Peaks
 Windowing
 ---------
 
-.. autofunction:: windowing
+.. autofunction:: square
 .. autofunction:: blackmanharris
 .. autofunction:: blackmanharris62dB
 .. autofunction:: blackmanharris92dB
+.. autofunction:: windowing
 
 
 .. Musher module

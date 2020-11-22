@@ -473,7 +473,7 @@ and braw profiles. Defaults to False.</p></li>
 
 <dl class="py function">
 <dt id="musher.detect_key">
-<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">detect_key</code><span class="sig-paren">(</span><em class="sig-param">normalized_samples: List[List[float]], sample_rate: float = 44100.0, profile_type: str = 'Bgate', use_polphony: bool = True, use_three_chords: bool = True, num_harmonics: int = 4, slope: float = 0.6, use_maj_min: bool = False, pcp_size: int = 36, frame_size: int = 4096, hop_size: int = 512, window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7fb6ad11e5a0&gt;, max_num_peaks: int = 0, window_size: float = 0.5</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.detect_key" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">detect_key</code><span class="sig-paren">(</span><em class="sig-param">normalized_samples: List[List[float]], sample_rate: float = 44100.0, profile_type: str = 'Bgate', use_polphony: bool = True, use_three_chords: bool = True, num_harmonics: int = 4, slope: float = 0.6, use_maj_min: bool = False, pcp_size: int = 36, frame_size: int = 4096, hop_size: int = 512, window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7f6bb3f2d360&gt;, max_num_peaks: int = 100, window_size: float = 0.5</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#musher.detect_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes key estimate given normalized samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -494,7 +494,7 @@ and braw profiles. Defaults to False.</p></li>
 <li><p><strong>hop_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Hop size between frames of framecutter. Defaults to 512.</p></li>
 <li><p><strong>window_type_func</strong> (<em>Callable</em><em>[</em><em>[</em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>, </em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – The window type function.
 Examples: BlackmanHarris92dB, BlackmanHarris62dB… Defaults to BlackmanHarris62dB.</p></li>
-<li><p><strong>max_num_peaks</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of returned peaks (set to 0 to return all peaks) for spectral peaks. Defaults to 0.</p></li>
+<li><p><strong>max_num_peaks</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of returned peaks (set to 0 to return all peaks) for spectral peaks. Defaults to 100.</p></li>
 <li><p><strong>window_size</strong> (<em>float</em><em>, </em><em>optional</em>) – Size, in semitones, of the window used for the weighting for HPCP. Defaults to 0.5.</p></li>
 </ul>
 </dd>
@@ -558,7 +558,7 @@ or descending by magnitude (height)). Defaults to ‘position’.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of spectral peaks, each peak being a tuple (frequency, magnitude).</p>
+<dd class="field-even"><p>List of spectral peaks, each peak being a tuple (frequency, magnitude).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>musher.peaks</p>
@@ -570,29 +570,15 @@ or descending by magnitude (height)). Defaults to ‘position’.</p></li>
 <div class="section" id="windowing">
 <h2>Windowing<a class="headerlink" href="#windowing" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="musher.windowing">
-<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">windowing</code><span class="sig-paren">(</span><em class="sig-param">audio_frame: List[float], window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7fb6ad11e2a0&gt;, zero_padding_size: int = 0, zero_phase: bool = True, _normalize: bool = True</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.windowing" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies windowing to an audio signal.</p>
-<p>It optionally applies zero-phase windowing and optionally adds zero-padding. The resulting windowed frame size is
-equal to the incoming frame size plus the number of padded zeros. By default, the available windows are normalized
-(to have an area of 1) and then scaled by a factor of 2.</p>
-<p>References:</p>
-<p>[1] F. J. Harris, On the use of windows for harmonic analysis with the discrete Fourier transform,
-Proceedings of the IEEE, vol. 66, no. 1, pp. 51-83, Jan. 1978</p>
-<p>[2] Window function - Wikipedia, the free encyclopedia, <a class="reference external" href="http://en.wikipedia.org/wiki/Window_function">http://en.wikipedia.org/wiki/Window_function</a></p>
+<dt id="musher.square">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">square</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.square" title="Permalink to this definition">¶</a></dt>
+<dd><p>Square windowing function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>audio_frame</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Input audio frame.</p></li>
-<li><p><strong>window_type_func</strong> (<em>Callable</em><em>[</em><em>[</em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>, </em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – The window type function. Examples: BlackmanHarris92dB, BlackmanHarris62dB…
-Defaults to BlackmanHarris92dB.</p></li>
-<li><p><strong>zero_padding_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of the zero-padding. Defaults to 0.</p></li>
-<li><p><strong>zero_phase</strong> (<em>bool</em><em>, </em><em>optional</em>) – Enables zero-phase windowing. Defaults to True.</p></li>
-<li><p><strong>_normalize</strong> (<em>bool</em><em>, </em><em>optional</em>) – Specify whether to normalize windows (to have an area of 1) and then scale by a factor of 2. Defaults to True.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>window</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Audio signal window.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Windowed audio frame.</p>
+<dd class="field-even"><p>Square window.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.ndarray[numpy.float64]</p>
@@ -627,13 +613,66 @@ Defaults to BlackmanHarris92dB.</p></li>
 <dl class="py function">
 <dt id="musher.blackmanharris62dB">
 <code class="sig-prename descclassname">musher.</code><code class="sig-name descname">blackmanharris62dB</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.blackmanharris62dB" title="Permalink to this definition">¶</a></dt>
-<dd><p>blackmanharris62dB description.</p>
+<dd><p>Blackmanharris62db windowing algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>window</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Audio signal window.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Blackmanharris62db window.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray[numpy.float64]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="musher.blackmanharris92dB">
 <code class="sig-prename descclassname">musher.</code><code class="sig-name descname">blackmanharris92dB</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window</span><span class="p">:</span> <span class="n">List<span class="p">[</span>float<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.blackmanharris92dB" title="Permalink to this definition">¶</a></dt>
-<dd><p>blackmanharris92dB description.</p>
+<dd><p>Blackmanharris92db windowing algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>window</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Audio signal window.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Blackmanharris92db window.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray[numpy.float64]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="musher.windowing">
+<code class="sig-prename descclassname">musher.</code><code class="sig-name descname">windowing</code><span class="sig-paren">(</span><em class="sig-param">audio_frame: List[float], window_type_func: Callable[[List[float]], List[float]] = &lt;built-in method  of PyCapsule object at 0x7f6bb4611f00&gt;, zero_padding_size: int = 0, zero_phase: bool = True, _normalize: bool = True</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#musher.windowing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies windowing to an audio signal.</p>
+<p>It optionally applies zero-phase windowing and optionally adds zero-padding. The resulting windowed frame size is
+equal to the incoming frame size plus the number of padded zeros. By default, the available windows are normalized
+(to have an area of 1) and then scaled by a factor of 2.</p>
+<p>References:</p>
+<p>[1] F. J. Harris, On the use of windows for harmonic analysis with the discrete Fourier transform,
+Proceedings of the IEEE, vol. 66, no. 1, pp. 51-83, Jan. 1978</p>
+<p>[2] Window function - Wikipedia, the free encyclopedia, <a class="reference external" href="http://en.wikipedia.org/wiki/Window_function">http://en.wikipedia.org/wiki/Window_function</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>audio_frame</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Input audio frame.</p></li>
+<li><p><strong>window_type_func</strong> (<em>Callable</em><em>[</em><em>[</em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>, </em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – The window type function. Examples: BlackmanHarris92dB, BlackmanHarris62dB…
+Defaults to BlackmanHarris92dB.</p></li>
+<li><p><strong>zero_padding_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of the zero-padding. Defaults to 0.</p></li>
+<li><p><strong>zero_phase</strong> (<em>bool</em><em>, </em><em>optional</em>) – Enables zero-phase windowing. Defaults to True.</p></li>
+<li><p><strong>_normalize</strong> (<em>bool</em><em>, </em><em>optional</em>) – Specify whether to normalize windows (to have an area of 1) and then scale by a factor of 2. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Windowed audio frame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray[numpy.float64]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

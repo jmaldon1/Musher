@@ -8,6 +8,14 @@
 namespace musher {
 namespace core {
 
+std::vector<double> Square(const std::vector<double> &window) {
+  std::vector<double> ret(window);
+  for (int i=0; i<int(window.size()); i++) {
+    ret[i] = 1.0;
+  }
+  return ret;
+}
+
 std::vector<double> BlackmanHarris(const std::vector<double> &window, double a0, double a1, double a2, double a3) {
   std::vector<double> ret(window);
   int window_size = window.size();

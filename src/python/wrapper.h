@@ -28,6 +28,7 @@ py::array_t<double> _Windowing(const std::vector<double>& audio_frame,
                                bool zero_phase,
                                bool _normalize);
 
+py::array_t<double> _Square(const std::vector<double>& window);
 py::array_t<double> _BlackmanHarris(const std::vector<double>& window, double a0, double a1, double a2, double a3);
 py::array_t<double> _BlackmanHarris62dB(const std::vector<double>& window);
 py::array_t<double> _BlackmanHarris92dB(const std::vector<double>& window);

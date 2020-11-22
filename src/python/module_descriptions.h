@@ -176,6 +176,16 @@ const char* windowing_description = R"(
     numpy.ndarray[numpy.float64]: Windowed audio frame.
 )";
 
+const char* square_description = R"(
+  Square windowing function.
+
+  Args:
+    window (List[float]): Audio signal window.
+
+  Returns:
+    numpy.ndarray[numpy.float64]: Square window.
+)";
+
 const char* blackmanharris_description = R"(
   Blackmanharris windowing algorithm.
 
@@ -193,11 +203,23 @@ const char* blackmanharris_description = R"(
 )";
 
 const char* blackmanharris62dB_description = R"(
-blackmanharris62dB description.
+  Blackmanharris62db windowing algorithm.
+
+  Args:
+    window (List[float]): Audio signal window.
+
+  Returns:
+    numpy.ndarray[numpy.float64]: Blackmanharris62db window.
 )";
 
 const char* blackmanharris92dB_description = R"(
-blackmanharris92dB description.
+  Blackmanharris92db windowing algorithm.
+
+  Args:
+    window (List[float]): Audio signal window.
+
+  Returns:
+    numpy.ndarray[numpy.float64]: Blackmanharris92db window.
 )";
 
 const char* convert_to_frequency_spectrum_description = R"(

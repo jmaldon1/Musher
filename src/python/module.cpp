@@ -42,6 +42,7 @@ PYBIND11_MODULE(musher_python, m) {
         py::arg("window_type_func") = py::cpp_function(BlackmanHarris92dB), py::arg("zero_padding_size") = 0,
         py::arg("zero_phase") = true, py::arg("_normalize") = true);
 
+  m.def("square", &_Square, square_description, py::arg("window"));
   m.def("blackmanharris", &_BlackmanHarris, blackmanharris_description, py::arg("window"), py::arg("a0"), py::arg("a1"),
         py::arg("a2"), py::arg("a3"));
 

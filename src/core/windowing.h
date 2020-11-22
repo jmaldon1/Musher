@@ -8,6 +8,14 @@ namespace musher {
 namespace core {
 
 /**
+ * @brief Square windowing function.
+ * 
+ * @param window Audio signal window.
+ * @return std::vector<double> Square window.
+ */
+std::vector<double> Square(const std::vector<double> &window);
+
+/**
  * @brief Blackmanharris windowing algorithm.
  * 
  * Window functions help control spectral leakage when doing Fourier Analysis.

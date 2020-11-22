@@ -51,6 +51,11 @@ py::array_t<double> _Windowing(const std::vector<double>& audio_frame,
   return ConvertSequenceToPyarray(vec);
 }
 
+py::array_t<double> _Square(const std::vector<double>& window) {
+  const std::vector<double> vec = Square(window);
+  return ConvertSequenceToPyarray(vec);
+}
+
 py::array_t<double> _BlackmanHarris(const std::vector<double>& window, double a0, double a1, double a2, double a3) {
   const std::vector<double> vec = BlackmanHarris(window, a0, a1, a2, a3);
   return ConvertSequenceToPyarray(vec);

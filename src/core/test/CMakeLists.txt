@@ -12,6 +12,7 @@ project_test(musher-core-test
         test_musher_utils.cpp
         test_peak_detect.cpp
         test_spectrum.cpp
+        test_windowing.cpp
     DEPENDENCIES
         INTERNAL
             musher-core

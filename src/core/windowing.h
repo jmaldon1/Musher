@@ -28,7 +28,21 @@ std::vector<double> Square(const std::vector<double> &window);
  * @return std::vector<double> BlackmanHarris window.
  */
 std::vector<double> BlackmanHarris(const std::vector<double> &window, double a0, double a1, double a2, double a3);
+
+/**
+ * @brief Blackmanharris62db windowing algorithm.
+ * 
+ * @param window Audio signal window.
+ * @return std::vector<double> Blackmanharris62db window.
+ */
 std::vector<double> BlackmanHarris62dB(const std::vector<double> &window);
+
+/**
+ * @brief Blackmanharris92db windowing algorithm.
+ * 
+ * @param window Audio signal window.
+ * @return std::vector<double> Blackmanharris92db window.
+ */
 std::vector<double> BlackmanHarris92dB(const std::vector<double> &window);
 
 /**

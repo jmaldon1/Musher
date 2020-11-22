@@ -1,8 +1,6 @@
 find_package(Doxygen REQUIRED)
 find_package(Sphinx REQUIRED)
 
-# == Doxygen ==
-
 # Find all headers for this project
 file(GLOB_RECURSE PROJECT_HEADERS ${CMAKE_SOURCE_DIR}/src/*.h)
 # Find project python module
@@ -12,6 +10,7 @@ if (NOT EXISTS "${PROJECT_PYTHON_SO}")
     MESSAGE(FATAL_ERROR "Python module is required to generate documentation. Consider using `pip install -e .`")
 endif()
 
+# == Doxygen ==
 set(DOXYGEN_INPUT_DIR ${PROJECT_SOURCE_DIR}/src/core)
 set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/doxygen)
 set(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_DIR}/html/index.html)

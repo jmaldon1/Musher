@@ -1,4 +1,4 @@
-"""Setup that is responsible for building the C/C++ python extensions.
+"""Setup that is responsible for building the C++ python extensions.
 """
 import os
 import platform

@@ -40,7 +40,7 @@ def get_build_dir() -> str:
 # pylint: disable=no-self-use
 # pylint: disable=unnecessary-pass
 # pylint: disable=attribute-defined-outside-init
-class CleanBuildCommand(Command):
+class CleanProject(Command):
     """Clean the project directory of temporary files involved with
     building the C extension and python module.
     This will also uninstall the development version of musher.
@@ -82,11 +82,11 @@ class CleanBuildCommand(Command):
         for item in cleanup_list:
             try:  # If item is a dir then remove it
                 shutil.rmtree(item)
-                print(f"deleted {item}")
+                print("deleted {}".format(item))
             except OSError:
                 try:  # If item is a file then remove it
                     os.remove(item)
-                    print(f"deleted {item}")
+                    print("deleted {}".format(item))
                 except OSError:
                     pass
 
@@ -379,8 +379,7 @@ setup(
     packages=find_packages(),
     ext_modules=[
          Extension(
-             # Destination of .so
-             'musher.musher_python',
+             'musher.musher_python',  # Destination of .so
              include_dirs=[
                 # https://caligari.dartmouth.edu/doc/ibmcxx/en_US/doc/complink/tasks/tuinclud.htm
                 # Allows for root level imports within C++
@@ -423,12 +422,12 @@ setup(
              extra_link_args=extra_link_args(),
          )
     ],
-    setup_requires=['wheel', 'pybind11>=2.6.0', 'numpy>=1.19.4'],
+    setup_requires=['wheel', 'pybind11>=2.6.0', 'numpy>=1.18.5'],
     cmdclass={
         "cmake": CMakeBuild,
         "ctest": CTest,
         "gtest": GTest,
-        "clean": CleanBuildCommand,
+        "clean": CleanProject,
         "publish_docs": PublishDocs
     },
     zip_safe=False,

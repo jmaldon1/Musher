@@ -28,4 +28,5 @@ done
 # Install packages and test
 for PYBIN in /opt/python/*/bin/; do
     "${PYBIN}/pip" install python-manylinux-demo --no-index -f /io/wheelhouse
-    (cd "$HOME"; 
+    (cd "$HOME"; "${PYBIN}/nosetests" pymanylinuxdemo)
+done

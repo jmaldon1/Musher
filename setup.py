@@ -433,7 +433,7 @@ setup(
     },
     zip_safe=False,
     long_description=long_description,
-    author='Brian Silver, Joshua Maldonado',
+    author='Joshua Maldonado, Brian Silver',
     author_email='joshjm9915@gmail.com',
     url='https://github.com/jmaldon1/Musher',
     license='MIT',

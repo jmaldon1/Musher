@@ -375,7 +375,7 @@ def extra_link_args() -> list:
 setup(
     name='musher',
     version='0.1',
-    description='Mush songs together',
+    description='Simple musical key detection',
     packages=find_packages(),
     ext_modules=[
          Extension(
@@ -385,7 +385,7 @@ setup(
                 # Allows for root level imports within C++
                 ROOT_DIR,
                 # 3rd party libraries
-                os.path.join(ROOT_DIR, "src", "third-party"),
+                "src/third-party",
                 pybind11.get_include()
              ],
              sources=[
@@ -422,7 +422,7 @@ setup(
              extra_link_args=extra_link_args(),
          )
     ],
-    setup_requires=['wheel', 'pybind11>=2.6.0', 'numpy>=1.18.5'],
+    setup_requires=['wheel', 'cython', 'pybind11>=2.6.0', 'numpy>=1.18.5'],
     cmdclass={
         "cmake": CMakeBuild,
         "ctest": CTest,

@@ -126,6 +126,8 @@ Utilities
 Windowing
 =========
 
+.. doxygenfunction:: Square
+   :project: musher
 .. doxygenfunction:: BlackmanHarris
    :project: musher
 .. doxygenfunction:: BlackmanHarris62dB

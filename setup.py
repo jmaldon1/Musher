@@ -353,17 +353,7 @@ def extra_compile_args() -> list:
         args += ['-mmacosx-version-min=10.12']
 
     if os.name != 'nt':
-        compiler = platform.python_compiler()
-        found_gcc_compiler_ver = re.search(r'GCC\s*([\d.]+)', compiler)
-        if found_gcc_compiler_ver:
-            gcc_major, _, _ = found_gcc_compiler_ver.groups()[0].split(".")
-            if int(gcc_major) < 5:
-                # gcc versions < 5 use -std=c++1y instead of -std=c++14
-                args += ['-std=c++1y']
-            else:
-                args += ['-std=c++14']
-        else:
-            args += ['-std=c++14']
+        args += ['-std=c++14']
 
     return args
 

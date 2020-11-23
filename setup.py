@@ -356,7 +356,8 @@ def extra_compile_args() -> list:
         compiler = platform.python_compiler()
         found_gcc_compiler_ver = re.search(r'GCC\s*([\d.]+)', compiler)
         if found_gcc_compiler_ver:
-            print(found_gcc_compiler_ver.group()[0])
+            print(compiler)
+            print(found_gcc_compiler_ver)
             gcc_major = found_gcc_compiler_ver.group()[0].split(".")[0]
             if int(gcc_major) < 5:
                 # gcc versions < 5 use -std=c++1y instead of -std=c++14

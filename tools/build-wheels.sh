@@ -6,11 +6,12 @@ PROJECT_DIR=/io/
 WHEELHOUSE=$PROJECT_DIR/wheelhouse
 
 is_unsupported_python() {
+    PYTHON_EXECUTABLE=$1
     # Only Python 3.5+ is supported
-    if python -c 'import sys; sys.exit(not sys.version_info >= (3, 5))'; then
-        return 0
+    if $PYTHON_EXECUTABLE -c 'import sys; sys.exit(not sys.version_info >= (3, 5))'; then
+        return 1
     fi
-    return 1
+    return 0
 }
 
 prepare_system() {
@@ -20,7 +21,7 @@ prepare_system() {
 
 build_wheels() {
     for PYBIN in /opt/python/*/bin; do
-        if is_unsupported_python; then
+        if is_unsupported_python ${PYBIN}/python; then
             continue
         fi
         "${PYBIN}/pip" wheel $PROJECT_DIR --no-deps -w $WHEELHOUSE
@@ -30,7 +31,7 @@ build_wheels() {
 run_tests() {
     # Install packages and test
     for PYBIN in /opt/python/*/bin/; do
-        if is_unsupported_python; then
+        if is_unsupported_python ${PYBIN}/python; then
             continue
         fi
         "${PYBIN}/pip" install -r $PROJECT_DIR/dev_requirements.txt

@@ -17,6 +17,8 @@ $ DOCKER_IMAGE='quay.io/pypa/manylinux2014_x86_64'
 $ PLAT='manylinux2014_x86_64'
 ```
 
+### Run
+
 ```shell
 $ docker container run -t --rm -e PLAT=$PLAT -v "$(pwd)":/io "$DOCKER_IMAGE" /io/tools/build-wheels.sh
 ```
@@ -27,7 +29,7 @@ $ docker container run -t --rm -e PLAT=$PLAT -v "$(pwd)":/io "$DOCKER_IMAGE" /io
 
 The docker container will run the `tools/build-wheels.sh` script.
 
-Output will be stored in the project root `./wheelhouse/*.whl`
+Output will be stored in the project root `wheelhouse/*.whl`
 
 
 ## CI/CD Travis creation of wheels

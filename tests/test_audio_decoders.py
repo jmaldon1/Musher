@@ -1,4 +1,5 @@
 import os
+import math
 
 import numpy as np
 import musher
@@ -81,13 +82,16 @@ def test_decode_mp3_from_file(test_data_dir: str):
         'stereo': True
     }
 
+    # linux_i686 produces a slightly different result.
     expected_normalized_samples_sum = -32665783.0
+    expected_normalized_samples_sum_linux_i686 = -32665751.0
 
     # We are not checking normalized_samples.
     assert all(item in actual_decoded_mp3.items()
                for item in expected_decoded_mp3.items())
 
-    assert actual_normalized_samples_sum == expected_normalized_samples_sum
+    assert actual_normalized_samples_sum in (
+        expected_normalized_samples_sum, expected_normalized_samples_sum_linux_i686)
 
 
 # OTHERS

@@ -22,9 +22,9 @@ def test_hpcp():
     expected_hpcp = [0.,
                      0.,
                      0.,
-                     0.13404961527026432,
+                     0.13404962,
                      0.,
-                     0.24760913541668633,
+                     0.24760914,
                      0.,
                      0.,
                      0.,
@@ -32,7 +32,7 @@ def test_hpcp():
                      1.,
                      0.]
 
-    assert np.array_equal(actual_hpcp, expected_hpcp)
+    assert np.allclose(actual_hpcp, expected_hpcp, rtol=1e-8)
 
 
 def test_hpcp_from_peaks():
@@ -57,9 +57,9 @@ def test_hpcp_from_peaks():
     expected_hpcp = [0.,
                      0.,
                      0.,
-                     0.13404961527026432,
+                     0.13404962,
                      0.,
-                     0.24760913541668633,
+                     0.24760914,
                      0.,
                      0.,
                      0.,
@@ -67,4 +67,4 @@ def test_hpcp_from_peaks():
                      1.,
                      0.]
 
-    assert np.array_equal(actual_hpcp, expected_hpcp)
+    assert np.allclose(actual_hpcp, expected_hpcp, rtol=1e-8)

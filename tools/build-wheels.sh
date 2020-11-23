@@ -6,11 +6,13 @@ PROJECT_DIR=/io/
 WHEELHOUSE=$PROJECT_DIR/wheelhouse
 
 is_unsupported_python() {
-    PYTHON_EXECUTABLE=$1
     # Only Python 3.5+ is supported
+    PYTHON_EXECUTABLE=$1
     if $PYTHON_EXECUTABLE -c 'import sys; sys.exit(not sys.version_info >= (3, 5))'; then
+        echo "$PYTHON_EXECUTABLE is supported"
         return 1
     fi
+    echo "$PYTHON_EXECUTABLE is not supported"
     return 0
 }
 

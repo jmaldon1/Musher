@@ -1,52 +1,64 @@
-# language: python
-# python:
-#   - "3.5"
-#   - "3.6"      # current default Python on Travis CI
-#   - "3.7"
-#   - "3.8"
-#   - "3.9"
+# notifications:
+#   email: false
 
-# # command to install dependencies
-# # install:
-# #   - pip install -r requirements.txt
+# matrix:
+#   include:
+#     - sudo: required
+#       services:
+#         - docker
+#       env: DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
+#            PLAT=manylinux2010_x86_64
+#     - sudo: required
+#       services:
+#         - docker
+#       env: DOCKER_IMAGE=quay.io/pypa/manylinux2014_i686
+#            PLAT=manylinux2014
+#     - sudo: required
+#       services:
+#         - docker
+#       env: DOCKER_IMAGE=quay.io/pypa/manylinux2014_x86_64
+#            PLAT=manylinux2014
 
-# # command to run tests
+# install:
+#   - docker pull $DOCKER_IMAGE
+
 # script:
-#   - pytest
-notifications:
-  email: false
+#   - docker run --rm -e PLAT=$PLAT -v `pwd`:/io $DOCKER_IMAGE $PRE_CMD /io/tools/build-wheels.sh
 
-matrix:
+language: python
+
+jobs:
   include:
-    # - sudo: required
-    #   services:
-    #     - docker
-    #   env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
-    #        PLAT=manylinux1_x86_64
-    # - sudo: required
-    #   services:
-    #     - docker
-    #   env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
-    #        PRE_CMD=linux32
-    #        PLAT=manylinux1_i686
-    - sudo: required
-      services:
-        - docker
-      env: DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
-           PLAT=manylinux2010_x86_64
-    - sudo: required
-      services:
-        - docker
-      env: DOCKER_IMAGE=quay.io/pypa/manylinux2014_i686
-           PLAT=manylinux2014
-    - sudo: required
-      services:
-        - docker
-      env: DOCKER_IMAGE=quay.io/pypa/manylinux2014_x86_64
-           PLAT=manylinux2014
+    # perform a linux build
+    - services: docker
+    # perform a linux ARMv8 build
+    - services: docker
+      arch: arm64
+    # perform a linux PPC64LE build
+    - services: docker
+      arch: ppc64le
+    # perform a linux S390X build
+    - services: docker
+      arch: s390x
+    # and a mac build
+    - os: osx
+      language: shell
+    # and a windows build
+    - os: windows
+      language: shell
+      before_install:
+        - choco install python --version 3.8.0
+        - export PATH="/c/Python38:/c/Python38/Scripts:$PATH"
+        # make sure it's on PATH as 'python3'
+        - ln -s /c/Python38/python.exe /c/Python38/python3.exe
+
+env:
+  global:
+    - CIBW_SKIP="cp27-*"
 
 install:
-  - docker pull $DOCKER_IMAGE
+  - python3 -m pip install cibuildwheel==1.6.4
 
 script:
-  - docker run --rm -e PLAT=$PLAT -v `pwd`:/io $DOCKER_IMAGE $PRE_CMD /io/tools/build-wheels.sh
+  # build the wheels, put them into './wheelhouse'
+  - python3 -m cibuildwheel --output-dir wheelhouse

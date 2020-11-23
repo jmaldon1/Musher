@@ -1,6 +1,7 @@
 .DS_Store
 *.dylib
 temp_gh_pages
+wheelhouse
 
 # VSCODE
 .vscode/

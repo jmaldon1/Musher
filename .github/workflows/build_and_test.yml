@@ -28,10 +28,10 @@ jobs:
         run: |
           python -m cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_SKIP: "cp27-* pp27-*"
+          # Python 2.7 and PyPy (PyPy mainly due to MacOS numpy bugs) are unsupported.
+          CIBW_SKIP: "cp27-* pp*"
           # Perform tests on each wheel build
-          # Use an older numpy version of mac to avoid `Buggy Accelerate Backend` error.
-          CIBW_BEFORE_TEST: "{project}/tools/cibw-before-test.sh"
+          CIBW_BEFORE_TEST: pip install -r dev_requirements.txt
           CIBW_TEST_COMMAND: "pytest {project}/tests"
 
       - name: Check wheels

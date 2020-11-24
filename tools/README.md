@@ -37,3 +37,12 @@ Wheels output will be stored in the project root `wheelhouse/*.whl`
 
 
 ## CI/CD Github Actions creation of wheels
+
+### Config file
+
+Ensure config file exists in `.github/workflows/`
+
+### Conditions
+
+1. Building and testing occurs on all pushes and pull requests to the repo.
+2. Uploading to PyPi only occurs on tagged commits that begin with a `v`. eg. `v1.0.0`

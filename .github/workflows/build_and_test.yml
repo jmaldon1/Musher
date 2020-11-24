@@ -32,3 +32,8 @@ jobs:
           CIBW_BUILD: "cp36-*"
           CIBW_BEFORE_TEST: "pip install -r dev_requirements.txt"
           CIBW_TEST_COMMAND: "pytest {project}/tests"
+
+      - name: Check wheels
+        run: |
+          ls wheelhouse
+          echo "WE MADE IT!!!"

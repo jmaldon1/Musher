@@ -1,5 +1,6 @@
 #include "src/core/framecutter.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <stdexcept>

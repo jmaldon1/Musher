@@ -54,7 +54,7 @@ jobs:
 
 env:
   global:
-    - CIBW_SKIP="cp27-*"
+    - CIBW_SKIP="cp27-* pp27-*"
 
 install:
   - python3 -m pip install cibuildwheel==1.6.4

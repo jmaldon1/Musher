@@ -47,7 +47,7 @@ env:
     - CIBW_SKIP="cp27-* pp27-*"
 
 install:
-  - python3 -m pip install cibuildwheel==1.6.4
+  - python3 -m pip install cibuildwheel>=1.4.1
   - python3 -m pip install pytest
   - pytest
 

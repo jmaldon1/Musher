@@ -1,35 +1,39 @@
-# Build wheels for every linux distro
+# Build wheels for every linux distro, mac, and windows
+
+## Tool
+
+https://github.com/joerick/cibuildwheel
 
 ## Demo
 
-https://github.com/pypa/python-manylinux-demo
+https://github.com/joerick/cibuildwheel-autopypi-example
 
-## Local creation of wheels
 
-### Dependency
+## Local creation of wheels (Linux wheels only)
 
-[Docker](https://www.docker.com/)
+### Dependencies
+
+1. [Docker](https://www.docker.com/)
+2. `pip install cibuildwheel`
+
 
 ### Set variables
 
+Edit the `tools/.cibuildwheel.env` file with the desired settings. Then export with the following command:
+
 ```shell
-$ DOCKER_IMAGE='quay.io/pypa/manylinux2014_x86_64'
-$ PLAT='manylinux2014_x86_64'
+$ source tools/.cibuildwheel.env
 ```
 
 ### Run
 
 ```shell
-$ docker container run -t --rm -e PLAT=$PLAT -v "$(pwd)":/io "$DOCKER_IMAGE" /io/tools/build-wheels.sh
+$ cibuildwheel --platform linux
 ```
 
 ### Notes
 
-`/io/` is the volume mount on the docker image for this project.
-
-The docker container will run the `tools/build-wheels.sh` script.
-
-Output will be stored in the project root `wheelhouse/*.whl`
+Wheels output will be stored in the project root `wheelhouse/*.whl`
 
 
-## CI/CD Travis creation of wheels
+## CI/CD Github Actions creation of wheels

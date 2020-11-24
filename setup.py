@@ -7,7 +7,6 @@ import shutil
 import glob
 import codecs
 import signal
-import re
 from typing import Callable
 from setuptools import setup, find_packages, Extension, Command
 from setuptools.command.test import test
@@ -16,11 +15,10 @@ import pybind11
 
 
 README_NOTE = """\
-.. note::
+   # Note
 
    For the latest source, discussion, etc, please visit the
-   `GitHub repository <https://github.com/jmaldon1/Musher>`_\n\n
-
+   [GitHub repository](https://github.com/jmaldon1/Musher)\n\n
 """
 
 with codecs.open('README.md', encoding='utf-8') as fobj:
@@ -438,6 +436,7 @@ setup(
     },
     zip_safe=False,
     long_description=long_description,
+    long_description_content_type='text/markdown',
     author='Joshua Maldonado, Brian Silver',
     author_email='joshjm9915@gmail.com',
     url='https://github.com/jmaldon1/Musher',

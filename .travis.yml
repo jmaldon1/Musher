@@ -1,21 +1,22 @@
-language: python
-python:
-  - 3.5
-  - 3.6
-  - 3.7
-  - 3.8
+# language: python
+# python:
+#   - 3.5
+#   - 3.6
+#   - 3.7
+#   - 3.8
 
 stages:
   - Build and Test
 #   - test
 #   # Only execute deployment stage on tagged commits, and from your repository
 #   # (e.g. not PRs). Replace with your repo name.
-#   - deploy
+  - Deploy
 
 env:
   global:
     # Python 2.7 is not supported
     - CIBW_SKIP="cp27-* pp27-*"
+    - CIBW_BUILD="cp36-*"
     # Install dev dependencies before testing
     - CIBW_BEFORE_TEST="pip install -r dev_requirements.txt"
     # Test command
@@ -27,12 +28,16 @@ jobs:
     - stage: Build and Test
     # Perform a linux build on all archs [x86_64, i686, pypy_x86_64, aarch64, ppc64le, s390x]
     - services: docker
-      name: Build Linux wheels
+      name: Build and test Linux wheels
     # Mac build
+    - stage: Build and Test
     - os: osx
+      name: Build and test Mac wheels
       language: shell
     # Windows build
+    - stage: Build and Test
     - os: windows
+      name: Build and test Windows wheels
       language: shell
       before_install:
         - choco install python --version 3.8.0
@@ -51,7 +56,8 @@ script:
 after_success:
   # if the release was tagged, upload them to PyPI
   - |
-    echo "WE MADE IT HERE!!!!"
+    ls wheelhouse
+    echo "WE MADE IT!!!!!"
 
 # after_success:
 #   # if the release was tagged, upload them to PyPI

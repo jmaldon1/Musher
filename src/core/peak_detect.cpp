@@ -1,12 +1,12 @@
 #include "src/core/peak_detect.h"
 
-#include <vector>
-#include <string>
-#include <stdexcept>
-#include <cmath>
-#include <tuple>
 #include <algorithm>
-
+#include <cctype>
+#include <cmath>
+#include <stdexcept>
+#include <string>
+#include <tuple>
+#include <vector>
 
 namespace musher {
 namespace core {
@@ -26,13 +26,14 @@ std::vector<std::tuple<double, double>> PeakDetect(const std::vector<double> &in
                                                    double range,
                                                    int min_pos,
                                                    int max_pos) {
+  int _max_pos = max_pos;
   const int inp_size = inp.size();
   if (inp_size < 2) {
     std::string err_msg = "Peak detection input vector must be greater than 2.";
     throw std::runtime_error(err_msg);
   }
 
-  if (min_pos != 0 && max_pos != 0 && min_pos >= max_pos) {
+  if (min_pos != 0 && _max_pos != 0 && min_pos >= _max_pos) {
     std::string err_msg = "Peak detection max position must be greater than min position.";
     throw std::runtime_error(err_msg);
   }
@@ -50,8 +51,8 @@ std::vector<std::tuple<double, double>> PeakDetect(const std::vector<double> &in
     i = static_cast<int>(std::ceil(min_pos / scale));
   }
 
-  if (max_pos == 0) {
-    max_pos = (inp_size - 1) * scale;
+  if (_max_pos == 0) {
+    _max_pos = (inp_size - 1) * scale;
   }
 
   // Check if lower bound is a peak
@@ -103,7 +104,7 @@ std::vector<std::tuple<double, double>> PeakDetect(const std::vector<double> &in
       }
 
       // We are dividing by scale because the scale should have been accounted for when the user input the value
-      double scale_removed_max_pos = max_pos / scale;
+      double scale_removed_max_pos = _max_pos / scale;
       // Check if element before last is a peak right before breaking the loop
       if (scale_removed_max_pos > inp_size - 2 && scale_removed_max_pos <= inp_size - 1 &&
           inp[inp_size - 1] > inp[inp_size - 2] && inp[inp_size - 1] > threshold) {
@@ -136,7 +137,7 @@ std::vector<std::tuple<double, double>> PeakDetect(const std::vector<double> &in
         }
       }
 
-      if (pos * scale > max_pos) break;
+      if (pos * scale > _max_pos) break;
 
       std::tuple<double, double> peak(pos * scale, val);
       estimated_peaks.push_back(peak);

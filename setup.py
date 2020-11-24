@@ -353,6 +353,12 @@ def extra_compile_args() -> list:
         args += ['-mmacosx-version-min=10.12']
 
     if os.name != 'nt':
+        if platform.machine() == 'i686':
+            # This makes GCC generate modern SSE2 instructions
+            # that give the exact IEEE 754 floating-point semantics.
+            # Basically ensures that calculations using doubles
+            # produce the same result on any architecture.
+            args += ['-msse2']
         args += ['-std=c++14']
 
     return args

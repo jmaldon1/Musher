@@ -1,4 +1,4 @@
-name: Build and upload to PyPI
+name: Build, test, and upload to PyPI
 
 # Build on every branch push, tag push, and pull request change:
 on: [push, pull_request]
@@ -28,8 +28,10 @@ jobs:
         run: |
           python -m cibuildwheel --output-dir wheelhouse
         env:
-          # Python 2.7 and PyPy on MacOS (PyPy mainly due to MacOS numpy bugs) are unsupported.
-          CIBW_SKIP: "cp27-* pp*-macosx_x86_64"
+          # PyPy on MacOS (mainly due to MacOS numpy bugs) is unsupported.
+          CIBW_SKIP: "pp*-macosx_x86_64"
+          # Only Python 3.5+ is supported.
+          CIBW_BUILD: "cp3?-* pp3?-*"
           # Perform tests on each wheel build
           CIBW_BEFORE_TEST: pip install -r dev_requirements.txt
           CIBW_TEST_COMMAND: "pytest {project}/tests"

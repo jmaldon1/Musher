@@ -28,8 +28,8 @@ jobs:
         run: |
           python -m cibuildwheel --output-dir wheelhouse
         env:
-          # Python 2.7 and PyPy (PyPy mainly due to MacOS numpy bugs) are unsupported.
-          CIBW_SKIP: "cp27-* pp*"
+          # Python 2.7 and PyPy on MacOS (PyPy mainly due to MacOS numpy bugs) are unsupported.
+          CIBW_SKIP: "cp27-* pp*-macosx_x86_64"
           # Perform tests on each wheel build
           CIBW_BEFORE_TEST: pip install -r dev_requirements.txt
           CIBW_TEST_COMMAND: "pytest {project}/tests"
@@ -82,5 +82,6 @@ jobs:
         with:
           # https://github.com/pypa/gh-action-pypi-publish
           user: __token__
+          # Secrets need to be created on the settings page of the project on GitHub.
           password: ${{ secrets.pypi_password }}
           skip_existing: true

@@ -32,10 +32,10 @@ jobs:
           # Perform tests on each wheel build
           CIBW_BEFORE_TEST: |
             if "$RUNNER_OS" == "macOS"; then
+              # Fix for buggy Accelerate backend on mac
               brew install openblas
               OPENBLAS="$(brew --prefix openblas)" pip install numpy
-            fi
-            pip install -r dev_requirements.txt
+            fi && pip install -r dev_requirements.txt
           CIBW_TEST_COMMAND: "pytest {project}/tests"
 
       - name: Check wheels

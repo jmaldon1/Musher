@@ -30,8 +30,8 @@ jobs:
         env:
           CIBW_SKIP: "cp27-* pp27-*"
           # Perform tests on each wheel build
-          # Macs that have python downloaded from brew seem to have issues with numpy, so we brew install it.
-          CIBW_BEFORE_TEST: if [[ "$RUNNER_OS" == "macOS" ]]; then pip install numpy==1.18.0; fi && pip install -r dev_requirements.txt
+          # Use an older numpy version of mac to avoid `Buggy Accelerate Backend` error.
+          CIBW_BEFORE_TEST: if [[ '$RUNNER_OS' == 'macOS' ]]; then pip install numpy==1.18.0; fi; pip install -r dev_requirements.txt
           CIBW_TEST_COMMAND: "pytest {project}/tests"
 
       - name: Check wheels

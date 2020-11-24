@@ -81,5 +81,4 @@ jobs:
           # https://github.com/pypa/gh-action-pypi-publish
           user: __token__
           password: ${{ secrets.pypi_password }}
-        with:
           skip_existing: true

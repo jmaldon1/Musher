@@ -29,7 +29,6 @@ jobs:
           python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_SKIP: "cp27-* pp27-*"
-          CIBW_BUILD: "cp36-*"
           # Perform tests on each wheel build
           CIBW_BEFORE_TEST: "pip install -r dev_requirements.txt"
           CIBW_TEST_COMMAND: "pytest {project}/tests"
@@ -40,6 +39,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
+          # Uploaded to a dist artifact folder
           path: ./wheelhouse/*.whl
 
   
@@ -63,6 +63,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
+          # Uploaded to a dist artifact folder
           path: dist/*.tar.gz
   
   upload_pypi:

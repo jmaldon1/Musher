@@ -1,0 +1,300 @@
+CHANGES
+=======
+
+* added pbr requirement
+
+0.0.1
+-----
+
+* added pbr to dev dependencies
+* using setup.cfg with pbr
+* small changes
+* added comment
+* renamed requirements
+* fixed build skips
+* updated readme
+* only removed macos pypy support
+* removed unused files
+* removed pypy support
+* fixed syntax
+* try calling bash script
+* different syntax
+* trying older version of numpy
+* trying 1 liner
+* syntax error fix
+* added AND logic
+* different syntax
+* trying to fix mac numpy buggy Accelerate backend
+* wheel creation for all python versions
+* fixed syntax
+* skip existing for now
+* uploading wheel artifacts
+* uploading to pypi
+* changed readme note to markdown
+* adjusted tools readme
+* added sdist requirements
+* output test
+* fixed test for i686
+* trying github actions
+* removed arch code
+* fixed doubles calculations on different archs
+* added env variables for local testing
+* fixed language
+* only trying 1 python version
+* simplified CICD
+* install dev requirements
+* fixed pip install command
+* CICD with tests
+* changed cibuildwheel version
+* running tests after building
+* fix tolower error
+* added include for algorithm
+* removed support for pypi2.7
+* testing new travis
+* fixed tests for linux\_i686
+* no support for manylinux1
+* changed to groups
+* trying to find compiler
+* fixed bug
+* fixed syntax error
+* trying addional compile args for older linux
+* correctly checking python version
+* not supporting python2.7
+* testing out travis deploy
+* trying new build-wheels
+* added dev-requirements
+* fixed script
+* added build-wheels script
+* attempting manylinux
+* added travis
+* added comments
+* small edits
+* added blank line
+* added readme
+* added blank end line
+* code works with python3.5+
+* added cython dependency
+* added isclose function
+* updated numpy version
+* added pybind11 dep
+* added manifest and pyproject
+* fixed comment
+* moved comment
+* changed variable name
+* added square to docs
+* blackmanharris docs
+* removed old files
+* added docs
+* finalizing some extra c++ and python tests
+* added python tests
+* added comment in usage
+* added key profile docs
+* cleaned up SelectKeyProfile doc string
+* removed colon
+* updated docs
+* added quick start and updated documentation section
+* added decode\_mp3\_from\_file func to docs
+* added user option for publish docs
+* removed cmake file creation
+* finalized publish docs command
+* testing deploy gh-pages
+* adding gh pages deploy
+* Updated Docs
+* mp3 decoder added
+* working mp3 decoder
+* removed include
+* removed interleaved samples
+* updated doxygen
+* adding c++ docs
+* fixed c++ docs
+* removed import
+* removed unused extra compile arg
+* python module working for windows
+* working python module for gcc
+* removed warning supressing
+* python module works for clang
+* fixed typo
+* docs are now generated with cmake
+* added documentation for python module
+* added .vscode used during development
+* added both hpcp versions
+* fixed comment
+* fixed comment
+* renamed func
+* removed test package
+* removed manifest
+* removed relax warnings
+* removed git modules
+* removed python related CMAKE
+* fixed includes for python
+* most functions are put in correct spots
+* moved mono mixer to its own file
+* Remove ignored files
+* more function splitting
+* breaking out functions into their own files
+* added credits
+* updated usage readme
+* updated readme
+* added basic usage to readme
+* added key detect
+* readme fix
+* readme fix
+* more tests
+* adding to readme
+* working key detect in python
+* fixed variable names
+* moved doxygen to header
+* writing wrapper code with pybind11
+* working pybind11
+* added fix to msvc, it now compiles
+* fixed MSVC warnings
+* removed non windows compile args
+* added nice test
+* cleaned up setup
+* no longer build python in cmake
+* ensured cmake still works to build cpp code alone
+* full python implementation of wavdecode
+* working c++ module without cmake
+* removed c++17 dependencies
+* renamed musher to src and added a dummy wrapper
+* removed old cmake
+* started reworking python extension
+* fixing it up
+* added helpful hints
+* moved documentation to header file
+* cleaned up casts and function names
+* Added documentation to many functions
+* added essentia reference
+* added documentation for key algorithm
+* small updates
+* updated setup.py to only use setuptools
+* added pylint
+* changed to 2 tab width
+* added key test
+* renamed audio file
+* removed fixture
+* completed key algorithm
+* fixed syntax
+* updating key algorithm
+* added support for macos
+* added gtest command to setup.py
+* added functionalplus to library
+* Changed cmake conan to specify libc++11 flag if unix or mingw. Must test on windows
+* Fixed windows exception in beat detection algo
+* Updated tests and cmake to find data path at project root dir
+* fixed some windows compilation issues. Fix c++17 -> c++14 compile issues. Fix cmake and ctest from setup.py
+* Reogranized code. python cmake and setup.py testing WIP
+* adding key algorithm
+* working on key detect algorithm
+* removed space
+* finished tests for framecutter
+* trying to fix framecutter
+* creating more framecutter tests
+* added useful test functions
+* adding more framecutter tests
+* added matrices equality macro
+* fixed framecutter algorithm + added tests
+* fixing framecutter
+* adding framecutter algorithm
+* working hpcp again
+* completed initial HPCP algorithm and tests
+* added new fPIC flag
+* moved code out of headers to cpp files
+* removed templates from code
+* updated some functions to be cleaner
+* finalized some features and tests for peak detect
+* fixed comment
+* Changed bpm detection due to new peak detection
+* added additonal features to peak detection
+* fixed merge conflict
+* working on key detection
+* adding mp3decode
+* fixed iterleaving over mono samples
+* fully working BPM detector
+* half working bpm detector, produces wrong bpm
+* almost finished BPM detection
+* Fixed linux wsl builds
+* commented out fft
+* fixed test cmake for new structure
+* Moved code to new directory. created new cmake
+* fixed test
+* Started fixing windows compile errors
+* adding fft
+* possibly fixed wavelib
+* Removing all files in .gitignore
+* fixed wavelib .git
+* creating bpm algorithm
+* fixed cmake for mac
+* fixed googletest
+* Fix namespaces and work on cmake changes
+* major progress
+* Added Musher namespace to library code. Fixed template for undordered and ordered maps
+* fixed system errors and now return type errors in python
+* added 2nd solution to const char issue
+* passing decoded data to python
+* fix python
+* fixed python test
+* successfully decoded a wav file
+* attempting visitors
+* writing decode wav function
+* not finished
+* Fix header file ifndef wrapper for python\_utils
+* load audio file function completed in python
+* converting uint8\_t to int
+* moved test binaries to test\_bin folder
+* Remove ignored files
+* added comment
+* fixed python exceptions
+* fix python exceptions in c++
+* checking for g++ compiler in setup.py and fixed tests to new names
+* Cleaned up musher\_library.cpp
+* Fixed linux linking issues with c++17. Cleaned up musher library code
+* creating load audio file function
+* beginning to create wav file decoder
+* Added windows visual studio debug and release folders to clean list
+* Fixed musher\_library build for windows and linux. Added run arg to windows cpp test
+* small update
+* added submodule for lower cmake versions
+* testing submodule
+* removed submodule
+* readded googletest submode for support for lower cmake versions
+* removed googletest submodule in favor of cmake FetchContent
+* fixed link issue
+* linking issue found, trying to solve
+* Wrapped dll copy in if statement for visual studio generator
+* Added to setup clean command to remove windows outputs
+* added possible fix for msvc
+* Increase build speed by splitting into libraries. Does not fully work on windows without manually copying dlls
+* Fix windows googletest tests
+* Fixed Cmake build for c++ googltests
+* broken code
+* removed submodule
+* added tox
+* changed variable names in buildTools
+* added prints to setup.py clean
+* Fixed toc in readme
+* Fixed c-style dll/so interface. Removed old poc instructions from readme
+* updated readme
+* updated readme
+* Added cleanup stage for windows .pyd files
+* Removed old poc and build scripts. Cleaned up musher\_wrapper.cpp. Updated readme with cmake download link for windows developers
+* fixed test, small change to cmake
+* huge cmake overhaul, now works on mac/linux with multiple python versions installed
+* added to cmakelist to find correct python libs
+* cleaned up setup.py
+* added tests to setup.py
+* updated readme
+* updated readme
+* added comment
+* fixed wrapper code
+* deleting dylibs on clean
+* Update README.md
+* fixed setup.py clean
+* Moved c++ musher test library out of poc. Started creating new setup script for building the module
+* added support for macos in setup.py
+* fixed readme
+* Correct typo in readme from previous commit
+* Initial commit of POC model
+* added to readme
+* added to readme
+* Initial commit

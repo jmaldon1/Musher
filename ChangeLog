@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+* new changes
+* removing metadata from setup.py
+* added more details to setup.cfg
+* added badges to readme
+
 v0.0.3
 ------
 
@@ -8,10 +13,6 @@ v0.0.3
 * added changelog
 * added authors
 * added pbr requirement
-
-0.0.1
------
-
 * added pbr to dev dependencies
 * using setup.cfg with pbr
 * small changes

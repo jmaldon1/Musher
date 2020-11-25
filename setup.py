@@ -5,7 +5,6 @@ import platform
 import subprocess
 import shutil
 import glob
-import codecs
 import signal
 from typing import Callable
 from setuptools import setup, find_packages, Extension, Command
@@ -13,16 +12,6 @@ from setuptools.command.test import test
 
 import pybind11
 
-
-README_NOTE = """\
-   Note
-
-   For the latest source, discussion, etc, please visit the
-   [GitHub repository](https://github.com/jmaldon1/Musher)\n\n
-"""
-
-with codecs.open('README.md', encoding='utf-8') as fobj:
-    long_description = README_NOTE + fobj.read()
 
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 

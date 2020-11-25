@@ -377,9 +377,6 @@ def extra_link_args() -> list:
 
 
 setup(
-    name='musher',
-    version='0.1',
-    description='Simple musical key detection',
     packages=find_packages(),
     ext_modules=[
          Extension(
@@ -437,8 +434,5 @@ setup(
     zip_safe=False,
     long_description=long_description,
     long_description_content_type='text/markdown',
-    author='Joshua Maldonado, Brian Silver',
-    author_email='joshjm9915@gmail.com',
-    url='https://github.com/jmaldon1/Musher',
-    license='MIT',
+    pbr=True
 )

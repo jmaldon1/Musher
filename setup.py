@@ -15,7 +15,7 @@ import pybind11
 
 
 README_NOTE = """\
-   # Note
+   Note
 
    For the latest source, discussion, etc, please visit the
    [GitHub repository](https://github.com/jmaldon1/Musher)\n\n
@@ -431,8 +431,5 @@ setup(
         "clean": CleanProject,
         "publish_docs": PublishDocs
     },
-    zip_safe=False,
-    long_description=long_description,
-    long_description_content_type='text/markdown',
     pbr=True
 )

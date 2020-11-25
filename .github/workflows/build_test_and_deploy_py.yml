@@ -33,7 +33,7 @@ jobs:
           # Only Python 3.5+ is supported.
           CIBW_BUILD: "cp3?-* pp3?-*"
           # Perform tests on each wheel build
-          CIBW_BEFORE_TEST: pip install -r dev_requirements.txt
+          CIBW_BEFORE_TEST: pip install -r requirements_dev.txt
           CIBW_TEST_COMMAND: "pytest {project}/tests"
 
       - name: Check wheels
@@ -59,7 +59,7 @@ jobs:
 
       - name: Install sdist requirements
         run: |
-          python -m pip install -r sdist_requirements.txt
+          python -m pip install -r requirements_sdist.txt
 
       - name: Build sdist
         run: python setup.py sdist
@@ -72,8 +72,8 @@ jobs:
   upload_pypi:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
-    # # upload to PyPI on every tag starting with 'v'
-    # if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
+    # upload to PyPI on every tag starting with 'v'
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
     steps:
       - uses: actions/download-artifact@v2
         with:
@@ -86,4 +86,3 @@ jobs:
           user: __token__
           # Secrets need to be created on the settings page of the project on GitHub.
           password: ${{ secrets.pypi_password }}
-          skip_existing: true

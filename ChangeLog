@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+v0.0.3
+------
+
+* added comments
+* added changelog
+* added authors
 * added pbr requirement
 
 0.0.1

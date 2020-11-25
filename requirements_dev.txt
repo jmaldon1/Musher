@@ -3,3 +3,4 @@ tox>=3.20.1
 autopep8>=1.5.4
 pylint>=2.6.0
 numpy>=1.18.5
+pbr>=5.5.1

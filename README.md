@@ -1,6 +1,6 @@
 # Musher
 
-[![Build Status](https://img.shields.io/github/workflow/status/jmaldon1/musher/Build,%20test,%20and%20upload%20to%20PyPI)](https://github.com/jmaldon1/Musher/actions)
+[![Build Status](https://img.shields.io/github/workflow/status/jmaldon1/musher/Build,%20test,%20and%20upload%20to%20PyPi)](https://github.com/jmaldon1/Musher/actions)
 [![PyPI version](https://img.shields.io/pypi/v/musher.svg?style=flat)](https://pypi.org/project/musher/)
 
 Simple musical key detection.

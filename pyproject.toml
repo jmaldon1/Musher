@@ -1,5 +1,7 @@
 # PEP 518 requirements (Pip 10+ required)
 # Install required packages before building this package.
 [build-system]
-requires = ["setuptools", "cython", "wheel", "pbr>=5.5.1", "pybind11>=2.6.0", "numpy>=1.18.5"]
+requires = ["setuptools", "cython", "wheel", "setuptools_scm[toml]>=3.4", "pybind11>=2.6.0", "numpy>=1.18.5"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]

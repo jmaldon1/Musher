@@ -343,8 +343,8 @@ def extra_compile_args() -> list:
         if platform.machine() == 'i686':
             # This makes GCC generate modern SSE2 instructions
             # that give the exact IEEE 754 floating-point semantics.
-            # Basically ensures that calculations using doubles
-            # produce the same result on any architecture.
+            # Basically ensures that calculations using produce the
+            # same results on all 32bit linux architecture.
             args += ['-msse2']
         args += ['-std=c++14']
 
@@ -366,7 +366,6 @@ def extra_link_args() -> list:
 
 
 setup(
-    packages=find_packages(),
     ext_modules=[
          Extension(
              'musher.musher_python',  # Destination of .so
@@ -412,7 +411,6 @@ setup(
              extra_link_args=extra_link_args(),
          )
     ],
-    setup_requires=['wheel', 'cython', 'pybind11>=2.6.0', 'numpy>=1.18.5'],
     cmdclass={
         "cmake": CMakeBuild,
         "ctest": CTest,
@@ -420,5 +418,6 @@ setup(
         "clean": CleanProject,
         "publish_docs": PublishDocs
     },
-    pbr=True
+    setup_requires=['wheel', 'cython', 'setuptools_scm>=4.1.2', 'pybind11>=2.6.0', 'numpy>=1.18.5'],
+    use_scm_version=True
 )

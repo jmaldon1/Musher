@@ -1,6 +1,0 @@
-include README.md
-include src/core/*.h
-include src/python/*.h
-include src/third-party/fplus/fplus.hpp
-include src/third-party/pocketfft/pocketfft.h
-include src/third-party/minimp3/minimp3_ex.h src/third-party/minimp3/minimp3.h

@@ -17,7 +17,7 @@ Simple musical key detection.
   - [Sample Usage](#sample-usage)
   - [What key profile should I use?](#what-key-profile-should-i-use)
 - [Installation](#installation)
-  - [Python 3.5+(WIP)](#python-35wip)
+  - [Python 3.5+](#python-35)
   - [C++ 14](#c-14)
     - [Dependencies](#dependencies)
       - [Cmake](#cmake)
@@ -71,7 +71,7 @@ pip install musher
 You can choose to install this package in 2 ways, Python and C++. The package was primary written in C++ and wrapped in Python. Choose either of the following methods of installation.
 
 
-## Python 3.5+(WIP)
+## Python 3.5+
 
 ```
 pip install musher

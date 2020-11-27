@@ -365,7 +365,7 @@ const char* detect_key_description = R"(
   Computes key estimate given normalized samples.
 
   Args:
-    normalized_samples (List[List[float]]): The input pitch class profile.
+    normalized_samples (List[List[float]]): Normalized samples from a decoded file.
     sample_rate (float, optional): Sampling rate of the audio signal [Hz]. Defaults to 44100.0.
     profile_type (str, optional): The type of polyphic profile to use for correlation calculation. Defaults to 'Bgate'.
     use_polphony (bool, optional): Enables the use of polyphonic profiles to define key profiles (this includes the contributions

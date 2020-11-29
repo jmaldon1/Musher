@@ -4,4 +4,10 @@
 requires = ["setuptools", "cython", "wheel", "setuptools_scm[toml]>=3.4", "pybind11>=2.6.0", "numpy>=1.18.5"]
 build-backend = "setuptools.build_meta"
 
+[tool.pytest.ini_options]
+addopts = "-v -p no:warnings"
+
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 120
+
 [tool.setuptools_scm]

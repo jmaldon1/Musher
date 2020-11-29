@@ -101,7 +101,7 @@ std::vector<std::vector<double>> SelectKeyProfile(const std::string profile_type
     return temperley;
   else if (profile_type == "Weichai")
     return weichai;
-  else if (profile_type == "Tonictriad")
+  else if (profile_type == "Tonic Triad")
     return tonictriad;
   else if (profile_type == "Temperley2005")
     return temperley2005;
